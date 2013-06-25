@@ -1,17 +1,13 @@
 .classic-accordion {
 	position: relative;
 	overflow: hidden;
-	background-color: #000;
+	border: 4px solid #000;
 }
 
 
 .classic-accordion .panel {
-	background-image: url(accordion-assets/images/preloader.gif);
-	background-repeat: no-repeat;
-	background-position: center center;
 	position: absolute;
 	overflow: hidden;
-	background-color: #FFF;
 }
 
 
@@ -30,31 +26,4 @@
 	bottom: 0;
 	width: 100%;
 	height: 25px;
-}
-
-
-.classic-accordion .preloader {
-	background:url(accordion-assets/images/preloader2.gif) no-repeat;
-	width: 62px;
-	height: 14px;
-	position: absolute;
-	z-index: 15;
-}
-
-
-.classic-accordion .caption {
-	background: rgb(0, 0, 0);
-	background: rgba(0, 0, 0, 0.5);
-	overflow: hidden;
-	position: absolute;
-	z-index: 20;
-	visibility: hidden;
-	color: #FFF;
-	margin: 0;
-	padding: 10px;
-}
-
-
-.classic-accordion .active {
-	visibility: visible;
 }
