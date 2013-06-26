@@ -11,7 +11,12 @@ var ClassicAccordion;
 
 	var ClassicAccordion = function(instance, options) {
 		this.accordion = $(instance);
+
 		this.options = options;
+
+		this.settings = $.extend({}, this.defaults, this.options);
+
+		this.currentIndex = this.settings.startPanel;
 
 		this._init();
 	};
@@ -21,16 +26,23 @@ var ClassicAccordion;
 	ClassicAccordion.prototype = {
 
 		_init: function() {
-			this.settings = $.extend({}, this.defaults, this.options);
-
-			this.accordion.css({width: this.settings.width, height: this.settings.height});
-
 			this.refresh();
+
+			// set the initial size of the accordion
+			if (this.settings.responsive) {
+				this.accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
+
+				if (this.settings.aspectRatio == -1)
+					this.settings.aspectRatio = this.accordion.innerWidth() / this.accordion.innerHeight();
+			} else {
+				this.accordion.css({width: this.settings.width, height: this.settings.height});
+			}
 
 			this.resize();
 
 			var _this = this;
 
+			// resize the accordion when the browser resizes
 			$(window).on('resize.' + NS, function() {
 				_this.resize();
 			});
@@ -43,29 +55,40 @@ var ClassicAccordion;
 
 
 		refresh: function() {
-			this.totalPanels = this.accordion.find('.panel').length;
+
 		},
 
 
 		resize: function() {
 			var _this = this,
-				totalSize = _this.settings.orientation == "horizontal" ? this.accordion.innerWidth() : this.accordion.innerHeight(),
-				computedOpenedPanelSize = _this.settings.openedPanelSize;
+				computedOpenedPanelSize = this.settings.openedPanelSize;
+
+
+			if (this.settings.aspectRatio != -1)
+				this.accordion.css('height', this.accordion.innerWidth() / this.settings.aspectRatio);
+
+
+			var totalSize = _this.settings.orientation == "horizontal" ? this.accordion.innerWidth() : this.accordion.innerHeight();
 
 			if (typeof computedOpenedPanelSize == 'string') {
-				if (computedOpenedPanelSize.indexOf('%') != -1)
+				if (computedOpenedPanelSize.indexOf('%') != -1) {
 					computedOpenedPanelSize = totalSize * (parseInt(computedOpenedPanelSize, 10)/ 100);
-				else if (computedOpenedPanelSize.indexOf('px') != -1)
+				} else if (computedOpenedPanelSize.indexOf('px') != -1) {
 					computedOpenedPanelSize = parseInt(computedOpenedPanelSize, 10);
-				else if (computedOpenedPanelSize == 'max')
-					computedOpenedPanelSize = parseInt(computedOpenedPanelSize, 10);
+				} else if (computedOpenedPanelSize == 'max') {
+					computedOpenedPanelSize = this.accordion.find('.panel').eq(this.currentIndex - 1).outerWidth(true);
+
+				}
 			}
 
-			var closedPanelSize = (totalSize - computedOpenedPanelSize) / (this.totalPanels - 1);
+
+			var closedPanelSize = (totalSize - computedOpenedPanelSize) / (this.getTotalPanels() - 1);
+
+			console.log('resize');
 
 			this.accordion.find('.panel').each(function(index, element) {
 				if (_this.settings.orientation == 'horizontal') {
-					$(element).css('left', index * closedPanelSize);
+					$(element).css('left', index * closedPanelSize + (index > _this.currentIndex - 1 ? computedOpenedPanelSize - closedPanelSize : 0));
 				} else if (_this.settings.orientation == 'vertical') {
 
 				}
@@ -89,7 +112,12 @@ var ClassicAccordion;
 
 
 		getCurrentIndex: function() {
+			return this.currentIndex;
+		},
 
+
+		getTotalPanels: function() {
+			return this.accordion.find('.panel').length;
 		},
 
 
@@ -147,9 +175,11 @@ var ClassicAccordion;
 			xmlSource: null,
 			width: 500,
 			height: 300,
+			responsive: true,
+			aspectRatio: -1,
 			orientation: 'horizontal',
-			openedPanelSize: '50%',
-			startPanel: 1
+			startPanel: 1,
+			openedPanelSize: '50%'
 		}
 
 	};

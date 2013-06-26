@@ -7,6 +7,7 @@
 
 .classic-accordion .panel {
 	position: absolute;
+	display: block;
 	overflow: hidden;
 }
 
