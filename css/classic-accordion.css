@@ -5,14 +5,14 @@
 }
 
 
-.classic-accordion .panel {
+.classic-accordion .ca-panel {
 	position: absolute;
 	display: block;
 	overflow: hidden;
 }
 
 
-.classic-accordion .shadow-horizontal {
+.classic-accordion .ca-shadow-horizontal {
 	background: url(accordion-assets/images/shadow.png) repeat-Y;
 	position: absolute;
 	right: 0;
@@ -21,7 +21,7 @@
 }
 
 
-.classic-accordion .shadow-vertical {
+.classic-accordion .ca-shadow-vertical {
 	background: url(accordion-assets/images/shadow_v.png) repeat-x;
 	position: absolute;
 	bottom: 0;
