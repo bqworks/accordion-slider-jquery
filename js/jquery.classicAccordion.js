@@ -18,6 +18,10 @@
 
 		this.currentIndex = this.settings.startPanel;
 
+		this.computedOpenedPanelSize = 0;
+
+		this.closedPanelSize = 0;
+
 		this.panels = [];
 
 		this._init();
@@ -55,9 +59,34 @@
 			var _this = this;
 
 			this.accordion.find('.ca-panel').each(function(index, element) {
-				var panel = new ClassicAccordionPanel($(element), _this.accordion, index, _this.settings);
+				_this._createPanel(index + 1, element);
+			});
+		},
 
-				_this.panels.push(panel);
+
+		_createPanel: function(index, element) {
+			var _this = this;
+
+			var panel = new ClassicAccordionPanel($(element), this.accordion, index, this.settings);
+			this.panels.splice(index, 0, panel);
+
+
+			$(element).on('panelMouseOver.' + NS, function(event) {
+				if (_this.settings.openPanelOn == 'hover')
+					_this.openPanel(event.index);
+			});
+
+			$(element).on('panelMouseOut.' + NS, function(event) {
+				if (_this.settings.openPanelOn == 'hover')
+					_this.closePanel();
+			});
+
+			$(element).on('panelClick.' + NS, function(event) {
+				if (_this.settings.openPanelOn == 'click')
+					if (index !== this.currentIndex)
+						_this.openPanel(event.index);
+					else
+						_this.closePanel();
 			});
 		},
 
@@ -68,36 +97,34 @@
 
 
 		resize: function() {
-			var _this = this,
-				computedOpenedPanelSize = this.settings.openedPanelSize;
-
+			var _this = this;
 
 			if (this.settings.aspectRatio != -1)
 				this.accordion.css('height', this.accordion.innerWidth() / this.settings.aspectRatio);
 
+			this.computedOpenedPanelSize = this.settings.openedPanelSize;
 
-			var totalSize = _this.settings.orientation == "horizontal" ? this.accordion.innerWidth() : this.accordion.innerHeight();
+			var totalSize = this.settings.orientation == "horizontal" ? this.accordion.innerWidth() : this.accordion.innerHeight();
 
-			if (typeof computedOpenedPanelSize == 'string') {
-				if (computedOpenedPanelSize.indexOf('%') != -1) {
-					computedOpenedPanelSize = totalSize * (parseInt(computedOpenedPanelSize, 10)/ 100);
-				} else if (computedOpenedPanelSize.indexOf('px') != -1) {
-					computedOpenedPanelSize = parseInt(computedOpenedPanelSize, 10);
-				} else if (computedOpenedPanelSize == 'max') {
-					computedOpenedPanelSize = this.getPanelAt(this.currentIndex - 1).outerWidth(true);
+			if (typeof this.computedOpenedPanelSize == 'string') {
+				if (this.computedOpenedPanelSize.indexOf('%') != -1) {
+					this.computedOpenedPanelSize = totalSize * (parseInt(this.computedOpenedPanelSize, 10)/ 100);
+				} else if (this.computedOpenedPanelSize.indexOf('px') != -1) {
+					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
+				} else if (this.computedOpenedPanelSize == 'max') {
+					this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex - 1).outerWidth(true);
 
 				}
 			}
 
-
-			var closedPanelSize = (totalSize - computedOpenedPanelSize) / (this.getTotalPanels() - 1);
+			this.closedPanelSize = (totalSize - this.computedOpenedPanelSize) / (this.getTotalPanels() - 1);
 
 			console.log('resize');
 
 			$.each(_this.panels, function(index) {
 				var panel = _this.panels[index];
 
-				panel.setPosition(index * closedPanelSize + (index > _this.currentIndex - 1 ? computedOpenedPanelSize - closedPanelSize : 0));
+				panel.setPosition(index * _this.closedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.closedPanelSize : 0));
 			});
 		},
 
@@ -122,18 +149,27 @@
 		},
 
 
-		openPanel: function(index) {
-
-		},
-
-
 		nextPanel: function() {
-
+			var index = (this.currentIndex === this.getTotalPanels() - 1) ? 0 : (this.currentIndex + 1);
+			this.openPanel(index);
 		},
 
 
 		previousPanel: function() {
+			var index = this.currentIndex === 0 ? (this.getTotalPanels() - 1) : (this.currentIndex - 1);
+			this.openPanel(index);
+		},
 
+
+		openPanel: function(index) {
+			var _this = this;
+
+			_this.currentIndex = index;
+
+			$.each(this.panels, function(index) {
+				var panel = _this.panels[index];
+				panel.setPosition(index * _this.closedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.closedPanelSize : 0), true);
+			});
 		},
 
 
@@ -175,7 +211,8 @@
 			aspectRatio: -1,
 			orientation: 'horizontal',
 			startPanel: 1,
-			openedPanelSize: '50%'
+			openedPanelSize: '50%',
+			openPanelOn: 'hover'
 		}
 
 	};
@@ -187,22 +224,55 @@
 		this.accordion = accordion;
 		this.index = index;
 		this.settings = settings;
+
+		this._init();
 	};
 
 
 
 	ClassicAccordionPanel.prototype = {
 
-		getIndex: function () {
+		_init: function() {
+			var _this = this;
+
+			this.panel.on('mouseenter.' + NS, function() {
+				_this.panel.trigger({type: 'panelMouseOver.' + NS, index: _this.index});
+			});
+
+			this.panel.on('mouseleave.' + NS, function() {
+				_this.panel.trigger({type: 'panelMouseOut.' + NS, index: _this.index});
+			});
+
+			this.panel.on('click.' + NS, function() {
+				_this.panel.trigger({type: 'panelClick.' + NS, index: _this.index});
+			});
+		},
+
+
+		getIndex: function() {
 			return this.index;
 		},
 
 
-		setPosition: function (value) {
+		setPosition: function(value, animate) {
 			if (this.settings.orientation == 'horizontal') {
-				this.panel.css('left', value);
+				if (this.panel.css('left') === value)
+					return;
+
+				if (animate === true) {
+					this.panel.stop().animate({'left': value});
+				} else {
+					this.panel.css('left', value);
+				}
 			} else if (this.settings.orientation == 'vertical') {
-				this.panel.css('top', value);
+				if (this.panel.css('top') === value)
+					return;
+
+				if (animate === true) {
+					this.panel.stop().animate({'top': value});
+				} else {
+					this.panel.css('top', value);
+				}
 			}
 		}
 
