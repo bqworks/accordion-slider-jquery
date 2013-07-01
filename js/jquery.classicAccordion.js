@@ -26,6 +26,8 @@
 
 		this.panels = [];
 
+		this.mouseDelayTimer = 0;
+
 		this._init();
 	};
 
@@ -90,8 +92,13 @@
 
 
 			element.on('panelMouseOver.' + NS, function(event) {
-				if (_this.settings.openPanelOn == 'hover')
-					_this.openPanel(event.index);
+				if (_this.settings.openPanelOn == 'hover') {
+					clearTimeout(_this.mouseDelayTimer);
+
+					_this.mouseDelayTimer = setTimeout(function() {
+						_this.openPanel(event.index);
+					}, _this.settings.mouseDelay);
+				}
 
 				var eventObject = {type: 'panelMouseOver', index: index, element: element};
 				if ($.isFunction(_this.settings.panelMouseOver))
@@ -253,6 +260,7 @@
 			openedPanelSize: '50%',
 			openPanelOn: 'hover',
 			closePanelsOnMouseOut:false,
+			mouseDelay: 200,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
