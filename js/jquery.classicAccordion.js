@@ -66,8 +66,8 @@
 
 			this.accordion.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
-				if ($.isFunction(self.settings.accordionMouseOver))
-					self.settings.accordionMouseOver.call(_this, eventObject);
+				if ($.isFunction(_this.settings.accordionMouseOver))
+					_this.settings.accordionMouseOver.call(_this, eventObject);
 			});
 
 			this.accordion.on('mouseleave.' + NS, function(event) {
@@ -75,8 +75,8 @@
 					_this.closePanels();
 
 				var eventObject = {type: 'accordionMouseOut'};
-				if ($.isFunction(self.settings.accordionMouseOut))
-					self.settings.accordionMouseOut.call(_this, eventObject);
+				if ($.isFunction(_this.settings.accordionMouseOut))
+					_this.settings.accordionMouseOut.call(_this, eventObject);
 			});
 		},
 
@@ -94,14 +94,14 @@
 					_this.openPanel(event.index);
 
 				var eventObject = {type: 'panelMouseOver', index: index, element: element};
-				if ($.isFunction(self.settings.panelMouseOver))
-					self.settings.panelMouseOver.call(_this, eventObject);
+				if ($.isFunction(_this.settings.panelMouseOver))
+					_this.settings.panelMouseOver.call(_this, eventObject);
 			});
 
 			element.on('panelMouseOut.' + NS, function(event) {
 				var eventObject = {type: 'panelMouseOut', index: index, element: element};
-				if ($.isFunction(self.settings.panelMouseOut))
-					self.settings.panelMouseOut.call(_this, eventObject);
+				if ($.isFunction(_this.settings.panelMouseOut))
+					_this.settings.panelMouseOut.call(_this, eventObject);
 			});
 
 			element.on('panelClick.' + NS, function(event) {
@@ -112,8 +112,8 @@
 						_this.closePanels();
 
 				var eventObject = {type: 'panelClick', index: index, element: element};
-				if ($.isFunction(self.settings.panelMouseOut))
-					self.settings.panelMouseOut.call(_this, eventObject);
+				if ($.isFunction(_this.settings.panelClick))
+					_this.settings.panelClick.call(_this, eventObject);
 			});
 		},
 

@@ -24,7 +24,12 @@
 						aspectRatio: 2,
 						orientation: 'horizontal',
 						openPanelOn: 'click',
-						closePanelsOnMouseOut: true
+						closePanelsOnMouseOut: true,
+						accordionMouseOver: function(obj) {console.log('accordion mouse over');},
+						accordionMouseOut: function(obj) {console.log('accordion mouse out');},
+						panelClick: function(obj) {console.log('panel click', obj.index, obj.element);},
+						panelMouseOver: function(obj) {console.log('panel mouse over', obj.index, obj.element);},
+						panelMouseOut: function(obj) {console.log('panel mouse out', obj.index, obj.element);}
 
 					});
 	});
