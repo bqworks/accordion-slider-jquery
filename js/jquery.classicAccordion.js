@@ -218,6 +218,8 @@
 
 			_this.currentIndex = -1;
 
+			clearTimeout(_this.mouseDelayTimer);
+
 			$.each(this.panels, function(index) {
 				var panel = _this.panels[index];
 				panel.setPositionAndSize(index * _this.closedPanelSize, _this.closedPanelSize, true);
