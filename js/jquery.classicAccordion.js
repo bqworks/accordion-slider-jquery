@@ -65,39 +65,55 @@
 			});
 
 			this.accordion.on('mouseenter.' + NS, function(event) {
-
+				var eventObject = {type: 'accordionMouseOver'};
+				if ($.isFunction(self.settings.accordionMouseOver))
+					self.settings.accordionMouseOver.call(_this, eventObject);
 			});
 
 			this.accordion.on('mouseleave.' + NS, function(event) {
 				if (_this.settings.closePanelsOnMouseOut)
 					_this.closePanels();
+
+				var eventObject = {type: 'accordionMouseOut'};
+				if ($.isFunction(self.settings.accordionMouseOut))
+					self.settings.accordionMouseOut.call(_this, eventObject);
 			});
 		},
 
 
-		_createPanel: function(index, element) {
-			var _this = this;
+		_createPanel: function(index, el) {
+			var _this = this,
+				element = $(el);
 
-			var panel = new ClassicAccordionPanel($(element), this.accordion, index, this.settings);
+			var panel = new ClassicAccordionPanel(element, this.accordion, index, this.settings);
 			this.panels.splice(index, 0, panel);
 
 
-			$(element).on('panelMouseOver.' + NS, function(event) {
+			element.on('panelMouseOver.' + NS, function(event) {
 				if (_this.settings.openPanelOn == 'hover')
 					_this.openPanel(event.index);
+
+				var eventObject = {type: 'panelMouseOver', index: index, element: element};
+				if ($.isFunction(self.settings.panelMouseOver))
+					self.settings.panelMouseOver.call(_this, eventObject);
 			});
 
-			$(element).on('panelMouseOut.' + NS, function(event) {
-				//if (_this.settings.closePanelsOnMouseOut)
-				//	_this.closePanels();
+			element.on('panelMouseOut.' + NS, function(event) {
+				var eventObject = {type: 'panelMouseOut', index: index, element: element};
+				if ($.isFunction(self.settings.panelMouseOut))
+					self.settings.panelMouseOut.call(_this, eventObject);
 			});
 
-			$(element).on('panelClick.' + NS, function(event) {
+			element.on('panelClick.' + NS, function(event) {
 				if (_this.settings.openPanelOn == 'click')
 					if (index !== this.currentIndex)
 						_this.openPanel(event.index);
 					else
 						_this.closePanels();
+
+				var eventObject = {type: 'panelClick', index: index, element: element};
+				if ($.isFunction(self.settings.panelMouseOut))
+					self.settings.panelMouseOut.call(_this, eventObject);
 			});
 		},
 
@@ -236,7 +252,12 @@
 			startPanel: 1,
 			openedPanelSize: '50%',
 			openPanelOn: 'hover',
-			closePanelsOnMouseOut:false
+			closePanelsOnMouseOut:false,
+			accordionMouseOver: function() {},
+			accordionMouseOut: function() {},
+			panelClick: function() {},
+			panelMouseOver: function() {},
+			panelMouseOut: function() {}
 		}
 
 	};
