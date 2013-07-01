@@ -20,6 +20,8 @@
 
 		this.computedOpenedPanelSize = 0;
 
+		this.collapsedPanelSize = 0;
+
 		this.closedPanelSize = 0;
 
 		this.panels = [];
@@ -40,18 +42,18 @@
 
 				if (this.settings.aspectRatio == -1)
 					this.settings.aspectRatio = this.settings.width / this.settings.height;
+
+				var _this = this;
+
+				// resize the accordion when the browser resizes
+				$(window).on('resize.' + NS, function() {
+					_this.resize();
+				});
 			} else {
 				this.accordion.css({width: this.settings.width, height: this.settings.height});
 			}
 
 			this.resize();
-
-			var _this = this;
-
-			// resize the accordion when the browser resizes
-			$(window).on('resize.' + NS, function() {
-				_this.resize();
-			});
 		},
 
 
@@ -60,6 +62,15 @@
 
 			this.accordion.find('.ca-panel').each(function(index, element) {
 				_this._createPanel(index + 1, element);
+			});
+
+			this.accordion.on('mouseenter.' + NS, function(event) {
+
+			});
+
+			this.accordion.on('mouseleave.' + NS, function(event) {
+				if (_this.settings.closePanelsOnMouseOut)
+					_this.closePanels();
 			});
 		},
 
@@ -77,8 +88,8 @@
 			});
 
 			$(element).on('panelMouseOut.' + NS, function(event) {
-				if (_this.settings.openPanelOn == 'hover')
-					_this.closePanel();
+				//if (_this.settings.closePanelsOnMouseOut)
+				//	_this.closePanels();
 			});
 
 			$(element).on('panelClick.' + NS, function(event) {
@@ -86,7 +97,7 @@
 					if (index !== this.currentIndex)
 						_this.openPanel(event.index);
 					else
-						_this.closePanel();
+						_this.closePanels();
 			});
 		},
 
@@ -117,14 +128,19 @@
 				}
 			}
 
-			this.closedPanelSize = (totalSize - this.computedOpenedPanelSize) / (this.getTotalPanels() - 1);
+			this.collapsedPanelSize = (totalSize - this.computedOpenedPanelSize) / (this.getTotalPanels() - 1);
+
+			this.closedPanelSize = totalSize / this.getTotalPanels();
 
 			console.log('resize');
 
 			$.each(_this.panels, function(index) {
 				var panel = _this.panels[index];
 
-				panel.setPosition(index * _this.closedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.closedPanelSize : 0));
+				if (_this.currentIndex == -1)
+					panel.setPosition(index * _this.closedPanelSize);
+				else
+					panel.setPosition(index * _this.collapsedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.collapsedPanelSize : 0));
 			});
 		},
 
@@ -168,13 +184,20 @@
 
 			$.each(this.panels, function(index) {
 				var panel = _this.panels[index];
-				panel.setPosition(index * _this.closedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.closedPanelSize : 0), true);
+				panel.setPosition(index * _this.collapsedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.collapsedPanelSize : 0), true);
 			});
 		},
 
 
-		closePanel: function() {
+		closePanels: function() {
+			var _this = this;
 
+			_this.currentIndex = -1;
+
+			$.each(this.panels, function(index) {
+				var panel = _this.panels[index];
+				panel.setPosition(index * _this.closedPanelSize, true);
+			});
 		},
 
 
@@ -212,7 +235,8 @@
 			orientation: 'horizontal',
 			startPanel: 1,
 			openedPanelSize: '50%',
-			openPanelOn: 'hover'
+			openPanelOn: 'hover',
+			closePanelsOnMouseOut:false
 		}
 
 	};
