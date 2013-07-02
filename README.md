@@ -6,6 +6,7 @@ Features
 * layers - opened, closed, title
 * pagination
 * touch-swipe
+* CSS3 transitions
 * link & lightbox
 * swap image on hover
 * add/remove items on runtime

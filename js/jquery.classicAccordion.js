@@ -330,29 +330,6 @@
 					this.panel.css({'top': positionValue, 'height': sizeValue});
 				}
 			}
-		},
-
-
-		setSize: function(value, animate) {
-			if (this.settings.orientation == 'horizontal') {
-				if (this.panel.css('width') === value)
-					return;
-
-				if (animate === true) {
-					this.panel.stop().transition({'width': value});
-				} else {
-					this.panel.css('width', value);
-				}
-			} else if (this.settings.orientation == 'vertical') {
-				if (this.panel.css('top') === value)
-					return;
-
-				if (animate === true) {
-					this.panel.stop().transition({'height': value});
-				} else {
-					this.panel.css('height', value);
-				}
-			}
 		}
 
 	};
