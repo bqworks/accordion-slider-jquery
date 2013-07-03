@@ -3,7 +3,7 @@
 */
 (function(window, $) {
 
-	// declare a namespace to use it in events
+	// namespace
 	var NS = 'ClassicAccordion';
 
 	var ClassicAccordion = function(instance, options) {
@@ -332,7 +332,6 @@
 			panelMouseOver: function() {},
 			panelMouseOut: function() {}
 		}
-
 	};
 
 	var ClassicAccordionPanel = function(panel, accordion, index, settings) {
@@ -394,7 +393,8 @@
 					return;
 
 				if (animate === true) {
-					this.panel.stop().animate({'left': positionValue, 'width': sizeValue});
+					//this.panel.stop().animate({'left': positionValue, 'width': sizeValue});
+					this.panel.css({'transition': 'width 1s', 'width': sizeValue, 'left': positionValue});
 				} else {
 					this.panel.css({'left': positionValue, 'width': sizeValue});
 				}
@@ -409,7 +409,6 @@
 				}
 			}
 		}
-
 	};
 
 	$.fn.classicAccordion = function(options) {
