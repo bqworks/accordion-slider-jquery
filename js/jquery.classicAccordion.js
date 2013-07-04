@@ -67,11 +67,11 @@
 				if (this.settings.aspectRatio == -1)
 					this.settings.aspectRatio = this.settings.width / this.settings.height;
 
-				var _this = this;
+				var that = this;
 
 				// resize the accordion when the browser resizes
 				$(window).on('resize.' + NS, function() {
-					_this.resize();
+					that.resize();
 				});
 			} else {
 				this.$accordion.css({width: this.settings.width, height: this.settings.height});
@@ -83,19 +83,19 @@
 			// listen for 'mouseenter' events
 			this.$accordion.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
-				if ($.isFunction(_this.settings.accordionMouseOver))
-					_this.settings.accordionMouseOver.call(_this, eventObject);
+				if ($.isFunction(that.settings.accordionMouseOver))
+					that.settings.accordionMouseOver.call(that, eventObject);
 			});
 
 			// listen for 'mouseleave' events
 			this.$accordion.on('mouseleave.' + NS, function(event) {
 				// close the panels
-				if (_this.settings.closePanelsOnMouseOut)
-					_this.closePanels();
+				if (that.settings.closePanelsOnMouseOut)
+					that.closePanels();
 
 				var eventObject = {type: 'accordionMouseOut'};
-				if ($.isFunction(_this.settings.accordionMouseOut))
-					_this.settings.accordionMouseOut.call(_this, eventObject);
+				if ($.isFunction(that.settings.accordionMouseOut))
+					that.settings.accordionMouseOut.call(that, eventObject);
 			});
 		},
 
@@ -103,10 +103,10 @@
 			Create the panels based on the HTML specified in the accordion
 		*/
 		create: function() {
-			var _this = this;
+			var that = this;
 
 			this.$accordion.find('.ca-panel').each(function(index, element) {
-				_this._createPanel(index + 1, element);
+				that._createPanel(index + 1, element);
 			});
 		},
 
@@ -114,7 +114,7 @@
 			Create an individual panel
 		*/
 		_createPanel: function(index, element) {
-			var _this = this,
+			var that = this,
 				$element = $(element);
 
 			// create a panel instance and add it to the array of panels
@@ -123,42 +123,42 @@
 
 			// listen for 'panelMouseOver' events
 			$element.on('panelMouseOver.' + NS, function(event) {
-				if (_this.settings.openPanelOn == 'hover') {
-					clearTimeout(_this.mouseDelayTimer);
+				if (that.settings.openPanelOn == 'hover') {
+					clearTimeout(that.mouseDelayTimer);
 
 					// open the panel, but only after a short delay in order to prevent
 					// opening panels that the user doesn't intend
-					_this.mouseDelayTimer = setTimeout(function() {
-						_this.openPanel(event.index);
-					}, _this.settings.mouseDelay);
+					that.mouseDelayTimer = setTimeout(function() {
+						that.openPanel(event.index);
+					}, that.settings.mouseDelay);
 				}
 
 				var eventObject = {type: 'panelMouseOver', index: index, element: $element};
-				if ($.isFunction(_this.settings.panelMouseOver))
-					_this.settings.panelMouseOver.call(_this, eventObject);
+				if ($.isFunction(that.settings.panelMouseOver))
+					that.settings.panelMouseOver.call(that, eventObject);
 			});
 
 			// listen for 'panelMouseOut' events
 			$element.on('panelMouseOut.' + NS, function(event) {
 				var eventObject = {type: 'panelMouseOut', index: index, element: $element};
-				if ($.isFunction(_this.settings.panelMouseOut))
-					_this.settings.panelMouseOut.call(_this, eventObject);
+				if ($.isFunction(that.settings.panelMouseOut))
+					that.settings.panelMouseOut.call(that, eventObject);
 			});
 
 			// listen for 'panelClick' events
 			$element.on('panelClick.' + NS, function(event) {
-				if (_this.settings.openPanelOn == 'click') {
+				if (that.settings.openPanelOn == 'click') {
 					// open the panel if it's not already opened
 					// and close the panels if the clicked panel is opened
 					if (index !== this.currentIndex)
-						_this.openPanel(event.index);
+						that.openPanel(event.index);
 					else
-						_this.closePanels();
+						that.closePanels();
 				}
 
 				var eventObject = {type: 'panelClick', index: index, element: $element};
-				if ($.isFunction(_this.settings.panelClick))
-					_this.settings.panelClick.call(_this, eventObject);
+				if ($.isFunction(that.settings.panelClick))
+					that.settings.panelClick.call(that, eventObject);
 			});
 		},
 
@@ -173,7 +173,7 @@
 			Called when the accordion needs to resize 
 		*/
 		resize: function() {
-			var _this = this;
+			var that = this;
 
 			// set the height of the accordion based on the aspect ratio
 			if (this.settings.aspectRatio != -1)
@@ -204,13 +204,13 @@
 			this.closedPanelSize = totalSize / this.getTotalPanels();
 
 			// set the initial position and size of the panels
-			$.each(_this.panels, function(index) {
-				var panel = _this.panels[index];
+			$.each(that.panels, function(index) {
+				var panel = that.panels[index];
 
-				if (_this.currentIndex == -1) {
-					panel.setPositionAndSize(index * _this.closedPanelSize, _this.closedPanelSize);
+				if (that.currentIndex == -1) {
+					panel.setPositionAndSize(index * that.closedPanelSize, that.closedPanelSize);
 				} else {
-					panel.setPositionAndSize(index * _this.collapsedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.collapsedPanelSize : 0), index + 1 === _this.currentIndex ? _this.computedOpenedPanelSize : _this.collapsedPanelSize);
+					panel.setPositionAndSize(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
 				}
 			});
 		},
@@ -263,14 +263,14 @@
 			Open the panel at the specified index
 		*/
 		openPanel: function(index) {
-			var _this = this;
+			var that = this;
 
-			_this.currentIndex = index;
+			that.currentIndex = index;
 
 			// animate each panel to its position and size, based on the current index
 			$.each(this.panels, function(index) {
-				var panel = _this.panels[index];
-				panel.setPositionAndSize(index * _this.collapsedPanelSize + (index > _this.currentIndex - 1 ? _this.computedOpenedPanelSize - _this.collapsedPanelSize : 0), index + 1 === _this.currentIndex ? _this.computedOpenedPanelSize : _this.collapsedPanelSize, true);
+				var panel = that.panels[index];
+				panel.setPositionAndSize(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize, true);
 			});
 		},
 
@@ -278,16 +278,16 @@
 			Close the panels
 		*/
 		closePanels: function() {
-			var _this = this;
+			var that = this;
 
-			_this.currentIndex = -1;
+			that.currentIndex = -1;
 
-			clearTimeout(_this.mouseDelayTimer);
+			clearTimeout(that.mouseDelayTimer);
 
 			// animate each panel to its closed position and size
 			$.each(this.panels, function(index) {
-				var panel = _this.panels[index];
-				panel.setPositionAndSize(index * _this.closedPanelSize, _this.closedPanelSize, true);
+				var panel = that.panels[index];
+				panel.setPositionAndSize(index * that.closedPanelSize, that.closedPanelSize, true);
 			});
 		},
 
@@ -359,21 +359,21 @@
 			The starting point for the panel
 		*/
 		_init: function() {
-			var _this = this;
+			var that = this;
 
 			// listen for 'mouseenter' events
 			this.$panel.on('mouseenter.' + NS, function() {
-				_this.$panel.trigger({type: 'panelMouseOver.' + NS, index: _this.index});
+				that.$panel.trigger({type: 'panelMouseOver.' + NS, index: that.index});
 			});
 
 			// listen for 'mouseleave' events
 			this.$panel.on('mouseleave.' + NS, function() {
-				_this.$panel.trigger({type: 'panelMouseOut.' + NS, index: _this.index});
+				that.$panel.trigger({type: 'panelMouseOut.' + NS, index: that.index});
 			});
 
 			// listen for 'click' events
 			this.$panel.on('click.' + NS, function() {
-				_this.$panel.trigger({type: 'panelClick.' + NS, index: _this.index});
+				that.$panel.trigger({type: 'panelClick.' + NS, index: that.index});
 			});
 		},
 
