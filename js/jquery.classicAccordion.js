@@ -83,6 +83,7 @@
 			// listen for 'mouseenter' events
 			this.$accordion.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
+				that.$accordion.triggerHandler(eventObject);
 				if ($.isFunction(that.settings.accordionMouseOver))
 					that.settings.accordionMouseOver.call(that, eventObject);
 			});
@@ -94,6 +95,7 @@
 					that.closePanels();
 
 				var eventObject = {type: 'accordionMouseOut'};
+				that.$accordion.triggerHandler(eventObject);
 				if ($.isFunction(that.settings.accordionMouseOut))
 					that.settings.accordionMouseOut.call(that, eventObject);
 			});
@@ -134,6 +136,7 @@
 				}
 
 				var eventObject = {type: 'panelMouseOver', index: index, element: $element};
+				that.$accordion.triggerHandler(eventObject);
 				if ($.isFunction(that.settings.panelMouseOver))
 					that.settings.panelMouseOver.call(that, eventObject);
 			});
@@ -141,6 +144,7 @@
 			// listen for 'panelMouseOut' events
 			$element.on('panelMouseOut.' + NS, function(event) {
 				var eventObject = {type: 'panelMouseOut', index: index, element: $element};
+				that.$accordion.triggerHandler(eventObject);
 				if ($.isFunction(that.settings.panelMouseOut))
 					that.settings.panelMouseOut.call(that, eventObject);
 			});
@@ -157,6 +161,7 @@
 				}
 
 				var eventObject = {type: 'panelClick', index: index, element: $element};
+				that.$accordion.triggerHandler(eventObject);
 				if ($.isFunction(that.settings.panelClick))
 					that.settings.panelClick.call(that, eventObject);
 			});
@@ -363,17 +368,17 @@
 
 			// listen for 'mouseenter' events
 			this.$panel.on('mouseenter.' + NS, function() {
-				that.$panel.trigger({type: 'panelMouseOver.' + NS, index: that.index});
+				that.$panel.triggerHandler({type: 'panelMouseOver.' + NS, index: that.index});
 			});
 
 			// listen for 'mouseleave' events
 			this.$panel.on('mouseleave.' + NS, function() {
-				that.$panel.trigger({type: 'panelMouseOut.' + NS, index: that.index});
+				that.$panel.triggerHandler({type: 'panelMouseOut.' + NS, index: that.index});
 			});
 
 			// listen for 'click' events
 			this.$panel.on('click.' + NS, function() {
-				that.$panel.trigger({type: 'panelClick.' + NS, index: that.index});
+				that.$panel.triggerHandler({type: 'panelClick.' + NS, index: that.index});
 			});
 		},
 
