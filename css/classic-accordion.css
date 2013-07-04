@@ -9,6 +9,10 @@
 	position: absolute;
 	display: block;
 	overflow: hidden;
+	background-color: #FFF;
+
+	/* workaround for Firefox bug that causes panels to dissapear */
+	transform: scale(1);
 }
 
 

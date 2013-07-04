@@ -9,7 +9,7 @@
 	var ClassicAccordion = function(instance, options) {
 
 		// reference to the accordion jQuery object
-		this.accordion = $(instance);
+		this.$accordion = $(instance);
 
 		// holds the options specified when the accordion was instantiated
 		this.options = options;
@@ -52,15 +52,15 @@
 			// add a class to the accordion based on the orientation
 			// to be used in CSS
 			if (this.settings.orientation == 'horizontal')
-				this.accordion.addClass('ca-horizontal');
+				this.$accordion.addClass('ca-horizontal');
 			else if (this.settings.orientation == 'vertical')
-				this.accordion.addClass('ca-vertical');
+				this.$accordion.addClass('ca-vertical');
 
 			// prepare the accordion for responsiveness
 			if (this.settings.responsive) {
 				// if the accordion is responsive set the width to 100% and use
 				// the specified width and height as a max-width and max-height
-				this.accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
+				this.$accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
 
 				// if an aspect ratio was not specified, set the aspect ratio
 				// based on the specified width and height
@@ -74,21 +74,21 @@
 					_this.resize();
 				});
 			} else {
-				this.accordion.css({width: this.settings.width, height: this.settings.height});
+				this.$accordion.css({width: this.settings.width, height: this.settings.height});
 			}
 
 			// set the initial size of the accordion
 			this.resize();
 
 			// listen for 'mouseenter' events
-			this.accordion.on('mouseenter.' + NS, function(event) {
+			this.$accordion.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
 				if ($.isFunction(_this.settings.accordionMouseOver))
 					_this.settings.accordionMouseOver.call(_this, eventObject);
 			});
 
 			// listen for 'mouseleave' events
-			this.accordion.on('mouseleave.' + NS, function(event) {
+			this.$accordion.on('mouseleave.' + NS, function(event) {
 				// close the panels
 				if (_this.settings.closePanelsOnMouseOut)
 					_this.closePanels();
@@ -105,7 +105,7 @@
 		create: function() {
 			var _this = this;
 
-			this.accordion.find('.ca-panel').each(function(index, element) {
+			this.$accordion.find('.ca-panel').each(function(index, element) {
 				_this._createPanel(index + 1, element);
 			});
 		},
@@ -113,16 +113,16 @@
 		/*
 			Create an individual panel
 		*/
-		_createPanel: function(index, el) {
+		_createPanel: function(index, element) {
 			var _this = this,
-				element = $(el);
+				$element = $(element);
 
 			// create a panel instance and add it to the array of panels
-			var panel = new ClassicAccordionPanel(element, this.accordion, index, this.settings);
+			var panel = new ClassicAccordionPanel($element, this.accordion, index, this.settings);
 			this.panels.splice(index, 0, panel);
 
 			// listen for 'panelMouseOver' events
-			element.on('panelMouseOver.' + NS, function(event) {
+			$element.on('panelMouseOver.' + NS, function(event) {
 				if (_this.settings.openPanelOn == 'hover') {
 					clearTimeout(_this.mouseDelayTimer);
 
@@ -133,20 +133,20 @@
 					}, _this.settings.mouseDelay);
 				}
 
-				var eventObject = {type: 'panelMouseOver', index: index, element: element};
+				var eventObject = {type: 'panelMouseOver', index: index, element: $element};
 				if ($.isFunction(_this.settings.panelMouseOver))
 					_this.settings.panelMouseOver.call(_this, eventObject);
 			});
 
 			// listen for 'panelMouseOut' events
-			element.on('panelMouseOut.' + NS, function(event) {
-				var eventObject = {type: 'panelMouseOut', index: index, element: element};
+			$element.on('panelMouseOut.' + NS, function(event) {
+				var eventObject = {type: 'panelMouseOut', index: index, element: $element};
 				if ($.isFunction(_this.settings.panelMouseOut))
 					_this.settings.panelMouseOut.call(_this, eventObject);
 			});
 
 			// listen for 'panelClick' events
-			element.on('panelClick.' + NS, function(event) {
+			$element.on('panelClick.' + NS, function(event) {
 				if (_this.settings.openPanelOn == 'click') {
 					// open the panel if it's not already opened
 					// and close the panels if the clicked panel is opened
@@ -156,7 +156,7 @@
 						_this.closePanels();
 				}
 
-				var eventObject = {type: 'panelClick', index: index, element: element};
+				var eventObject = {type: 'panelClick', index: index, element: $element};
 				if ($.isFunction(_this.settings.panelClick))
 					_this.settings.panelClick.call(_this, eventObject);
 			});
@@ -177,13 +177,13 @@
 
 			// set the height of the accordion based on the aspect ratio
 			if (this.settings.aspectRatio != -1)
-				this.accordion.css('height', this.accordion.innerWidth() / this.settings.aspectRatio);
+				this.$accordion.css('height', this.$accordion.innerWidth() / this.settings.aspectRatio);
 
 			// set the initial computedOpenedPanelSize to the value defined in the options
 			this.computedOpenedPanelSize = this.settings.openedPanelSize;
 
 			// get the total size, in pixels, of the accordion
-			var totalSize = this.settings.orientation == "horizontal" ? this.accordion.innerWidth() : this.accordion.innerHeight();
+			var totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 
 			// parse computedOpenedPanelSize set it to a pixel value
 			if (typeof this.computedOpenedPanelSize == 'string') {
@@ -233,7 +233,7 @@
 			Return the total amount of panels
 		*/
 		getTotalPanels: function() {
-			return this.accordion.find('.ca-panel').length;
+			return this.$accordion.find('.ca-panel').length;
 		},
 
 		/*
@@ -337,10 +337,10 @@
 	var ClassicAccordionPanel = function(panel, accordion, index, settings) {
 
 		// reference to the panel jQuery object
-		this.panel = panel;
+		this.$panel = panel;
 
 		// reference to the accordion jQuery object
-		this.accordion = accordion;
+		this.$accordion = accordion;
 
 		// the index of the panel
 		this.index = index;
@@ -362,18 +362,18 @@
 			var _this = this;
 
 			// listen for 'mouseenter' events
-			this.panel.on('mouseenter.' + NS, function() {
-				_this.panel.trigger({type: 'panelMouseOver.' + NS, index: _this.index});
+			this.$panel.on('mouseenter.' + NS, function() {
+				_this.$panel.trigger({type: 'panelMouseOver.' + NS, index: _this.index});
 			});
 
 			// listen for 'mouseleave' events
-			this.panel.on('mouseleave.' + NS, function() {
-				_this.panel.trigger({type: 'panelMouseOut.' + NS, index: _this.index});
+			this.$panel.on('mouseleave.' + NS, function() {
+				_this.$panel.trigger({type: 'panelMouseOut.' + NS, index: _this.index});
 			});
 
 			// listen for 'click' events
-			this.panel.on('click.' + NS, function() {
-				_this.panel.trigger({type: 'panelClick.' + NS, index: _this.index});
+			this.$panel.on('click.' + NS, function() {
+				_this.$panel.trigger({type: 'panelClick.' + NS, index: _this.index});
 			});
 		},
 
@@ -389,23 +389,16 @@
 		*/
 		setPositionAndSize: function(positionValue, sizeValue, animate) {
 			if (this.settings.orientation == 'horizontal') {
-				if (this.panel.css('left') === positionValue)
-					return;
-
 				if (animate === true) {
-					//this.panel.stop().animate({'left': positionValue, 'width': sizeValue});
-					this.panel.css({'transition': 'width 1s', 'width': sizeValue, 'left': positionValue});
+					this.$panel.css({'transition': 'all 1s', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
 				} else {
-					this.panel.css({'left': positionValue, 'width': sizeValue});
+					this.$panel.css({'transition': 'none', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
 				}
 			} else if (this.settings.orientation == 'vertical') {
-				if (this.panel.css('top') === sizeValue)
-					return;
-
 				if (animate === true) {
-					this.panel.stop().animate({'top': positionValue, 'height': sizeValue});
+					this.$panel.stop().animate({'top': positionValue, 'height': sizeValue});
 				} else {
-					this.panel.css({'top': positionValue, 'height': sizeValue});
+					this.$panel.css({'top': positionValue, 'height': sizeValue});
 				}
 			}
 		}
