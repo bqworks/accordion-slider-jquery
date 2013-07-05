@@ -11,5 +11,8 @@ Icon
 .Spotlight-V100
 .Trashes
 
+*.sublime-project
+*.sublime-workspace
+
 jquery.classicAccordion.old.js
 classic-accordion.old.css
