@@ -83,7 +83,7 @@
 			// listen for 'mouseenter' events
 			this.$accordion.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
-				that.$accordion.triggerHandler(eventObject);
+				that.trigger(eventObject);
 				if ($.isFunction(that.settings.accordionMouseOver))
 					that.settings.accordionMouseOver.call(that, eventObject);
 			});
@@ -95,7 +95,7 @@
 					that.closePanels();
 
 				var eventObject = {type: 'accordionMouseOut'};
-				that.$accordion.triggerHandler(eventObject);
+				that.trigger(eventObject);
 				if ($.isFunction(that.settings.accordionMouseOut))
 					that.settings.accordionMouseOut.call(that, eventObject);
 			});
@@ -124,7 +124,7 @@
 			this.panels.splice(index, 0, panel);
 
 			// listen for 'panelMouseOver' events
-			$element.on('panelMouseOver.' + NS, function(event) {
+			panel.on('panelMouseOver.' + NS, function(event) {
 				if (that.settings.openPanelOn == 'hover') {
 					clearTimeout(that.mouseDelayTimer);
 
@@ -136,21 +136,21 @@
 				}
 
 				var eventObject = {type: 'panelMouseOver', index: index, element: $element};
-				that.$accordion.triggerHandler(eventObject);
+				that.trigger(eventObject);
 				if ($.isFunction(that.settings.panelMouseOver))
 					that.settings.panelMouseOver.call(that, eventObject);
 			});
 
 			// listen for 'panelMouseOut' events
-			$element.on('panelMouseOut.' + NS, function(event) {
+			panel.on('panelMouseOut.' + NS, function(event) {
 				var eventObject = {type: 'panelMouseOut', index: index, element: $element};
-				that.$accordion.triggerHandler(eventObject);
+				that.trigger(eventObject);
 				if ($.isFunction(that.settings.panelMouseOut))
 					that.settings.panelMouseOut.call(that, eventObject);
 			});
 
 			// listen for 'panelClick' events
-			$element.on('panelClick.' + NS, function(event) {
+			panel.on('panelClick.' + NS, function(event) {
 				if (that.settings.openPanelOn == 'click') {
 					// open the panel if it's not already opened
 					// and close the panels if the clicked panel is opened
@@ -161,7 +161,7 @@
 				}
 
 				var eventObject = {type: 'panelClick', index: index, element: $element};
-				that.$accordion.triggerHandler(eventObject);
+				that.trigger(eventObject);
 				if ($.isFunction(that.settings.panelClick))
 					that.settings.panelClick.call(that, eventObject);
 			});
@@ -218,6 +218,20 @@
 					panel.setPositionAndSize(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
 				}
 			});
+		},
+
+		/*
+			Attach an event handler to the accordion
+		*/
+		on: function(type, callback) {
+			this.$accordion.on(type, callback);
+		},
+
+		/*
+			Trigger an event on the accordion
+		*/
+		trigger: function(data) {
+			this.$accordion.triggerHandler({type: data.type, index: data.index});
 		},
 
 		/*
@@ -367,18 +381,18 @@
 			var that = this;
 
 			// listen for 'mouseenter' events
-			this.$panel.on('mouseenter.' + NS, function() {
-				that.$panel.triggerHandler({type: 'panelMouseOver.' + NS, index: that.index});
+			this.on('mouseenter.' + NS, function() {
+				that.trigger({type: 'panelMouseOver.' + NS, index: that.index});
 			});
 
 			// listen for 'mouseleave' events
-			this.$panel.on('mouseleave.' + NS, function() {
-				that.$panel.triggerHandler({type: 'panelMouseOut.' + NS, index: that.index});
+			this.on('mouseleave.' + NS, function() {
+				that.trigger({type: 'panelMouseOut.' + NS, index: that.index});
 			});
 
 			// listen for 'click' events
-			this.$panel.on('click.' + NS, function() {
-				that.$panel.triggerHandler({type: 'panelClick.' + NS, index: that.index});
+			this.on('click.' + NS, function() {
+				that.trigger({type: 'panelClick.' + NS, index: that.index});
 			});
 		},
 
@@ -406,6 +420,20 @@
 					this.$panel.css({'top': positionValue, 'height': sizeValue});
 				}
 			}
+		},
+
+		/*
+			Attach an event handler to the panel
+		*/
+		on: function(type, callback) {
+			this.$panel.on(type, callback);
+		},
+
+		/*
+			Trigger an event on the panel
+		*/
+		trigger: function(data) {
+			this.$panel.triggerHandler({type: data.type, index: data.index});
 		}
 	};
 
