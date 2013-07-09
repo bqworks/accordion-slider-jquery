@@ -482,13 +482,13 @@
 		addAccordionModule: function(module) {
 			this.accordionModules.push(module);
 
-			$.extend(ClassicAccordion.prototype, module.prototype._prototype);
+			$.extend(ClassicAccordion.prototype, module.prototype.extend);
 		},
 
 		addPanelModule: function(module) {
 			this.panelModules.push(module);
 
-			$.extend(ClassicAccordionPanel.prototype, module.prototype._prototype);
+			$.extend(ClassicAccordionPanel.prototype, module.prototype.extend);
 		}
 	};
 
@@ -497,12 +497,14 @@
 	*/
 	var CSS3Transitions = function() {
 		this.name = 'CSS3TransitionsModule';
-
-		this._init();
 	};
 
 	CSS3Transitions.prototype = {
-		_prototype: {
+
+		/*
+			Contains the main methods of the module, that will add or overwrite functionality
+		*/
+		extend: {
 			_animate: function(element, properties) {
 				this._animateUsingTranslate(element, properties);
 			},
