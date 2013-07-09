@@ -13,3 +13,8 @@ Features
 * set options on runtime
 * destroy
 * XML
+
+CSS3 Transitions TODO
+* detect browser support and apply animate method accordingly
+* add easing and delay
+* animate width and height only if
