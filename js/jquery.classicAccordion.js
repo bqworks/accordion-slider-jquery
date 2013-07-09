@@ -284,7 +284,7 @@
 		openPanel: function(index) {
 			var that = this;
 
-			that.currentIndex = index;
+			this.currentIndex = index;
 
 			// animate each panel to its position and size, based on the current index
 			$.each(this.panels, function(index) {
@@ -299,9 +299,9 @@
 		closePanels: function() {
 			var that = this;
 
-			that.currentIndex = -1;
+			this.currentIndex = -1;
 
-			clearTimeout(that.mouseDelayTimer);
+			clearTimeout(this.mouseDelayTimer);
 
 			// animate each panel to its closed position and size
 			$.each(this.panels, function(index) {
@@ -345,6 +345,10 @@
 			openPanelOn: 'hover',
 			closePanelsOnMouseOut:false,
 			mouseDelay: 200,
+			openPanelDuration: 700,
+			closePanelDuration: 700,
+			openPanelEasing: 'swing',
+			closePanelEasing: 'swing',
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -407,27 +411,48 @@
 			Set the position and size of the panel
 		*/
 		setPositionAndSize: function(positionValue, sizeValue, animate) {
-			if (this.settings.orientation == 'horizontal') {
-				if (animate === true) {
-					this._animate();
-					this.$panel.css({'transition': 'all 1s', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
-				} else {
-					this.$panel.css({'transition': 'none', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
-				}
-			} else if (this.settings.orientation == 'vertical') {
-				if (animate === true) {
-					this.$panel.stop().animate({'top': positionValue, 'height': sizeValue});
-				} else {
-					this.$panel.css({'top': positionValue, 'height': sizeValue});
-				}
+			var properties = {};
+
+			if (this.settings.orientation == 'horizontal')
+				properties = {'left': positionValue, 'width': sizeValue};
+			else if (this.settings.orientation == 'vertical')
+				properties = {'top': positionValue, 'height': sizeValue};
+
+			if (typeof animate !== 'undefined') {
+				var duration = this.currentIndex == -1 ? this.settings.closePanelDuration : this.settings.openPanelDuration,
+					easing = this.currentIndex == -1 ? this.settings.closePanelEasing : this.settings.openPanelEasing;
+
+				properties.duration = duration;
+				properties.easing =  easing;
 			}
+
+			this._animate(this.$panel, properties);
 		},
 
 		/*
-			Animate the panel to the spcified position
+			Animate the panel to the specified position
 		*/
-		_animate: function() {
-			console.log('animate - panel');
+		_animate: function(element, properties) {
+			var css = {};
+
+			if (typeof properties.left !== 'undefined')
+				css.left = properties.left;
+
+			if (typeof properties.top !== 'undefined')
+				css.top = properties.top;
+
+			if (typeof properties.width !== 'undefined')
+				css.width = properties.width;
+
+			if (typeof properties.height !== 'undefined')
+				css.height = properties.height;
+
+			if (typeof properties.duration === 'undefined') {
+				element.css(css);
+			} else {
+				element.animate(css, properties.duration, properties.easing);
+			}
+
 		},
 
 		/*
@@ -445,17 +470,121 @@
 		}
 	};
 
+	/*
+		Static methods for Classic Accordion
+	*/
+	$.ClassicAccordion = {
+
+		accordionModules: [],
+
+		panelModules: [],
+
+		addAccordionModule: function(module) {
+			this.accordionModules.push(module);
+
+			$.extend(ClassicAccordion.prototype, module.prototype._prototype);
+		},
+
+		addPanelModule: function(module) {
+			this.panelModules.push(module);
+
+			$.extend(ClassicAccordionPanel.prototype, module.prototype._prototype);
+		}
+	};
+
+	/*
+		CSS3 Transitions Module
+	*/
 	var CSS3TransitionsModule = function() {
 		this.name = 'CSS3TransitionsModule';
+
+		this._init();
 	};
 
 	CSS3TransitionsModule.prototype = {
-		_animate: function() {
-			console.log('animate - css3 transitions module');
-		}
-	},
+		_prototype: {
+			_animate: function(element, properties) {
+				this._animateUsingTranslate(element, properties);
+			},
 
-	$.extend(ClassicAccordionPanel.prototype, CSS3TransitionsModule.prototype);
+			_animateUsingTranslate3D: function(element, properties) {
+				var css = {},
+					left = 0,
+					top = 0;
+
+				if (typeof properties.left !== 'undefined')
+					left = properties.left;
+
+				if (typeof properties.top !== 'undefined')
+					top = properties.top;
+
+				css.transform = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
+
+				if (typeof properties.width !== 'undefined')
+					css.width = properties.width;
+
+				if (typeof properties.height !== 'undefined')
+					css.height = properties.height;
+
+				if (typeof properties.duration === 'undefined')
+					css.transition = 'none';
+				else
+					css.transition = 'all ' + properties.duration / 1000 + 's';
+
+				element.css(css);
+			},
+
+			_animateUsingTranslate: function(element, properties) {
+				var css = {},
+					left = 0,
+					top = 0;
+
+				if (typeof properties.left !== 'undefined')
+					left = properties.left;
+
+				if (typeof properties.top !== 'undefined')
+					top = properties.top;
+
+				css.transform = 'translate(' + left + 'px, ' + top + 'px)';
+
+				if (typeof properties.width !== 'undefined')
+					css.width = properties.width;
+
+				if (typeof properties.height !== 'undefined')
+					css.height = properties.height;
+
+				if (typeof properties.duration === 'undefined')
+					css.transition = 'none';
+				else
+					css.transition = 'all ' + properties.duration / 1000 + 's';
+
+				element.css(css);
+			},
+
+			_animateUsingJavaScript: function(element, properties) {
+				var css = {};
+
+				if (typeof properties.left !== 'undefined')
+					css.left = properties.left;
+
+				if (typeof properties.top !== 'undefined')
+					css.top = properties.top;
+
+				if (typeof properties.width !== 'undefined')
+					css.width = properties.width;
+
+				if (typeof properties.height !== 'undefined')
+					css.height = properties.height;
+
+				if (typeof properties.duration === 'undefined')
+					element.css(css);
+				else
+					element.animate(css, properties.duration, properties.easing);
+			}
+		}
+	};
+
+	$.ClassicAccordion.addPanelModule(CSS3TransitionsModule);
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
