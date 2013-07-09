@@ -493,15 +493,15 @@
 	};
 
 	/*
-		CSS3 Transitions Module
+		CSS3 Transitions module
 	*/
-	var CSS3TransitionsModule = function() {
+	var CSS3Transitions = function() {
 		this.name = 'CSS3TransitionsModule';
 
 		this._init();
 	};
 
-	CSS3TransitionsModule.prototype = {
+	CSS3Transitions.prototype = {
 		_prototype: {
 			_animate: function(element, properties) {
 				this._animateUsingTranslate(element, properties);
@@ -584,7 +584,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addPanelModule(CSS3TransitionsModule);
+	$.ClassicAccordion.addPanelModule(CSS3Transitions);
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
