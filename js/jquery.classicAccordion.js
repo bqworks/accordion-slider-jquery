@@ -409,6 +409,7 @@
 		setPositionAndSize: function(positionValue, sizeValue, animate) {
 			if (this.settings.orientation == 'horizontal') {
 				if (animate === true) {
+					this._animate();
 					this.$panel.css({'transition': 'all 1s', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
 				} else {
 					this.$panel.css({'transition': 'none', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
@@ -420,6 +421,13 @@
 					this.$panel.css({'top': positionValue, 'height': sizeValue});
 				}
 			}
+		},
+
+		/*
+			Animate the panel to the spcified position
+		*/
+		_animate: function() {
+			console.log('animate - panel');
 		},
 
 		/*
@@ -436,6 +444,18 @@
 			this.$panel.triggerHandler({type: data.type, index: data.index});
 		}
 	};
+
+	var CSS3TransitionsModule = function() {
+		this.name = 'CSS3TransitionsModule';
+	};
+
+	CSS3TransitionsModule.prototype = {
+		_animate: function() {
+			console.log('animate - css3 transitions module');
+		}
+	},
+
+	$.extend(ClassicAccordionPanel.prototype, CSS3TransitionsModule.prototype);
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
