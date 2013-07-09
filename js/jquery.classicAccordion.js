@@ -81,7 +81,7 @@
 			this.resize();
 
 			// listen for 'mouseenter' events
-			this.$accordion.on('mouseenter.' + NS, function(event) {
+			this.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
 				that.trigger(eventObject);
 				if ($.isFunction(that.settings.accordionMouseOver))
@@ -89,7 +89,7 @@
 			});
 
 			// listen for 'mouseleave' events
-			this.$accordion.on('mouseleave.' + NS, function(event) {
+			this.on('mouseleave.' + NS, function(event) {
 				// close the panels
 				if (that.settings.closePanelsOnMouseOut)
 					that.closePanels();
