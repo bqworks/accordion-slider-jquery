@@ -213,9 +213,9 @@
 				var panel = that.panels[index];
 
 				if (that.currentIndex == -1) {
-					panel.setPositionAndSize(index * that.closedPanelSize, that.closedPanelSize);
+					panel.transform(index * that.closedPanelSize, that.closedPanelSize);
 				} else {
-					panel.setPositionAndSize(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+					panel.transform(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
 				}
 			});
 		},
@@ -289,7 +289,7 @@
 			// animate each panel to its position and size, based on the current index
 			$.each(this.panels, function(index) {
 				var panel = that.panels[index];
-				panel.setPositionAndSize(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize, true);
+				panel.transform(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize, true);
 			});
 		},
 
@@ -306,7 +306,7 @@
 			// animate each panel to its closed position and size
 			$.each(this.panels, function(index) {
 				var panel = that.panels[index];
-				panel.setPositionAndSize(index * that.closedPanelSize, that.closedPanelSize, true);
+				panel.transform(index * that.closedPanelSize, that.closedPanelSize, true);
 			});
 		},
 
@@ -410,7 +410,7 @@
 		/*
 			Set the position and size of the panel
 		*/
-		setPositionAndSize: function(positionValue, sizeValue, animate) {
+		transform: function(positionValue, sizeValue, animate) {
 			var properties = {};
 
 			if (this.settings.orientation == 'horizontal')
