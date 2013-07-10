@@ -347,8 +347,8 @@
 			mouseDelay: 200,
 			openPanelDuration: 700,
 			closePanelDuration: 700,
-			openPanelEasing: 'swing',
-			closePanelEasing: 'swing',
+			openPanelEasing: 'ease',
+			closePanelEasing: 'ease',
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -506,13 +506,14 @@
 		*/
 		extend: {
 			_animate: function(element, properties) {
-				this._animateUsingTranslate(element, properties);
+				this._animateUsingTranslate3D(element, properties);
 			},
 
 			_animateUsingTranslate3D: function(element, properties) {
 				var css = {},
 					left = 0,
-					top = 0;
+					top = 0,
+					transition;
 
 				if (typeof properties.left !== 'undefined')
 					left = properties.left;
@@ -529,9 +530,17 @@
 					css.height = properties.height;
 
 				if (typeof properties.duration === 'undefined')
-					css.transition = 'none';
+					transition = 'none';
 				else
-					css.transition = 'all ' + properties.duration / 1000 + 's';
+					transition = 'all ' + properties.duration / 1000 + 's';
+
+				if (typeof properties.easing !== 'undefined')
+					transition += ' ' + properties.easing;
+
+				if (typeof properties.delay !== 'undefined')
+					transition += ' ' + properties.delay / 1000 + 's';
+
+				css.transition = transition;
 
 				element.css(css);
 			},
@@ -539,7 +548,8 @@
 			_animateUsingTranslate: function(element, properties) {
 				var css = {},
 					left = 0,
-					top = 0;
+					top = 0,
+					transition;
 
 				if (typeof properties.left !== 'undefined')
 					left = properties.left;
@@ -556,9 +566,17 @@
 					css.height = properties.height;
 
 				if (typeof properties.duration === 'undefined')
-					css.transition = 'none';
+					transition = 'none';
 				else
-					css.transition = 'all ' + properties.duration / 1000 + 's';
+					transition = 'all ' + properties.duration / 1000 + 's';
+
+				if (typeof properties.easing !== 'undefined')
+					transition += ' ' + properties.easing;
+
+				if (typeof properties.delay !== 'undefined')
+					transition += ' ' + properties.delay / 1000 + 's';
+
+				css.transition = transition;
 
 				element.css(css);
 			},
@@ -578,10 +596,14 @@
 				if (typeof properties.height !== 'undefined')
 					css.height = properties.height;
 
-				if (typeof properties.duration === 'undefined')
+				if (typeof properties.duration === 'undefined') {
 					element.css(css);
-				else
+				} else {
+					if (typeof properties.delay !== 'undefined')
+						element.delay(properties.delay);
+
 					element.animate(css, properties.duration, properties.easing);
+				}
 			}
 		}
 	};
