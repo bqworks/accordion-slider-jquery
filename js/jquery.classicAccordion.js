@@ -208,14 +208,28 @@
 			// set the size, in pixels, of the closed panels
 			this.closedPanelSize = totalSize / this.getTotalPanels();
 
+			// round the values
+			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
+			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
+			this.closedPanelSize = Math.floor(this.closedPanelSize);
+
 			// set the initial position and size of the panels
-			$.each(that.panels, function(index) {
+			this._transformPanels();
+		},
+
+		/*
+			change the position (and size) of the panels
+		*/
+		_transformPanels: function(animate) {
+			var that = this;
+
+			$.each(this.panels, function(index) {
 				var panel = that.panels[index];
 
 				if (that.currentIndex == -1) {
-					panel.transform(index * that.closedPanelSize, that.closedPanelSize);
+					panel.transform(index * that.closedPanelSize, that.closedPanelSize, animate);
 				} else {
-					panel.transform(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+					panel.transform(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize, animate);
 				}
 			});
 		},
@@ -286,11 +300,8 @@
 
 			this.currentIndex = index;
 
-			// animate each panel to its position and size, based on the current index
-			$.each(this.panels, function(index) {
-				var panel = that.panels[index];
-				panel.transform(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize, true);
-			});
+			// animate each panel to its position and size
+			this._transformPanels(true);
 		},
 
 		/*
@@ -304,10 +315,7 @@
 			clearTimeout(this.mouseDelayTimer);
 
 			// animate each panel to its closed position and size
-			$.each(this.panels, function(index) {
-				var panel = that.panels[index];
-				panel.transform(index * that.closedPanelSize, that.closedPanelSize, true);
-			});
+			this._transformPanels(true);
 		},
 
 		startSlideshow: function() {
@@ -345,6 +353,7 @@
 			openPanelOn: 'hover',
 			closePanelsOnMouseOut:false,
 			mouseDelay: 200,
+			panelDistance: 0,
 			openPanelDuration: 700,
 			closePanelDuration: 700,
 			openPanelEasing: 'ease',
