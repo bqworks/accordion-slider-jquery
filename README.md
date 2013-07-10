@@ -17,4 +17,6 @@ Features
 CSS3 Transitions TODO
 * detect browser support and apply animate method accordingly
 * add easing and delay
-* animate width and height only if
+* animate width and height only if distance is not 0
+* add vendore prefixes
+* add webkit hacks
