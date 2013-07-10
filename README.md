@@ -18,4 +18,3 @@ CSS3 Transitions TODO
 * detect browser support and apply animate method accordingly
 * add vendore prefixes
 * add webkit hacks
-* change top and left to x and y

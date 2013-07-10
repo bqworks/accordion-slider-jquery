@@ -425,7 +425,7 @@
 		*/
 		transform: function(props, animate) {
 			var properties = {},
-				positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
+				positionProperty = this.settings.orientation == 'horizontal' ? 'x' : 'y',
 				sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
 
 			if (typeof props.position !== 'undefined')
@@ -451,11 +451,11 @@
 		_animate: function(element, properties) {
 			var css = {};
 
-			if (typeof properties.left !== 'undefined')
-				css.left = properties.left;
+			if (typeof properties.x !== 'undefined')
+				css.left = properties.x;
 
-			if (typeof properties.top !== 'undefined')
-				css.top = properties.top;
+			if (typeof properties.y !== 'undefined')
+				css.top = properties.y;
 
 			if (typeof properties.width !== 'undefined')
 				css.width = properties.width;
@@ -526,17 +526,17 @@
 
 			_animateUsingTranslate3D: function(element, properties) {
 				var css = {},
-					left = 0,
-					top = 0,
+					x = 0,
+					y = 0,
 					transition;
 
-				if (typeof properties.left !== 'undefined')
-					left = properties.left;
+				if (typeof properties.x !== 'undefined')
+					x = properties.x;
 
-				if (typeof properties.top !== 'undefined')
-					top = properties.top;
+				if (typeof properties.y !== 'undefined')
+					y = properties.y;
 
-				css.transform = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
+				css.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0)';
 
 				if (typeof properties.width !== 'undefined')
 					css.width = properties.width;
@@ -562,17 +562,17 @@
 
 			_animateUsingTranslate: function(element, properties) {
 				var css = {},
-					left = 0,
-					top = 0,
+					x = 0,
+					y = 0,
 					transition;
 
-				if (typeof properties.left !== 'undefined')
-					left = properties.left;
+				if (typeof properties.x !== 'undefined')
+					x = properties.x;
 
-				if (typeof properties.top !== 'undefined')
-					top = properties.top;
+				if (typeof properties.y !== 'undefined')
+					y = properties.y;
 
-				css.transform = 'translate(' + left + 'px, ' + top + 'px)';
+				css.transform = 'translate(' + x + 'px, ' + y + 'px)';
 
 				if (typeof properties.width !== 'undefined')
 					css.width = properties.width;
@@ -599,11 +599,11 @@
 			_animateUsingJavaScript: function(element, properties) {
 				var css = {};
 
-				if (typeof properties.left !== 'undefined')
-					css.left = properties.left;
+				if (typeof properties.x !== 'undefined')
+					css.left = properties.x;
 
-				if (typeof properties.top !== 'undefined')
-					css.top = properties.top;
+				if (typeof properties.y !== 'undefined')
+					css.top = properties.y;
 
 				if (typeof properties.width !== 'undefined')
 					css.width = properties.width;
