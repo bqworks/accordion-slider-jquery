@@ -221,16 +221,20 @@
 			change the position (and size) of the panels
 		*/
 		_transformPanels: function(animate) {
-			var that = this;
+			var that = this,
+				properties = {};
 
 			$.each(this.panels, function(index) {
 				var panel = that.panels[index];
 
-				if (that.currentIndex == -1) {
-					panel.transform(index * that.closedPanelSize, that.closedPanelSize, animate);
-				} else {
-					panel.transform(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize, animate);
-				}
+				// get the position of the panel based on the currently selected index and the panel's index
+				properties.position = (that.currentIndex == -1) ? (index * that.closedPanelSize) : (index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+
+				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
+				if (that.settings.panelDistance !== 0)
+					properties.size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+
+				panel.transform(properties, animate);
 			});
 		},
 
@@ -417,15 +421,18 @@
 		},
 
 		/*
-			Set the position and size of the panel
+			Set the position (and size) of the panel
 		*/
-		transform: function(positionValue, sizeValue, animate) {
-			var properties = {};
+		transform: function(props, animate) {
+			var properties = {},
+				positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
+				sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
 
-			if (this.settings.orientation == 'horizontal')
-				properties = {'left': positionValue, 'width': sizeValue};
-			else if (this.settings.orientation == 'vertical')
-				properties = {'top': positionValue, 'height': sizeValue};
+			if (typeof props.position !== 'undefined')
+				properties[positionProperty] = props.position;
+
+			if (typeof props.size !== 'undefined')
+				properties[sizeProperty] = props.size;
 
 			if (typeof animate !== 'undefined') {
 				var duration = this.currentIndex == -1 ? this.settings.closePanelDuration : this.settings.openPanelDuration,
@@ -461,7 +468,6 @@
 			} else {
 				element.animate(css, properties.duration, properties.easing);
 			}
-
 		},
 
 		/*
