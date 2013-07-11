@@ -411,6 +411,13 @@
 			this.on('click.' + NS, function() {
 				that.trigger({type: 'panelClick.' + NS, index: that.index});
 			});
+
+			// init panel modules
+			var modules = $.ClassicAccordion.panelModules;
+
+			for (var i in modules) {
+				this['init' + modules[i]]();
+			}
 		},
 
 		/*
@@ -494,27 +501,27 @@
 
 		panelModules: [],
 
-		addAccordionModule: function(module) {
+		addAccordionModule: function(name, module) {
 			this.accordionModules.push(module);
 
-			$.extend(ClassicAccordion.prototype, module.prototype);
+			$.extend(ClassicAccordion.prototype, module);
 		},
 
-		addPanelModule: function(module) {
-			this.panelModules.push(module);
+		addPanelModule: function(name, module) {
+			this.panelModules.push(name);
 
-			$.extend(ClassicAccordionPanel.prototype, module.prototype);
+			$.extend(ClassicAccordionPanel.prototype, module);
 		}
 	};
 
 	/*
 		CSS3 Transitions module
 	*/
-	var CSS3Transitions = function() {
-		this.name = 'CSS3TransitionsModule';
-	};
+	var CSS3Transitions = {
 
-	CSS3Transitions.prototype = {
+		initCSS3Transitions: function() {
+			console.log('init CSS3 Transitions');
+		},
 
 		_animate: function(element, properties) {
 
@@ -588,7 +595,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addPanelModule(CSS3Transitions);
+	$.ClassicAccordion.addPanelModule('CSS3Transitions', CSS3Transitions);
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
