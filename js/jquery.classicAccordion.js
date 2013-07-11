@@ -497,13 +497,13 @@
 		addAccordionModule: function(module) {
 			this.accordionModules.push(module);
 
-			$.extend(ClassicAccordion.prototype, module.prototype.extend);
+			$.extend(ClassicAccordion.prototype, module.prototype);
 		},
 
 		addPanelModule: function(module) {
 			this.panelModules.push(module);
 
-			$.extend(ClassicAccordionPanel.prototype, module.prototype.extend);
+			$.extend(ClassicAccordionPanel.prototype, module.prototype);
 		}
 	};
 
@@ -516,109 +516,74 @@
 
 	CSS3Transitions.prototype = {
 
-		/*
-			Contains the main methods of the module, that will add or overwrite functionality
-		*/
-		extend: {
-			_animate: function(element, properties) {
-				this._animateUsingTranslate3D(element, properties);
-			},
+		_animate: function(element, properties) {
 
-			_animateUsingTranslate3D: function(element, properties) {
-				var css = {},
-					x = 0,
-					y = 0,
-					transition;
+			properties.use3D = true;
 
-				if (typeof properties.x !== 'undefined')
-					x = properties.x;
+			this._animateUsingTranslate(element, properties);
+		},
 
-				if (typeof properties.y !== 'undefined')
-					y = properties.y;
+		_animateUsingTranslate: function(element, properties) {
+			var css = {},
+				x = 0,
+				y = 0,
+				transition;
 
+			if (typeof properties.x !== 'undefined')
+				x = properties.x;
+
+			if (typeof properties.y !== 'undefined')
+				y = properties.y;
+
+			if (typeof properties.use3D !== 'undefined')
 				css.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0)';
-
-				if (typeof properties.width !== 'undefined')
-					css.width = properties.width;
-
-				if (typeof properties.height !== 'undefined')
-					css.height = properties.height;
-
-				if (typeof properties.duration === 'undefined')
-					transition = 'none';
-				else
-					transition = 'all ' + properties.duration / 1000 + 's';
-
-				if (typeof properties.easing !== 'undefined')
-					transition += ' ' + properties.easing;
-
-				if (typeof properties.delay !== 'undefined')
-					transition += ' ' + properties.delay / 1000 + 's';
-
-				css.transition = transition;
-
-				element.css(css);
-			},
-
-			_animateUsingTranslate: function(element, properties) {
-				var css = {},
-					x = 0,
-					y = 0,
-					transition;
-
-				if (typeof properties.x !== 'undefined')
-					x = properties.x;
-
-				if (typeof properties.y !== 'undefined')
-					y = properties.y;
-
+			else
 				css.transform = 'translate(' + x + 'px, ' + y + 'px)';
 
-				if (typeof properties.width !== 'undefined')
-					css.width = properties.width;
+			if (typeof properties.width !== 'undefined')
+				css.width = properties.width;
 
-				if (typeof properties.height !== 'undefined')
-					css.height = properties.height;
+			if (typeof properties.height !== 'undefined')
+				css.height = properties.height;
 
-				if (typeof properties.duration === 'undefined')
-					transition = 'none';
-				else
-					transition = 'all ' + properties.duration / 1000 + 's';
+			if (typeof properties.duration === 'undefined')
+				transition = 'none';
+			else
+				transition = 'all ' + properties.duration / 1000 + 's';
 
-				if (typeof properties.easing !== 'undefined')
-					transition += ' ' + properties.easing;
+			if (typeof properties.easing !== 'undefined')
+				transition += ' ' + properties.easing;
 
-				if (typeof properties.delay !== 'undefined')
-					transition += ' ' + properties.delay / 1000 + 's';
+			if (typeof properties.delay !== 'undefined')
+				transition += ' ' + properties.delay / 1000 + 's';
 
-				css.transition = transition;
+			css.transition = transition;
 
+			element.css(css);
+		},
+
+		_animateUsingJavaScript: function(element, properties) {
+			var css = {};
+
+			if (typeof properties.x !== 'undefined')
+				css.left = properties.x;
+
+			if (typeof properties.y !== 'undefined')
+				css.top = properties.y;
+
+			if (typeof properties.width !== 'undefined')
+				css.width = properties.width;
+
+			if (typeof properties.height !== 'undefined')
+				css.height = properties.height;
+
+			if (typeof properties.duration === 'undefined') {
 				element.css(css);
-			},
+			} else {
+				if (typeof properties.delay !== 'undefined')
+					element.delay(properties.delay);
 
-			_animateUsingJavaScript: function(element, properties) {
-				var css = {};
-
-				if (typeof properties.x !== 'undefined')
-					css.left = properties.x;
-
-				if (typeof properties.y !== 'undefined')
-					css.top = properties.y;
-
-				if (typeof properties.width !== 'undefined')
-					css.width = properties.width;
-
-				if (typeof properties.height !== 'undefined')
-					css.height = properties.height;
-
-				if (typeof properties.duration === 'undefined') {
-					element.css(css);
-				} else {
-					if (typeof properties.delay !== 'undefined')
-						element.delay(properties.delay);
-
-					element.animate(css, properties.duration, properties.easing);
-				}
+				element.animate(css, properties.duration, properties.easing);
 			}
 		}
 	};
