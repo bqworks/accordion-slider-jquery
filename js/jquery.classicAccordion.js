@@ -520,14 +520,33 @@
 	var CSS3Transitions = {
 
 		initCSS3Transitions: function() {
-			console.log('init CSS3 Transitions');
+			// check if 2D and 3D transforms are supported
+			// inspired by Modernizr
+			var div = document.createElement('div');
+			this.useTransforms = typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style['transform'] !== 'undefined';
+			this.use3DTransforms = typeof div.style['WebkitPerspective'] !== 'undefined' || typeof div.style['perspective'] !== 'undefined';
+
+			if (this.use3DTransforms && typeof div.style['WebkitPerspective'] !== 'undefined') {
+				var style = document.createElement('style');
+				style.textContent = '@media (transform-3d),(-webkit-transform-3d){#test-3d{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0;}}';
+				document.getElementsByTagName('head')[0].appendChild(style);
+
+				div.id = 'test-3d';
+				document.body.appendChild(div);
+				this.use3DTransforms = div.offsetLeft === 9 && div.offsetHeight === 5;
+
+				style.parentNode.removeChild(style);
+				div.parentNode.removeChild(div);
+			}
 		},
 
 		_animate: function(element, properties) {
-
-			properties.use3D = true;
-
-			this._animateUsingTranslate(element, properties);
+			if (this.useTransforms) {
+				properties.use3DTransforms = this.use3DTransforms;
+				this._animateUsingTranslate(element, properties);
+			} else {
+				_animateUsingJavaScript(element, properties);
+			}
 		},
 
 		_animateUsingTranslate: function(element, properties) {
@@ -542,7 +561,7 @@
 			if (typeof properties.y !== 'undefined')
 				y = properties.y;
 
-			if (typeof properties.use3D !== 'undefined')
+			if (typeof properties.use3DTransforms !== 'undefined' && properties.use3DTransforms === true)
 				css.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0)';
 			else
 				css.transform = 'translate(' + x + 'px, ' + y + 'px)';
