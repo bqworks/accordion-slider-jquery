@@ -208,15 +208,33 @@
 			// set the size, in pixels, of the closed panels
 			this.closedPanelSize = totalSize / this.getTotalPanels();
 
+			// round the values
+			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
+			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
+			this.closedPanelSize = Math.floor(this.closedPanelSize);
+
 			// set the initial position and size of the panels
-			$.each(that.panels, function(index) {
+			this._transformPanels();
+		},
+
+		/*
+			change the position (and size) of the panels
+		*/
+		_transformPanels: function(animate) {
+			var that = this,
+				properties = {};
+
+			$.each(this.panels, function(index) {
 				var panel = that.panels[index];
 
-				if (that.currentIndex == -1) {
-					panel.setPositionAndSize(index * that.closedPanelSize, that.closedPanelSize);
-				} else {
-					panel.setPositionAndSize(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
-				}
+				// get the position of the panel based on the currently selected index and the panel's index
+				properties.position = (that.currentIndex == -1) ? (index * that.closedPanelSize) : (index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+
+				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
+				if (that.settings.panelDistance !== 0)
+					properties.size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+
+				panel.transform(properties, animate);
 			});
 		},
 
@@ -284,13 +302,10 @@
 		openPanel: function(index) {
 			var that = this;
 
-			that.currentIndex = index;
+			this.currentIndex = index;
 
-			// animate each panel to its position and size, based on the current index
-			$.each(this.panels, function(index) {
-				var panel = that.panels[index];
-				panel.setPositionAndSize(index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0), index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize, true);
-			});
+			// animate each panel to its position and size
+			this._transformPanels(true);
 		},
 
 		/*
@@ -299,15 +314,12 @@
 		closePanels: function() {
 			var that = this;
 
-			that.currentIndex = -1;
+			this.currentIndex = -1;
 
-			clearTimeout(that.mouseDelayTimer);
+			clearTimeout(this.mouseDelayTimer);
 
 			// animate each panel to its closed position and size
-			$.each(this.panels, function(index) {
-				var panel = that.panels[index];
-				panel.setPositionAndSize(index * that.closedPanelSize, that.closedPanelSize, true);
-			});
+			this._transformPanels(true);
 		},
 
 		startSlideshow: function() {
@@ -345,6 +357,11 @@
 			openPanelOn: 'hover',
 			closePanelsOnMouseOut:false,
 			mouseDelay: 200,
+			panelDistance: 0,
+			openPanelDuration: 700,
+			closePanelDuration: 700,
+			openPanelEasing: 'ease',
+			closePanelEasing: 'ease',
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -394,6 +411,13 @@
 			this.on('click.' + NS, function() {
 				that.trigger({type: 'panelClick.' + NS, index: that.index});
 			});
+
+			// init panel modules
+			var modules = $.ClassicAccordion.panelModules;
+
+			for (var i in modules) {
+				this['init' + modules[i]]();
+			}
 		},
 
 		/*
@@ -404,21 +428,52 @@
 		},
 
 		/*
-			Set the position and size of the panel
+			Set the position (and size) of the panel
 		*/
-		setPositionAndSize: function(positionValue, sizeValue, animate) {
-			if (this.settings.orientation == 'horizontal') {
-				if (animate === true) {
-					this.$panel.css({'transition': 'all 1s', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
-				} else {
-					this.$panel.css({'transition': 'none', 'transform': 'translate3d(' + positionValue + 'px, 0, 0)'});
-				}
-			} else if (this.settings.orientation == 'vertical') {
-				if (animate === true) {
-					this.$panel.stop().animate({'top': positionValue, 'height': sizeValue});
-				} else {
-					this.$panel.css({'top': positionValue, 'height': sizeValue});
-				}
+		transform: function(props, animate) {
+			var properties = {},
+				positionProperty = this.settings.orientation == 'horizontal' ? 'x' : 'y',
+				sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
+
+			if (typeof props.position !== 'undefined')
+				properties[positionProperty] = props.position;
+
+			if (typeof props.size !== 'undefined')
+				properties[sizeProperty] = props.size;
+
+			if (typeof animate !== 'undefined') {
+				var duration = this.currentIndex == -1 ? this.settings.closePanelDuration : this.settings.openPanelDuration,
+					easing = this.currentIndex == -1 ? this.settings.closePanelEasing : this.settings.openPanelEasing;
+
+				properties.duration = duration;
+				properties.easing =  easing;
+			}
+
+			this._animate(this.$panel, properties);
+		},
+
+		/*
+			Animate the panel to the specified position
+		*/
+		_animate: function(element, properties) {
+			var css = {};
+
+			if (typeof properties.x !== 'undefined')
+				css.left = properties.x;
+
+			if (typeof properties.y !== 'undefined')
+				css.top = properties.y;
+
+			if (typeof properties.width !== 'undefined')
+				css.width = properties.width;
+
+			if (typeof properties.height !== 'undefined')
+				css.height = properties.height;
+
+			if (typeof properties.duration === 'undefined') {
+				element.css(css);
+			} else {
+				element.animate(css, properties.duration, properties.easing);
 			}
 		},
 
@@ -436,6 +491,135 @@
 			this.$panel.triggerHandler({type: data.type, index: data.index});
 		}
 	};
+
+	/*
+		Static methods for Classic Accordion
+	*/
+	$.ClassicAccordion = {
+
+		accordionModules: [],
+
+		panelModules: [],
+
+		addAccordionModule: function(name, module) {
+			this.accordionModules.push(module);
+
+			$.extend(ClassicAccordion.prototype, module);
+		},
+
+		addPanelModule: function(name, module) {
+			this.panelModules.push(name);
+
+			$.extend(ClassicAccordionPanel.prototype, module);
+		}
+	};
+
+	/*
+		CSS3 Transitions module
+	*/
+	var CSS3Transitions = {
+
+		initCSS3Transitions: function() {
+			// check if 2D and 3D transforms are supported
+			// inspired by Modernizr
+			var div = document.createElement('div');
+
+			// check if 2D transforms are supported
+			this.useTransforms = typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style['transform'] !== 'undefined';
+
+			// check if 3D transforms are supported
+			this.use3DTransforms = typeof div.style['WebkitPerspective'] !== 'undefined' || typeof div.style['perspective'] !== 'undefined';
+
+			// additional checks for Webkit
+			if (this.use3DTransforms && typeof div.style['WebkitPerspective'] !== 'undefined') {
+				var style = document.createElement('style');
+				style.textContent = '@media (transform-3d),(-webkit-transform-3d){#test-3d{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0;}}';
+				document.getElementsByTagName('head')[0].appendChild(style);
+
+				div.id = 'test-3d';
+				document.body.appendChild(div);
+				this.use3DTransforms = div.offsetLeft === 9 && div.offsetHeight === 5;
+
+				style.parentNode.removeChild(style);
+				div.parentNode.removeChild(div);
+			}
+		},
+
+		_animate: function(element, properties) {
+			if (this.useTransforms) {
+				properties.use3DTransforms = this.use3DTransforms;
+				this._animateUsingTranslate(element, properties);
+			} else {
+				_animateUsingJavaScript(element, properties);
+			}
+		},
+
+		_animateUsingTranslate: function(element, properties) {
+			var css = {},
+				x = 0,
+				y = 0,
+				transition;
+
+			if (typeof properties.x !== 'undefined')
+				x = properties.x;
+
+			if (typeof properties.y !== 'undefined')
+				y = properties.y;
+
+			if (typeof properties.use3DTransforms !== 'undefined' && properties.use3DTransforms === true)
+				css.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0)';
+			else
+				css.transform = 'translate(' + x + 'px, ' + y + 'px)';
+
+			if (typeof properties.width !== 'undefined')
+				css.width = properties.width;
+
+			if (typeof properties.height !== 'undefined')
+				css.height = properties.height;
+
+			if (typeof properties.duration === 'undefined')
+				transition = 'none';
+			else
+				transition = 'all ' + properties.duration / 1000 + 's';
+
+			if (typeof properties.easing !== 'undefined')
+				transition += ' ' + properties.easing;
+
+			if (typeof properties.delay !== 'undefined')
+				transition += ' ' + properties.delay / 1000 + 's';
+
+			css.transition = transition;
+
+			element.css(css);
+		},
+
+		_animateUsingJavaScript: function(element, properties) {
+			var css = {};
+
+			if (typeof properties.x !== 'undefined')
+				css.left = properties.x;
+
+			if (typeof properties.y !== 'undefined')
+				css.top = properties.y;
+
+			if (typeof properties.width !== 'undefined')
+				css.width = properties.width;
+
+			if (typeof properties.height !== 'undefined')
+				css.height = properties.height;
+
+			if (typeof properties.duration === 'undefined') {
+				element.css(css);
+			} else {
+				if (typeof properties.delay !== 'undefined')
+					element.delay(properties.delay);
+
+				element.animate(css, properties.duration, properties.easing);
+			}
+		}
+	};
+
+	$.ClassicAccordion.addPanelModule('CSS3Transitions', CSS3Transitions);
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
