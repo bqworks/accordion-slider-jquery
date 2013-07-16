@@ -13,8 +13,3 @@ Features
 * set options on runtime
 * destroy
 * XML
-
-CSS3 Transitions TODO
-* detect browser support and apply animate method accordingly
-* add vendore prefixes
-* add webkit hacks

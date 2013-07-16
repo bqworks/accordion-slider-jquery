@@ -523,9 +523,14 @@
 			// check if 2D and 3D transforms are supported
 			// inspired by Modernizr
 			var div = document.createElement('div');
+
+			// check if 2D transforms are supported
 			this.useTransforms = typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style['transform'] !== 'undefined';
+
+			// check if 3D transforms are supported
 			this.use3DTransforms = typeof div.style['WebkitPerspective'] !== 'undefined' || typeof div.style['perspective'] !== 'undefined';
 
+			// additional checks for Webkit
 			if (this.use3DTransforms && typeof div.style['WebkitPerspective'] !== 'undefined') {
 				var style = document.createElement('style');
 				style.textContent = '@media (transform-3d),(-webkit-transform-3d){#test-3d{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0;}}';
