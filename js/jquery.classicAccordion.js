@@ -642,15 +642,52 @@
 			// reference to the panel object
 			var that = this;
 
-			// iterate through the panel's layers 
+			// iterate through the panel's layer jQuery objects
+			// and create Layer instances for each object
 			this.$panel.find('.ca-layer').each(function() {
 				var layer = new Layer($(this));
 
 				that.layers.push(layer);
 			});
 
+			// listen when a panel is opened and handle 
+			// the layer's behaviour based on the state of the panel
 			this.accordion.on('panelOpen.' + NS, function(event) {
-				console.log(event);
+				if (that.index === event.index)
+					that.handleLayersInOpenedState();
+
+				if (that.index === event.previousIndex)
+					that.handleLayersInClosedState();
+			});
+		},
+
+		handleLayersInOpenedState: function() {
+			var that = this;
+
+			// show 'opened' layers and close 'closed' layers
+			$.each(this.layers, function(index, value) {
+				var layer = that.layers[index];
+
+				if (layer.visibleOn == 'opened')
+					layer.show();
+
+				if (layer.visibleOn == 'closed')
+					layer.hide();
+			});
+		},
+
+		handleLayersInClosedState: function() {
+			var that = this;
+
+			// hide 'opened' layers and show 'closed' layers
+			$.each(this.layers, function(index, value) {
+				var layer = that.layers[index];
+
+				if (layer.visibleOn == 'opened')
+					layer.hide();
+
+				if (layer.visibleOn == 'closed')
+					layer.show();
 			});
 		}
 	};
@@ -662,14 +699,23 @@
 		// reference to the layer jQuery object
 		this.$layer = layer;
 
+		// indicates when will the layer be visible
+		// can be visible when the panel is opened, when the panel is closed or always
+		this.visibleOn = 'n/a';
+
 		this._init();
 	};
 
 	Layer.prototype = {
 
 		_init: function() {
-			if (this.$layer.hasClass('ca-closed') === false)
-				this.$layer.css('visibility', 'hidden');
+			if (this.$layer.hasClass('ca-always')) {
+				this.visibleOn = 'always';
+			} else if (this.$layer.hasClass('ca-opened')) {
+				this.visibleOn = 'opened';
+			} else if (this.$layer.hasClass('ca-closed')) {
+				this.visibleOn = 'closed';
+			}
 		},
 
 		show: function() {
