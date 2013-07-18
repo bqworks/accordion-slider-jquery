@@ -249,7 +249,7 @@
 			Trigger an event on the accordion
 		*/
 		trigger: function(data) {
-			this.$accordion.triggerHandler({type: data.type, index: data.index});
+			this.$accordion.triggerHandler(data);
 		},
 
 		/*
@@ -300,15 +300,16 @@
 			Open the panel at the specified index
 		*/
 		openPanel: function(index) {
-			var that = this;
+			var that = this,
+				previousIndex = this.currentIndex;
 
 			this.currentIndex = index;
 
 			// animate each panel to its position and size
 			this._transformPanels(true);
 
-			// fire event
-			var eventObject = {type: 'panelOpen', index: index, element: this.getPanelAt(index)};
+			// fire 'panelOpen' event
+			var eventObject = {type: 'panelOpen', index: index, previousIndex: previousIndex, element: this.getPanelAt(index)};
 			this.trigger(eventObject);
 			if ($.isFunction(that.settings.panelOpen))
 				that.settings.panelOpen.call(that, eventObject);
@@ -494,7 +495,7 @@
 			Trigger an event on the panel
 		*/
 		trigger: function(data) {
-			this.$panel.triggerHandler({type: data.type, index: data.index});
+			this.$panel.triggerHandler(data);
 		}
 	};
 
@@ -649,7 +650,7 @@
 			});
 
 			this.accordion.on('panelOpen.' + NS, function(event) {
-				console.log(that.index, event.index);
+				console.log(event);
 			});
 		}
 	};
