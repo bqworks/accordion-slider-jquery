@@ -120,7 +120,7 @@
 				$element = $(element);
 
 			// create a panel instance and add it to the array of panels
-			var panel = new ClassicAccordionPanel($element, this.accordion, index, this.settings);
+			var panel = new ClassicAccordionPanel($element, this, index, this.settings);
 			this.panels.splice(index, 0, panel);
 
 			// listen for 'panelMouseOver' events
@@ -306,6 +306,12 @@
 
 			// animate each panel to its position and size
 			this._transformPanels(true);
+
+			// fire event
+			var eventObject = {type: 'panelOpen', index: index, element: this.getPanelAt(index)};
+			this.trigger(eventObject);
+			if ($.isFunction(that.settings.panelOpen))
+				that.settings.panelOpen.call(that, eventObject);
 		},
 
 		/*
@@ -376,7 +382,7 @@
 		this.$panel = panel;
 
 		// reference to the accordion jQuery object
-		this.$accordion = accordion;
+		this.accordion = accordion;
 
 		// the index of the panel
 		this.index = index;
@@ -629,6 +635,25 @@
 
 		initLayers: function() {
 
+			// holds references to the layers
+			this.layers = [];
+
+			// reference to the panel object
+			var that = this;
+
+			// iterate through the panel's layers 
+			this.$panel.find('.ca-layer').each(function() {
+				var layer = $(this);
+
+				that.layers.push(layer);
+
+				if (layer.hasClass('ca-closed') === false)
+					layer.css('visibility', 'hidden');
+			});
+
+			this.accordion.on('panelOpen.' + NS, function(index, element) {
+				console.log(that.index, index);
+			});
 		}
 	};
 

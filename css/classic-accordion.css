@@ -26,6 +26,13 @@
 }
 
 
+.classic-accordion .ca-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+
 .classic-accordion .ca-shadow-horizontal {
 	background: url(accordion-assets/images/shadow.png) repeat-Y;
 	position: absolute;
