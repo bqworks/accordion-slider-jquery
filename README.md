@@ -13,3 +13,4 @@ Features
 * set options on runtime
 * destroy
 * XML
+* easings
