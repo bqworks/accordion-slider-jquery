@@ -643,21 +643,42 @@
 
 			// iterate through the panel's layers 
 			this.$panel.find('.ca-layer').each(function() {
-				var layer = $(this);
+				var layer = new Layer($(this));
 
 				that.layers.push(layer);
-
-				if (layer.hasClass('ca-closed') === false)
-					layer.css('visibility', 'hidden');
 			});
 
-			this.accordion.on('panelOpen.' + NS, function(index, element) {
-				console.log(that.index, index);
+			this.accordion.on('panelOpen.' + NS, function(event) {
+				console.log(that.index, event.index);
 			});
 		}
 	};
 
 	$.ClassicAccordion.addPanelModule('Layers', Layers);
+
+	var Layer = function(layer) {
+
+		// reference to the layer jQuery object
+		this.$layer = layer;
+
+		this._init();
+	};
+
+	Layer.prototype = {
+
+		_init: function() {
+			if (this.$layer.hasClass('ca-closed') === false)
+				this.$layer.css('visibility', 'hidden');
+		},
+
+		show: function() {
+
+		},
+
+		hide: function() {
+
+		}
+	};
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
