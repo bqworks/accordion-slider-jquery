@@ -520,7 +520,7 @@
 	var CSS3Transitions = {
 
 		initCSS3Transitions: function() {
-			console.log('init')
+
 			// check if 2D and 3D transforms are supported
 			// inspired by Modernizr
 			var div = document.createElement('div');
@@ -547,12 +547,12 @@
 		},
 
 		_animate: function(element, properties) {
-			//if (this.useTransforms) {
-			//	properties.use3DTransforms = this.use3DTransforms;
-			//	this._animateUsingTranslate(element, properties);
-			//} else {
+			if (this.useTransforms) {
+				properties.use3DTransforms = this.use3DTransforms;
+				this._animateUsingTranslate(element, properties);
+			} else {
 				this._animateUsingJavaScript(element, properties);
-			//}
+			}
 		},
 
 		_animateUsingTranslate: function(element, properties) {
