@@ -203,10 +203,10 @@
 			}
 
 			// set the size, in pixels, of the collapsed panels
-			this.collapsedPanelSize = (totalSize - this.computedOpenedPanelSize) / (this.getTotalPanels() - 1);
+			this.collapsedPanelSize = (totalSize - this.computedOpenedPanelSize - (this.getTotalPanels() - 1) * that.settings.panelDistance) / (this.getTotalPanels() - 1);
 
 			// set the size, in pixels, of the closed panels
-			this.closedPanelSize = totalSize / this.getTotalPanels();
+			this.closedPanelSize = (totalSize - (this.getTotalPanels() - 1) * that.settings.panelDistance) / this.getTotalPanels();
 
 			// round the values
 			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
@@ -228,7 +228,7 @@
 				var panel = that.panels[index];
 
 				// get the position of the panel based on the currently selected index and the panel's index
-				properties.position = (that.currentIndex == -1) ? (index * that.closedPanelSize) : (index * that.collapsedPanelSize + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+				properties.position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.settings.panelDistance)) : (index * (that.collapsedPanelSize + that.settings.panelDistance) + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
 
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
 				if (that.settings.panelDistance !== 0)
