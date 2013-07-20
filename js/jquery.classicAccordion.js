@@ -29,6 +29,9 @@
 		// the size, in pixels, of the closed panels
 		this.closedPanelSize = 0;
 
+		// the distance, in pixels, between the accordion's panels
+		this.computedPanelDistance = this.settings.panelDistance;
+
 		// array that contains the ClassicAccordionPanel objects
 		this.panels = [];
 
@@ -190,7 +193,7 @@
 			// get the total size, in pixels, of the accordion
 			var totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 
-			// parse computedOpenedPanelSize set it to a pixel value
+			// parse computedOpenedPanelSize and set it to a pixel value
 			if (typeof this.computedOpenedPanelSize == 'string') {
 				if (this.computedOpenedPanelSize.indexOf('%') != -1) {
 					this.computedOpenedPanelSize = totalSize * (parseInt(this.computedOpenedPanelSize, 10)/ 100);
@@ -202,11 +205,23 @@
 				}
 			}
 
+			// set the initial computedPanelDistance to the value defined in the options
+			this.computedPanelDistance = this.settings.panelDistance;
+
+			// parse computedPanelDistance and set it to a pixel value
+			if (typeof this.computedPanelDistance == 'string') {
+				if (this.computedPanelDistance.indexOf('%') != -1) {
+					this.computedPanelDistance = totalSize * (parseInt(this.computedPanelDistance, 10)/ 100);
+				} else if (this.computedPanelDistance.indexOf('px') != -1) {
+					this.computedPanelDistance = parseInt(this.computedPanelDistance, 10);
+				}
+			}
+
 			// set the size, in pixels, of the collapsed panels
-			this.collapsedPanelSize = (totalSize - this.computedOpenedPanelSize - (this.getTotalPanels() - 1) * that.settings.panelDistance) / (this.getTotalPanels() - 1);
+			this.collapsedPanelSize = (totalSize - this.computedOpenedPanelSize - (this.getTotalPanels() - 1) * that.computedPanelDistance) / (this.getTotalPanels() - 1);
 
 			// set the size, in pixels, of the closed panels
-			this.closedPanelSize = (totalSize - (this.getTotalPanels() - 1) * that.settings.panelDistance) / this.getTotalPanels();
+			this.closedPanelSize = (totalSize - (this.getTotalPanels() - 1) * that.computedPanelDistance) / this.getTotalPanels();
 
 			// round the values
 			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
@@ -228,10 +243,10 @@
 				var panel = that.panels[index];
 
 				// get the position of the panel based on the currently selected index and the panel's index
-				properties.position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.settings.panelDistance)) : (index * (that.collapsedPanelSize + that.settings.panelDistance) + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+				properties.position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.computedPanelDistance)) : (index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
 
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
-				if (that.settings.panelDistance !== 0)
+				if (that.computedPanelDistance !== 0)
 					properties.size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
 
 				panel.transform(properties, animate);
@@ -360,8 +375,8 @@
 			panelDistance: 0,
 			openPanelDuration: 700,
 			closePanelDuration: 700,
-			openPanelEasing: 'ease',
-			closePanelEasing: 'ease',
+			openPanelEasing: 'linear',
+			closePanelEasing: 'linear',
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
