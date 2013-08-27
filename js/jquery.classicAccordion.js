@@ -397,7 +397,7 @@
 		// reference to the panel jQuery object
 		this.$panel = panel;
 
-		// reference to the accordion jQuery object
+		// reference to the accordion object
 		this.accordion = accordion;
 
 		// the index of the panel
@@ -593,7 +593,7 @@
 
 			if (this.useTransforms) {
 				properties.use3DTransforms = this.use3DTransforms;
-return this._animateUsingTranslate(element, properties);
+				return this._animateUsingTranslate(element, properties);
 			} else {
 				return this._animateUsingJavaScript(element, properties);
 			}
@@ -665,7 +665,16 @@ return this._animateUsingTranslate(element, properties);
 	};
 
 	/*
-Layers module
+		bqTransition plugin adds animations that support CSS3 transitions
+	*/
+	$.fn.bqTransition = function(options) {
+		return this.each(function() {
+			$.bqTransition.animate($(this), options);
+		});
+	};
+
+	/*
+		Layers module
 	*/
 	var Layers = {
 
@@ -700,7 +709,7 @@ Layers module
 			var that = this;
 
 			// show 'opened' layers and close 'closed' layers
-$.each(this.layers, function(index, value) {
+			$.each(this.layers, function(index, value) {
 				var layer = that.layers[index];
 
 				if (layer.visibleOn == 'opened')
@@ -715,7 +724,7 @@ $.each(this.layers, function(index, value) {
 			var that = this;
 
 			// hide 'opened' layers and show 'closed' layers
-$.each(this.layers, function(index, value) {
+			$.each(this.layers, function(index, value) {
 				var layer = that.layers[index];
 
 				if (layer.visibleOn == 'opened')
@@ -744,11 +753,11 @@ $.each(this.layers, function(index, value) {
 	Layer.prototype = {
 
 		_init: function() {
-if (this.$layer.hasClass('ca-always')) {
+			if (this.$layer.hasClass('ca-always')) {
 				this.visibleOn = 'always';
 			} else if (this.$layer.hasClass('ca-opened')) {
 				this.visibleOn = 'opened';
-} else if (this.$layer.hasClass('ca-closed')) {
+			} else if (this.$layer.hasClass('ca-closed')) {
 
 				this.visibleOn = 'closed';
 			}
