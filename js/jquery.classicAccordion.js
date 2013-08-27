@@ -431,7 +431,8 @@
 			var modules = $.ClassicAccordion.panelModules;
 
 			for (var i in modules) {
-				this['init' + modules[i]]();
+				if (typeof this['init' + modules[i]] !== 'undefined')
+					this['init' + modules[i]]();
 			}
 		},
 
@@ -533,8 +534,24 @@
 		CSS3 Transitions module
 	*/
 	var CSS3Transitions = {
+		_animate: function(element, properties) {
+			element.bqTransition(properties);
+		}
+	};
 
-		initCSS3Transitions: function() {
+	$.ClassicAccordion.addPanelModule('CSS3Transitions', CSS3Transitions);
+
+	/*
+		Handles object animation by using CSS3 transitions where supported and jQuery animations otherwise
+	*/
+	$.bqTransition = {
+		// indicates whether the plugin was initiated
+		initiated: false,
+
+		/*
+			Check if the browser supports CSS3 transitions
+		*/
+		init: function() {
 
 			// check if 2D and 3D transforms are supported
 			// inspired by Modernizr
@@ -561,12 +578,17 @@
 			}
 		},
 
-		_animate: function(element, properties) {
+		animate: function(element, properties) {
+			if (this.initiated === false) {
+				this.initiated = true;
+				this.init();
+			}
+
 			if (this.useTransforms) {
 				properties.use3DTransforms = this.use3DTransforms;
-				this._animateUsingTranslate(element, properties);
+return this._animateUsingTranslate(element, properties);
 			} else {
-				this._animateUsingJavaScript(element, properties);
+				return this._animateUsingJavaScript(element, properties);
 			}
 		},
 
@@ -606,7 +628,7 @@
 
 			css.transition = transition;
 
-			element.css(css);
+			return element.css(css);
 		},
 
 		_animateUsingJavaScript: function(element, properties) {
@@ -625,17 +647,24 @@
 				css.height = properties.height;
 
 			if (typeof properties.duration === 'undefined') {
-				element.css(css);
+				return element.css(css);
 			} else {
 				if (typeof properties.delay !== 'undefined')
 					element.delay(properties.delay);
 
-				element.animate(css, properties.duration, properties.easing);
+				return element.animate(css, properties.duration, properties.easing);
 			}
 		}
 	};
 
-	$.ClassicAccordion.addPanelModule('CSS3Transitions', CSS3Transitions);
+	/*
+		bqTransition plugin adds animations that support CSS3 transitions
+	*/
+	$.fn.bqTransition = function(options) {
+		return this.each(function() {
+			$.bqTransition.animate($(this), options);
+		});
+	};
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
