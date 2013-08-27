@@ -549,6 +549,114 @@
 	$.ClassicAccordion.addPanelModule('CSS3Transitions', CSS3Transitions);
 
 	/*
+		Layers module
+	*/
+	var Layers = {
+
+		initLayers: function() {
+
+			// holds references to the layers
+			this.layers = [];
+
+			// reference to the panel object
+			var that = this;
+
+			// iterate through the panel's layer jQuery objects
+			// and create Layer instances for each object
+			this.$panel.find('.ca-layer').each(function() {
+				var layer = new Layer($(this));
+
+				that.layers.push(layer);
+			});
+
+			// listen when a panel is opened and handle 
+			// the layer's behaviour based on the state of the panel
+			this.accordion.on('panelOpen.' + NS, function(event) {
+				if (that.index === event.index)
+					that.handleLayersInOpenedState();
+
+				if (that.index === event.previousIndex)
+					that.handleLayersInClosedState();
+			});
+		},
+
+		handleLayersInOpenedState: function() {
+			var that = this;
+
+			// show 'opened' layers and close 'closed' layers
+			$.each(this.layers, function(index, value) {
+				var layer = that.layers[index];
+
+				if (layer.visibleOn == 'opened')
+					layer.show();
+
+				if (layer.visibleOn == 'closed')
+					layer.hide();
+			});
+		},
+
+		handleLayersInClosedState: function() {
+			var that = this;
+
+			// hide 'opened' layers and show 'closed' layers
+			$.each(this.layers, function(index, value) {
+				var layer = that.layers[index];
+
+				if (layer.visibleOn == 'opened')
+					layer.hide();
+
+				if (layer.visibleOn == 'closed')
+					layer.show();
+			});
+		}
+	};
+
+	$.ClassicAccordion.addPanelModule('Layers', Layers);
+
+	var Layer = function(layer) {
+
+		// reference to the layer jQuery object
+		this.$layer = layer;
+
+		// indicates when will the layer be visible
+		// can be visible when the panel is opened, when the panel is closed or always
+		this.visibleOn = 'n/a';
+
+		this._init();
+	};
+
+	Layer.prototype = {
+
+		_init: function() {
+			if (this.$layer.hasClass('ca-always')) {
+				this.visibleOn = 'always';
+			} else if (this.$layer.hasClass('ca-opened')) {
+				this.visibleOn = 'opened';
+			} else if (this.$layer.hasClass('ca-closed')) {
+
+				this.visibleOn = 'closed';
+			}
+		},
+
+		show: function() {
+
+		},
+
+		hide: function() {
+
+		}
+	};
+
+	$.fn.classicAccordion = function(options) {
+		return this.each(function() {
+			new ClassicAccordion(this, options);
+		});
+	};
+
+	window.ClassicAccordion = ClassicAccordion;
+	window.ClassicAccordionPanel = ClassicAccordionPanel;
+
+	/*
 		Handles object animation by using CSS3 transitions where supported and jQuery animations otherwise
 	*/
 	$.bqTransition = {
@@ -672,113 +780,5 @@
 			$.bqTransition.animate($(this), options);
 		});
 	};
-
-	/*
-		Layers module
-	*/
-	var Layers = {
-
-		initLayers: function() {
-
-			// holds references to the layers
-			this.layers = [];
-
-			// reference to the panel object
-			var that = this;
-
-			// iterate through the panel's layer jQuery objects
-			// and create Layer instances for each object
-			this.$panel.find('.ca-layer').each(function() {
-				var layer = new Layer($(this));
-
-				that.layers.push(layer);
-			});
-
-			// listen when a panel is opened and handle 
-			// the layer's behaviour based on the state of the panel
-			this.accordion.on('panelOpen.' + NS, function(event) {
-				if (that.index === event.index)
-					that.handleLayersInOpenedState();
-
-				if (that.index === event.previousIndex)
-					that.handleLayersInClosedState();
-			});
-		},
-
-		handleLayersInOpenedState: function() {
-			var that = this;
-
-			// show 'opened' layers and close 'closed' layers
-			$.each(this.layers, function(index, value) {
-				var layer = that.layers[index];
-
-				if (layer.visibleOn == 'opened')
-					layer.show();
-
-				if (layer.visibleOn == 'closed')
-					layer.hide();
-			});
-		},
-
-		handleLayersInClosedState: function() {
-			var that = this;
-
-			// hide 'opened' layers and show 'closed' layers
-			$.each(this.layers, function(index, value) {
-				var layer = that.layers[index];
-
-				if (layer.visibleOn == 'opened')
-					layer.hide();
-
-				if (layer.visibleOn == 'closed')
-					layer.show();
-			});
-		}
-	};
-
-	$.ClassicAccordion.addPanelModule('Layers', Layers);
-
-	var Layer = function(layer) {
-
-		// reference to the layer jQuery object
-		this.$layer = layer;
-
-		// indicates when will the layer be visible
-		// can be visible when the panel is opened, when the panel is closed or always
-		this.visibleOn = 'n/a';
-
-		this._init();
-	};
-
-	Layer.prototype = {
-
-		_init: function() {
-			if (this.$layer.hasClass('ca-always')) {
-				this.visibleOn = 'always';
-			} else if (this.$layer.hasClass('ca-opened')) {
-				this.visibleOn = 'opened';
-			} else if (this.$layer.hasClass('ca-closed')) {
-
-				this.visibleOn = 'closed';
-			}
-		},
-
-		show: function() {
-
-		},
-
-		hide: function() {
-
-		}
-	};
-
-	$.fn.classicAccordion = function(options) {
-		return this.each(function() {
-			new ClassicAccordion(this, options);
-		});
-	};
-
-	window.ClassicAccordion = ClassicAccordion;
-	window.ClassicAccordionPanel = ClassicAccordionPanel;
 
 })(window, jQuery);

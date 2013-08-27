@@ -2,6 +2,7 @@ classic-accordion
 =================
 
 Features
+
 ** responsive
 * layers - opened, closed, title
 * pagination
