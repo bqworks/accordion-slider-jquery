@@ -123,7 +123,7 @@
 				$element = $(element);
 
 			// create a panel instance and add it to the array of panels
-			var panel = new ClassicAccordionPanel($element, this.accordion, index, this.settings);
+			var panel = new ClassicAccordionPanel($element, this, index, this.settings);
 			this.panels.splice(index, 0, panel);
 
 			// listen for 'panelMouseOver' events
@@ -264,7 +264,7 @@
 			Trigger an event on the accordion
 		*/
 		trigger: function(data) {
-			this.$accordion.triggerHandler({type: data.type, index: data.index});
+			this.$accordion.triggerHandler(data);
 		},
 
 		/*
@@ -315,12 +315,19 @@
 			Open the panel at the specified index
 		*/
 		openPanel: function(index) {
-			var that = this;
+			var that = this,
+				previousIndex = this.currentIndex;
 
 			this.currentIndex = index;
 
 			// animate each panel to its position and size
 			this._transformPanels(true);
+
+			// fire 'panelOpen' event
+			var eventObject = {type: 'panelOpen', index: index, previousIndex: previousIndex, element: this.getPanelAt(index)};
+			this.trigger(eventObject);
+			if ($.isFunction(that.settings.panelOpen))
+				that.settings.panelOpen.call(that, eventObject);
 		},
 
 		/*
@@ -391,7 +398,7 @@
 		this.$panel = panel;
 
 		// reference to the accordion jQuery object
-		this.$accordion = accordion;
+		this.accordion = accordion;
 
 		// the index of the panel
 		this.index = index;
@@ -504,7 +511,7 @@
 			Trigger an event on the panel
 		*/
 		trigger: function(data) {
-			this.$panel.triggerHandler({type: data.type, index: data.index});
+			this.$panel.triggerHandler(data);
 		}
 	};
 
@@ -658,12 +665,102 @@ return this._animateUsingTranslate(element, properties);
 	};
 
 	/*
-		bqTransition plugin adds animations that support CSS3 transitions
+Layers module
 	*/
-	$.fn.bqTransition = function(options) {
-		return this.each(function() {
-			$.bqTransition.animate($(this), options);
-		});
+	var Layers = {
+
+		initLayers: function() {
+
+			// holds references to the layers
+			this.layers = [];
+
+			// reference to the panel object
+			var that = this;
+
+			// iterate through the panel's layer jQuery objects
+			// and create Layer instances for each object
+			this.$panel.find('.ca-layer').each(function() {
+				var layer = new Layer($(this));
+
+				that.layers.push(layer);
+			});
+
+			// listen when a panel is opened and handle 
+			// the layer's behaviour based on the state of the panel
+			this.accordion.on('panelOpen.' + NS, function(event) {
+				if (that.index === event.index)
+					that.handleLayersInOpenedState();
+
+				if (that.index === event.previousIndex)
+					that.handleLayersInClosedState();
+			});
+		},
+
+		handleLayersInOpenedState: function() {
+			var that = this;
+
+			// show 'opened' layers and close 'closed' layers
+$.each(this.layers, function(index, value) {
+				var layer = that.layers[index];
+
+				if (layer.visibleOn == 'opened')
+					layer.show();
+
+				if (layer.visibleOn == 'closed')
+					layer.hide();
+			});
+		},
+
+		handleLayersInClosedState: function() {
+			var that = this;
+
+			// hide 'opened' layers and show 'closed' layers
+$.each(this.layers, function(index, value) {
+				var layer = that.layers[index];
+
+				if (layer.visibleOn == 'opened')
+					layer.hide();
+
+				if (layer.visibleOn == 'closed')
+					layer.show();
+			});
+		}
+	};
+
+	$.ClassicAccordion.addPanelModule('Layers', Layers);
+
+	var Layer = function(layer) {
+
+		// reference to the layer jQuery object
+		this.$layer = layer;
+
+		// indicates when will the layer be visible
+		// can be visible when the panel is opened, when the panel is closed or always
+		this.visibleOn = 'n/a';
+
+		this._init();
+	};
+
+	Layer.prototype = {
+
+		_init: function() {
+if (this.$layer.hasClass('ca-always')) {
+				this.visibleOn = 'always';
+			} else if (this.$layer.hasClass('ca-opened')) {
+				this.visibleOn = 'opened';
+} else if (this.$layer.hasClass('ca-closed')) {
+
+				this.visibleOn = 'closed';
+			}
+		},
+
+		show: function() {
+
+		},
+
+		hide: function() {
+
+		}
 	};
 
 	$.fn.classicAccordion = function(options) {
