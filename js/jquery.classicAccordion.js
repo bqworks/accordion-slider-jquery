@@ -315,8 +315,7 @@
 			Open the panel at the specified index
 		*/
 		openPanel: function(index) {
-			var that = this,
-				previousIndex = this.currentIndex;
+			var previousIndex = this.currentIndex;
 
 			this.currentIndex = index;
 
@@ -326,22 +325,26 @@
 			// fire 'panelOpen' event
 			var eventObject = {type: 'panelOpen', index: index, previousIndex: previousIndex, element: this.getPanelAt(index)};
 			this.trigger(eventObject);
-			if ($.isFunction(that.settings.panelOpen))
-				that.settings.panelOpen.call(that, eventObject);
+			if ($.isFunction(this.settings.panelOpen))
+				this.settings.panelOpen.call(this, eventObject);
 		},
 
 		/*
 			Close the panels
 		*/
 		closePanels: function() {
-			var that = this;
-
 			this.currentIndex = -1;
 
 			clearTimeout(this.mouseDelayTimer);
 
 			// animate each panel to its closed position and size
 			this._transformPanels(true);
+
+			// fire 'panelsClose' event
+			var eventObject = {type: 'panelsClose', previousIndex: this.currentIndex};
+			this.trigger(eventObject);
+			if ($.isFunction(this.settings.panelsClose))
+				this.settings.panelsClose.call(this, eventObject);
 		},
 
 		startSlideshow: function() {
@@ -597,7 +600,7 @@
 
 		handleLayersInClosedState: function() {
 			var that = this;
-
+console.log(that);
 			// hide 'opened' layers and show 'closed' layers
 			$.each(this.layers, function(index, value) {
 				var layer = that.layers[index];
