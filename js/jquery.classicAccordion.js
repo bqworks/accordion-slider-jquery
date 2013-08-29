@@ -333,6 +333,8 @@
 			Close the panels
 		*/
 		closePanels: function() {
+			var previousIndex = this.currentIndex;
+
 			this.currentIndex = -1;
 
 			clearTimeout(this.mouseDelayTimer);
@@ -341,7 +343,7 @@
 			this._transformPanels(true);
 
 			// fire 'panelsClose' event
-			var eventObject = {type: 'panelsClose', previousIndex: this.currentIndex};
+			var eventObject = {type: 'panelsClose', previousIndex: previousIndex};
 			this.trigger(eventObject);
 			if ($.isFunction(this.settings.panelsClose))
 				this.settings.panelsClose.call(this, eventObject);
@@ -391,7 +393,9 @@
 			accordionMouseOut: function() {},
 			panelClick: function() {},
 			panelMouseOver: function() {},
-			panelMouseOut: function() {}
+			panelMouseOut: function() {},
+			panelOpen: function() {},
+			panelsClose: function() {}
 		}
 	};
 
@@ -408,7 +412,6 @@
 
 		// reference to the global settings of the accordion
 		this.settings = settings;
-
 
 		// init the panel
 		this._init();
@@ -572,12 +575,17 @@
 				that.layers.push(layer);
 			});
 
-			// listen when a panel is opened and handle 
+			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
 			this.accordion.on('panelOpen.' + NS, function(event) {
 				if (that.index === event.index)
 					that.handleLayersInOpenedState();
 
+				if (that.index === event.previousIndex)
+					that.handleLayersInClosedState();
+			});
+
+			this.accordion.on('panelsClose.' + NS, function(event) {
 				if (that.index === event.previousIndex)
 					that.handleLayersInClosedState();
 			});
@@ -600,7 +608,7 @@
 
 		handleLayersInClosedState: function() {
 			var that = this;
-console.log(that);
+
 			// hide 'opened' layers and show 'closed' layers
 			$.each(this.layers, function(index, value) {
 				var layer = that.layers[index];
@@ -625,6 +633,9 @@ console.log(that);
 		// can be visible when the panel is opened, when the panel is closed or always
 		this.visibleOn = 'n/a';
 
+		// indicates whether the layer was styled
+		this.styled = false;
+
 		this._init();
 	};
 
@@ -635,18 +646,80 @@ console.log(that);
 				this.visibleOn = 'always';
 			} else if (this.$layer.hasClass('ca-opened')) {
 				this.visibleOn = 'opened';
+				this.$layer.hide();
 			} else if (this.$layer.hasClass('ca-closed')) {
-
 				this.visibleOn = 'closed';
+			}
+
+			if (this.visibleOn == 'always' || this.visibleOn == 'closed')
+				this.setStyle();
+		},
+
+		setStyle: function() {
+			this.styled = true;
+
+			// get the data attributes specified in HTML
+			var data = this.$layer.data(),
+				target = {},
+				start = {};
+				
+			if (typeof data.width !== 'undefined')
+				this.$layer.css('width', data.width);
+			
+			if (typeof data.height !== 'undefined')
+				this.$layer.css('height', data.height);
+
+			if (typeof data.depth !== 'undefined')
+				this.$layer.css('z-index', data.depth);
+
+			var position = data.position ? (data.position).toLowerCase() : 'topleft',
+				horizontalPosition = position.indexOf('right') != -1 ? 'right' : 'left',
+				verticalPosition = position.indexOf('bottom') != -1 ? 'bottom' : 'top';
+
+			// set the horizontal position of the layer based on the data set
+			if (typeof data.horizontal !== 'undefined') {
+				if ((data.horizontal == 'left' && horizontalPosition == 'left') || (data.horizontal == 'right' && horizontalPosition == 'right')) {
+					this.$layer.css(horizontalPosition, 0);
+				} else if ((data.horizontal == 'right' && horizontalPosition == 'left') || (data.horizontal == 'left' && horizontalPosition == 'right')) {
+					this.$layer.css('margin-' + horizontalPosition, - this.$layer.outerWidth(false));
+					this.$layer.css(horizontalPosition, '100%');
+				} else if (data.horizontal == 'center') {
+					this.$layer.css('margin-' + horizontalPosition, - this.$layer.outerWidth(false) * 0.5);
+					this.$layer.css(horizontalPosition, '50%');
+				} else {
+					this.$layer.css(horizontalPosition, data.horizontal);
+				}
+			} else {
+				this.$layer.css(horizontalPosition, 0);
+			}
+
+			// set the vetical position of the layer based on the data set
+			if (typeof data.vertical !== 'undefined') {
+				if ((data.vertical == 'top' && verticalPosition == 'top') || (data.vertical == 'bottom' && verticalPosition == 'bottom')) {
+					this.$layer.css(verticalPosition, 0);
+				} else if ((data.vertical == 'bottom' && verticalPosition == 'top') || (data.vertical == 'top' && verticalPosition == 'bottom')) {
+					this.$layer.css('margin-' + verticalPosition, - this.$layer.outerHeight(false));
+					this.$layer.css(verticalPosition, '100%');
+				} else if (data.vertical == 'center') {
+					this.$layer.css('margin-' + verticalPosition, - this.$layer.outerHeight(false) * 0.5);
+					this.$layer.css(verticalPosition, '50%');
+				} else {
+					this.$layer.css(verticalPosition, data.vertical);
+				}
+			} else {
+				this.$layer.css(verticalPosition, 0);
 			}
 		},
 
 		show: function() {
+			if (this.styled === false)
+				this.setStyle();
 
+			this.$layer.fadeIn();
 		},
 
 		hide: function() {
-
+			this.$layer.fadeOut();
 		}
 	};
 

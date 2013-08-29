@@ -4,7 +4,6 @@
 	border: 4px solid #000;
 }
 
-
 .classic-accordion .ca-panel {
 	position: absolute;
 	display: block;
@@ -15,23 +14,46 @@
 	transform: scale(1);
 }
 
-
 .classic-accordion.ca-horizontal .ca-panel {
 	height: 100%;
 }
-
 
 .classic-accordion.ca-vertical .ca-panel {
 	width: 100%;
 }
 
-
 .classic-accordion .ca-layer {
 	position: absolute;
 	top: 0;
 	left: 0;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
+.classic-accordion .ca-layer.ca-black {
+	color: #FFF;
+	background: rgb(0, 0, 0);
+	background: rgba(0, 0, 0, 0.7);
+}
+
+.classic-accordion .ca-layer.ca-white {
+	color: #000;
+	background: rgb(255, 255, 255);
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.classic-accordion .ca-layer.ca-rounded {
+	border-radius: 10px;
+}
+
+.classic-accordion .ca-layer.ca-padding {
+	padding: 4px;
+}
+
+.classic-accordion .ca-layer.ca-vertical {
+	-webkit-transform: rotate(-90deg);
+}
 
 .classic-accordion .ca-shadow-horizontal {
 	background: url(accordion-assets/images/shadow.png) repeat-Y;
@@ -40,7 +62,6 @@
 	width: 25px;
 	height: 100%;
 }
-
 
 .classic-accordion .ca-shadow-vertical {
 	background: url(accordion-assets/images/shadow_v.png) repeat-x;

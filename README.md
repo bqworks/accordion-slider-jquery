@@ -15,3 +15,4 @@ Features
 * destroy
 * XML
 * easings
+* fullscreen
