@@ -989,6 +989,12 @@
 			if (typeof properties.delay !== 'undefined')
 				transition += ' ' + properties.delay / 1000 + 's';
 
+			if (typeof properties.callback !== 'undefined')
+				element.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
+					element.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
+					properties.callback();
+				});
+
 			css.transition = transition;
 
 			return element.css(css);
