@@ -515,7 +515,7 @@
 			if (typeof properties.duration === 'undefined') {
 				element.css(css);
 			} else {
-				element.animate(css, properties.duration, properties.easing);
+				element.stop().animate(css, properties.duration, properties.easing);
 			}
 		},
 
@@ -555,17 +555,6 @@
 			$.extend(ClassicAccordionPanel.prototype, module);
 		}
 	};
-
-	/*
-		CSS3 Transitions module
-	*/
-	var CSS3Transitions = {
-		_animate: function(element, properties) {
-			element.bqTransition(properties);
-		}
-	};
-
-	$.ClassicAccordion.addPanelModule('CSS3Transitions', CSS3Transitions);
 
 	/*
 		Layers module
