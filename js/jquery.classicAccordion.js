@@ -48,6 +48,10 @@
 		// timer used for delaying the opening of the panel on mouse hover
 		this.mouseDelayTimer = 0;
 
+		// simple objects to be used for animation
+		this.animationStart = {progress: 0};
+		this.animationEnd = {progress: 1};
+
 		// init the accordion
 		this._init();
 	};
@@ -121,7 +125,7 @@
 			var that = this;
 
 			this.$accordion.find('.ca-panel').each(function(index, element) {
-				that._createPanel(index + 1, element);
+				that._createPanel(index, element);
 			});
 		},
 
@@ -210,7 +214,7 @@
 				} else if (this.computedOpenedPanelSize.indexOf('px') != -1) {
 					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
 				} else if (this.computedOpenedPanelSize == 'max') {
-					this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex - 1).outerWidth(true);
+					this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex).outerWidth(true);
 
 				}
 			}
@@ -253,13 +257,14 @@
 				var panel = that.panels[index];
 
 				// get the position of the panel based on the currently selected index and the panel's index
-				properties.position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.computedPanelDistance)) : (index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+				var position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.computedPanelDistance)) : (index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+				panel.setPosition(position);
 
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
-				if (that.computedPanelDistance !== 0)
-					properties.size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
-
-				panel.transform(properties, animate);
+				if (that.computedPanelDistance !== 0) {
+					var size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+					panel.setSize(size);
+				}
 			});
 		},
 
@@ -332,8 +337,44 @@
 
 			this.currentIndex = index;
 
-			// animate each panel to its position and size
-			this._transformPanels(true);
+			//reset the animation objects
+			this.animationStart = {progress: 0};
+			this.animationEnd = {progress: 1};
+
+			var that = this,
+				targetSize = [],
+				targetPosition = [],
+				startSize = [],
+				startPosition = [];
+
+			// get the starting and target size and position of each panel
+			$.each(this.panels, function(i) {
+				var panel = that.getPanelAt(i);
+				
+				targetPosition[i] = i * (that.collapsedPanelSize + that.computedPanelDistance) + (i > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+				startPosition[i] = panel.getPosition();
+
+				if (that.computedPanelDistance !== 0) {
+					targetSize[i] = i === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize;
+					startSize[i] = panel.getSize();
+				}
+			});
+
+			// animate the panels
+			$(this.animationStart).stop().animate(this.animationEnd, {
+				duration: this.settings.openPanelDuration,
+				easing: this.settings.openPanelEasing,
+				step: function(now) {
+					$.each(that.panels, function(i) {
+						var panel = that.getPanelAt(i);
+
+						if (that.computedPanelDistance !== 0)
+							panel.setSize(now * (targetSize[i] - startSize[i]) + startSize[i]);
+
+						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
+					});
+				}
+			});
 
 			// fire 'panelOpen' event
 			var eventObject = {type: 'panelOpen', index: index, previousIndex: previousIndex, element: this.getPanelAt(index)};
@@ -350,10 +391,46 @@
 
 			this.currentIndex = -1;
 
+			//reset the animation objects
+			this.animationStart = {progress: 0};
+			this.animationEnd = {progress: 1};
+
 			clearTimeout(this.mouseDelayTimer);
 
-			// animate each panel to its closed position and size
-			this._transformPanels(true);
+			var that = this,
+				targetSize = [],
+				targetPosition = [],
+				startSize = [],
+				startPosition = [];
+
+			// get the starting and target size and position of each panel
+			$.each(this.panels, function(i) {
+				var panel = that.getPanelAt(i);
+				
+				targetPosition[i] = i * (that.closedPanelSize + that.computedPanelDistance);
+				startPosition[i] = panel.getPosition();
+
+				if (that.computedPanelDistance !== 0) {
+					targetSize[i] = that.closedPanelSize;
+					startSize[i] = panel.getSize();
+				}
+			});
+
+			// animate the panels
+			$(this.animationStart).stop().animate(this.animationEnd, {
+				duration: this.settings.closePanelDuration,
+				easing: this.settings.closePanelEasing,
+				step: function(now) {
+					$.each(that.panels, function(i) {
+						var panel = that.getPanelAt(i);
+
+						if (that.computedPanelDistance !== 0)
+							panel.setSize(now * (targetSize[i] - startSize[i]) + startSize[i]);
+
+						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
+					});
+				}
+			});
 
 			// fire 'panelsClose' event
 			var eventObject = {type: 'panelsClose', previousIndex: previousIndex};
@@ -426,6 +503,9 @@
 		// reference to the global settings of the accordion
 		this.settings = settings;
 
+		this.positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top';
+		this.sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
+
 		// init the panel
 		this._init();
 	};
@@ -470,53 +550,31 @@
 		},
 
 		/*
-			Set the position (and size) of the panel
+			Return the position of the panel
 		*/
-		transform: function(props, animate) {
-			var properties = {},
-				positionProperty = this.settings.orientation == 'horizontal' ? 'x' : 'y',
-				sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
-
-			if (typeof props.position !== 'undefined')
-				properties[positionProperty] = props.position;
-
-			if (typeof props.size !== 'undefined')
-				properties[sizeProperty] = props.size;
-
-			if (typeof animate !== 'undefined') {
-				var duration = this.currentIndex == -1 ? this.settings.closePanelDuration : this.settings.openPanelDuration,
-					easing = this.currentIndex == -1 ? this.settings.closePanelEasing : this.settings.openPanelEasing;
-
-				properties.duration = duration;
-				properties.easing =  easing;
-			}
-
-			this._animate(this.$panel, properties);
+		getPosition: function() {
+			return parseInt(this.$panel.css(this.positionProperty), 10);
 		},
 
 		/*
-			Animate the panel to the specified position
+			Set the position of the panel
 		*/
-		_animate: function(element, properties) {
-			var css = {};
+		setPosition: function(value) {
+			this.$panel.css(this.positionProperty, value);
+		},
 
-			if (typeof properties.x !== 'undefined')
-				css.left = properties.x;
+		/*
+			Return the size of the panel
+		*/
+		getSize: function() {
+			return parseInt(this.$panel.css(this.sizeProperty), 10);
+		},
 
-			if (typeof properties.y !== 'undefined')
-				css.top = properties.y;
-
-			if (typeof properties.width !== 'undefined')
-				css.width = properties.width;
-
-			if (typeof properties.height !== 'undefined')
-				css.height = properties.height;
-
-			if (typeof properties.duration === 'undefined') {
-				element.css(css);
-			} else {
-				element.stop().animate(css, properties.duration, properties.easing);
-			}
+		/*
+			Set the size of the panel
+		*/
+		setSize: function(value) {
+			this.$panel.css(this.sizeProperty, value);
 		},
 
 		/*
