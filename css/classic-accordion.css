@@ -26,6 +26,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
+	margin: 0;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -52,7 +53,12 @@
 }
 
 .classic-accordion .ca-layer.ca-vertical {
-	-webkit-transform: rotate(-90deg);
+	-moz-transform: translate(-100%) rotate(-90deg);
+	-webkit-transform: translate(-100%) rotate(-90deg);
+	transform: translate(-100%) rotate(-90deg);
+	-moz-transform-origin: right top;
+	-webkit-transform-origin: right top;
+	transform-origin: right top;
 }
 
 .classic-accordion .ca-shadow-horizontal {
