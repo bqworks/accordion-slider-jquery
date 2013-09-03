@@ -9,9 +9,6 @@
 	display: block;
 	overflow: hidden;
 	background-color: #FFF;
-
-	/* workaround for Firefox bug that causes panels to dissapear */
-	transform: scale(1);
 }
 
 .classic-accordion.ca-horizontal .ca-panel {
@@ -20,6 +17,26 @@
 
 .classic-accordion.ca-vertical .ca-panel {
 	width: 100%;
+}
+
+
+.classic-accordion.ca-horizontal .ca-background,
+.classic-accordion.ca-horizontal .ca-background-opened {
+	display: block;
+	height: 100%;
+}
+
+.classic-accordion.ca-vertical .ca-background,
+.classic-accordion.ca-vertical .ca-background-opened {
+	display: block;
+	width: 100%;
+}
+
+.classic-accordion .ca-background-opened {
+	position: absolute;
+	left: 0;
+	top: 0;
+	visibility: hidden;
 }
 
 .classic-accordion .ca-layer {

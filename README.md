@@ -19,3 +19,5 @@ Features
 * easings
 * fullscreen
 * deep linking
+* size breakpoints
+* shadows ?

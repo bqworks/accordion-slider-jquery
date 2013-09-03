@@ -97,6 +97,14 @@
 			// set the initial size of the accordion
 			this.resize();
 
+			// init accordion modules
+			var modules = $.ClassicAccordion.accordionModules;
+
+			for (var i in modules) {
+				if (typeof this['init' + modules[i]] !== 'undefined')
+					this['init' + modules[i]]();
+			}
+
 			// listen for 'mouseenter' events
 			this.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
@@ -359,7 +367,7 @@
 			}
 
 			totalPanels = animatedPanels.length;
-			
+
 			// animate the panels
 			$(this.animationStart).stop().animate(this.animationEnd, {
 				duration: this.settings.openPanelDuration,
@@ -481,6 +489,7 @@
 			closePanelDuration: 700,
 			openPanelEasing: 'swing',
 			closePanelEasing: 'swing',
+			hoverDuration: 700,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -604,7 +613,7 @@
 		panelModules: [],
 
 		addAccordionModule: function(name, module) {
-			this.accordionModules.push(module);
+			this.accordionModules.push(name);
 
 			$.extend(ClassicAccordion.prototype, module);
 		},
@@ -618,6 +627,8 @@
 
 	/*
 		Layers module
+
+		Adds support for animated and static layers.
 	*/
 	var Layers = {
 
@@ -824,7 +835,7 @@
 
 			// animate the layers only for modern browsers
 			// for IE7 and below make the layers visible instantly
-			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 7) {
+			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8) {
 				this.$layer.css('visibility', 'visible')
 					.css(target);
 			} else {
@@ -943,6 +954,77 @@
 			}
 		}
 	};
+
+	/*
+		Swap Background module
+
+		Allows a different image to be displayed as the panel's background
+		when the panel is selected
+	*/
+	var SwapBackground = {
+
+		initSwapBackground: function() {
+			var that = this;
+
+			this.on('panelOpen.' + NS, function(event) {
+				// get the currently opened panel
+				var panel = that.getPanelAt(event.index),
+					background = panel.$panel.find('.ca-background'),
+					opened = panel.$panel.find('.ca-background-opened');
+
+				// fade in the opened content
+				if (opened.length !== 0) {
+					opened.css({'visibility': 'visible', 'opacity': 0})
+						.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+
+					if (background.length !== 0) {
+						background.stop().animate({'opacity': 0}, that.settings.hoverDuration);
+					}
+				}
+
+				if (event.previousIndex != -1) {
+					// get the previously opened panel
+					var previousPanel = that.getPanelAt(event.previousIndex),
+						previousBackground = previousPanel.$panel.find('.ca-background'),
+						previousOpened = previousPanel.$panel.find('.ca-background-opened');
+
+					// fade out the opened content
+					if (previousOpened.length !== 0) {
+						previousOpened.stop().animate({'opacity': 0}, that.settings.hoverDuration, function() {
+							previousOpened.css({'visibility': 'hidden'});
+						});
+
+						if (previousBackground.length !== 0) {
+							previousBackground.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+						}
+					}
+				}
+			});
+
+			this.on('panelsClose.' + NS, function(event) {
+				if (event.previousIndex == -1)
+					return;
+
+				// get the previously opened panel
+				var panel = that.getPanelAt(event.previousIndex),
+					background = panel.$panel.find('.ca-background'),
+					opened = panel.$panel.find('.ca-background-opened');
+
+				// fade out the opened content
+				if (opened.length !== 0) {
+					opened.stop().animate({'opacity': 0}, that.settings.hoverDuration, function() {
+						opened.css({'visibility': 'hidden'});
+					});
+
+					if (background.length !== 0) {
+						background.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+					}
+				}
+			});
+		}
+	};
+
+	$.ClassicAccordion.addAccordionModule('SwapBackground', SwapBackground);
 
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
