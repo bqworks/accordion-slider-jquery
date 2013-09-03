@@ -242,17 +242,7 @@
 			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
 			this.closedPanelSize = Math.floor(this.closedPanelSize);
 
-			// set the initial position and size of the panels
-			this._transformPanels();
-		},
-
-		/*
-			change the position (and size) of the panels
-		*/
-		_transformPanels: function(animate) {
-			var that = this,
-				properties = {};
-
+			// set the position and size of each panel
 			$.each(this.panels, function(index) {
 				var panel = that.panels[index];
 
@@ -477,8 +467,8 @@
 			panelDistance: 0,
 			openPanelDuration: 700,
 			closePanelDuration: 700,
-			openPanelEasing: 'linear',
-			closePanelEasing: 'linear',
+			openPanelEasing: 'swing',
+			closePanelEasing: 'swing',
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
