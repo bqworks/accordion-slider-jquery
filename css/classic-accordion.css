@@ -9,9 +9,6 @@
 	display: block;
 	overflow: hidden;
 	background-color: #FFF;
-
-	/* workaround for Firefox bug that causes panels to dissapear */
-	transform: scale(1);
 }
 
 .classic-accordion.ca-horizontal .ca-panel {
@@ -22,10 +19,31 @@
 	width: 100%;
 }
 
+
+.classic-accordion.ca-horizontal .ca-background,
+.classic-accordion.ca-horizontal .ca-background-opened {
+	display: block;
+	height: 100%;
+}
+
+.classic-accordion.ca-vertical .ca-background,
+.classic-accordion.ca-vertical .ca-background-opened {
+	display: block;
+	width: 100%;
+}
+
+.classic-accordion .ca-background-opened {
+	position: absolute;
+	left: 0;
+	top: 0;
+	visibility: hidden;
+}
+
 .classic-accordion .ca-layer {
 	position: absolute;
 	top: 0;
 	left: 0;
+	margin: 0;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -52,7 +70,12 @@
 }
 
 .classic-accordion .ca-layer.ca-vertical {
-	-webkit-transform: rotate(-90deg);
+	-moz-transform: translate(-100%) rotate(-90deg);
+	-webkit-transform: translate(-100%) rotate(-90deg);
+	transform: translate(-100%) rotate(-90deg);
+	-moz-transform-origin: right top;
+	-webkit-transform-origin: right top;
+	transform-origin: right top;
 }
 
 .classic-accordion .ca-shadow-horizontal {

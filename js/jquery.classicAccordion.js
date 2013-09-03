@@ -48,6 +48,10 @@
 		// timer used for delaying the opening of the panel on mouse hover
 		this.mouseDelayTimer = 0;
 
+		// simple objects to be used for animation
+		this.animationStart = {progress: 0};
+		this.animationEnd = {progress: 1};
+
 		// init the accordion
 		this._init();
 	};
@@ -93,6 +97,14 @@
 			// set the initial size of the accordion
 			this.resize();
 
+			// init accordion modules
+			var modules = $.ClassicAccordion.accordionModules;
+
+			for (var i in modules) {
+				if (typeof this['init' + modules[i]] !== 'undefined')
+					this['init' + modules[i]]();
+			}
+
 			// listen for 'mouseenter' events
 			this.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
@@ -121,7 +133,7 @@
 			var that = this;
 
 			this.$accordion.find('.ca-panel').each(function(index, element) {
-				that._createPanel(index + 1, element);
+				that._createPanel(index, element);
 			});
 		},
 
@@ -210,7 +222,7 @@
 				} else if (this.computedOpenedPanelSize.indexOf('px') != -1) {
 					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
 				} else if (this.computedOpenedPanelSize == 'max') {
-					this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex - 1).outerWidth(true);
+					this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex).outerWidth(true);
 
 				}
 			}
@@ -238,28 +250,19 @@
 			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
 			this.closedPanelSize = Math.floor(this.closedPanelSize);
 
-			// set the initial position and size of the panels
-			this._transformPanels();
-		},
-
-		/*
-			change the position (and size) of the panels
-		*/
-		_transformPanels: function(animate) {
-			var that = this,
-				properties = {};
-
+			// set the position and size of each panel
 			$.each(this.panels, function(index) {
 				var panel = that.panels[index];
 
 				// get the position of the panel based on the currently selected index and the panel's index
-				properties.position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.computedPanelDistance)) : (index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex - 1 ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+				var position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.computedPanelDistance)) : (index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+				panel.setPosition(position);
 
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
-				if (that.computedPanelDistance !== 0)
-					properties.size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index + 1 === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
-
-				panel.transform(properties, animate);
+				if (that.computedPanelDistance !== 0) {
+					var size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+					panel.setSize(size);
+				}
 			});
 		},
 
@@ -332,8 +335,55 @@
 
 			this.currentIndex = index;
 
-			// animate each panel to its position and size
-			this._transformPanels(true);
+			//reset the animation objects
+			this.animationStart = {progress: 0};
+			this.animationEnd = {progress: 1};
+
+			var that = this,
+				targetSize = [],
+				targetPosition = [],
+				startSize = [],
+				startPosition = [],
+				animatedPanels = [],
+				totalPanels = this.getTotalPanels();
+
+			// get the starting and target size and position of each panel
+			for (var i = 0; i < totalPanels; i++) {
+				var panel = that.getPanelAt(i);
+				
+				targetPosition[i] = i * (that.collapsedPanelSize + that.computedPanelDistance) + (i > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+				startPosition[i] = panel.getPosition();
+
+				if (targetPosition[i] != startPosition[i])
+					animatedPanels.push(i);
+
+				if (that.computedPanelDistance !== 0) {
+					targetSize[i] = i === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize;
+					startSize[i] = panel.getSize();
+
+					if (targetSize[i] != startSize[i] && !$.inArray(i, animatedPanels))
+						animatedPanels.push(i);
+				}
+			}
+
+			totalPanels = animatedPanels.length;
+
+			// animate the panels
+			$(this.animationStart).stop().animate(this.animationEnd, {
+				duration: this.settings.openPanelDuration,
+				easing: this.settings.openPanelEasing,
+				step: function(now) {
+					for (var i = 0; i < totalPanels; i++) {
+						var value = animatedPanels[i],
+							panel = that.getPanelAt(value);
+
+						if (that.computedPanelDistance !== 0)
+							panel.setSize(now * (targetSize[value] - startSize[value]) + startSize[value]);
+
+						panel.setPosition(now * (targetPosition[value] - startPosition[value]) + startPosition[value]);
+					}
+				}
+			});
 
 			// fire 'panelOpen' event
 			var eventObject = {type: 'panelOpen', index: index, previousIndex: previousIndex, element: this.getPanelAt(index)};
@@ -350,10 +400,47 @@
 
 			this.currentIndex = -1;
 
+			//reset the animation objects
+			this.animationStart = {progress: 0};
+			this.animationEnd = {progress: 1};
+
 			clearTimeout(this.mouseDelayTimer);
 
-			// animate each panel to its closed position and size
-			this._transformPanels(true);
+			var that = this,
+				targetSize = [],
+				targetPosition = [],
+				startSize = [],
+				startPosition = [],
+				totalPanels = this.getTotalPanels();
+
+			// get the starting and target size and position of each panel
+			for (var i = 0; i < totalPanels; i++) {
+				var panel = that.getPanelAt(i);
+				
+				targetPosition[i] = i * (that.closedPanelSize + that.computedPanelDistance);
+				startPosition[i] = panel.getPosition();
+
+				if (that.computedPanelDistance !== 0) {
+					targetSize[i] = that.closedPanelSize;
+					startSize[i] = panel.getSize();
+				}
+			}
+
+			// animate the panels
+			$(this.animationStart).stop().animate(this.animationEnd, {
+				duration: this.settings.closePanelDuration,
+				easing: this.settings.closePanelEasing,
+				step: function(now) {
+					for (var i = 0; i < totalPanels; i++) {
+						var panel = that.getPanelAt(i);
+
+						if (that.computedPanelDistance !== 0)
+							panel.setSize(now * (targetSize[i] - startSize[i]) + startSize[i]);
+
+						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
+					}
+				}
+			});
 
 			// fire 'panelsClose' event
 			var eventObject = {type: 'panelsClose', previousIndex: previousIndex};
@@ -400,8 +487,9 @@
 			panelDistance: 0,
 			openPanelDuration: 700,
 			closePanelDuration: 700,
-			openPanelEasing: 'linear',
-			closePanelEasing: 'linear',
+			openPanelEasing: 'swing',
+			closePanelEasing: 'swing',
+			hoverDuration: 700,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -425,6 +513,9 @@
 
 		// reference to the global settings of the accordion
 		this.settings = settings;
+
+		this.positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top';
+		this.sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
 
 		// init the panel
 		this._init();
@@ -470,53 +561,31 @@
 		},
 
 		/*
-			Set the position (and size) of the panel
+			Return the position of the panel
 		*/
-		transform: function(props, animate) {
-			var properties = {},
-				positionProperty = this.settings.orientation == 'horizontal' ? 'x' : 'y',
-				sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
-
-			if (typeof props.position !== 'undefined')
-				properties[positionProperty] = props.position;
-
-			if (typeof props.size !== 'undefined')
-				properties[sizeProperty] = props.size;
-
-			if (typeof animate !== 'undefined') {
-				var duration = this.currentIndex == -1 ? this.settings.closePanelDuration : this.settings.openPanelDuration,
-					easing = this.currentIndex == -1 ? this.settings.closePanelEasing : this.settings.openPanelEasing;
-
-				properties.duration = duration;
-				properties.easing =  easing;
-			}
-
-			this._animate(this.$panel, properties);
+		getPosition: function() {
+			return parseInt(this.$panel.css(this.positionProperty), 10);
 		},
 
 		/*
-			Animate the panel to the specified position
+			Set the position of the panel
 		*/
-		_animate: function(element, properties) {
-			var css = {};
+		setPosition: function(value) {
+			this.$panel.css(this.positionProperty, value);
+		},
 
-			if (typeof properties.x !== 'undefined')
-				css.left = properties.x;
+		/*
+			Return the size of the panel
+		*/
+		getSize: function() {
+			return parseInt(this.$panel.css(this.sizeProperty), 10);
+		},
 
-			if (typeof properties.y !== 'undefined')
-				css.top = properties.y;
-
-			if (typeof properties.width !== 'undefined')
-				css.width = properties.width;
-
-			if (typeof properties.height !== 'undefined')
-				css.height = properties.height;
-
-			if (typeof properties.duration === 'undefined') {
-				element.css(css);
-			} else {
-				element.animate(css, properties.duration, properties.easing);
-			}
+		/*
+			Set the size of the panel
+		*/
+		setSize: function(value) {
+			this.$panel.css(this.sizeProperty, value);
 		},
 
 		/*
@@ -544,7 +613,7 @@
 		panelModules: [],
 
 		addAccordionModule: function(name, module) {
-			this.accordionModules.push(module);
+			this.accordionModules.push(name);
 
 			$.extend(ClassicAccordion.prototype, module);
 		},
@@ -557,18 +626,9 @@
 	};
 
 	/*
-		CSS3 Transitions module
-	*/
-	var CSS3Transitions = {
-		_animate: function(element, properties) {
-			element.bqTransition(properties);
-		}
-	};
-
-	$.ClassicAccordion.addPanelModule('CSS3Transitions', CSS3Transitions);
-
-	/*
 		Layers module
+
+		Adds support for animated and static layers.
 	*/
 	var Layers = {
 
@@ -775,7 +835,7 @@
 
 			// animate the layers only for modern browsers
 			// for IE7 and below make the layers visible instantly
-			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 7) {
+			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8) {
 				this.$layer.css('visibility', 'visible')
 					.css(target);
 			} else {
@@ -895,6 +955,77 @@
 		}
 	};
 
+	/*
+		Swap Background module
+
+		Allows a different image to be displayed as the panel's background
+		when the panel is selected
+	*/
+	var SwapBackground = {
+
+		initSwapBackground: function() {
+			var that = this;
+
+			this.on('panelOpen.' + NS, function(event) {
+				// get the currently opened panel
+				var panel = that.getPanelAt(event.index),
+					background = panel.$panel.find('.ca-background'),
+					opened = panel.$panel.find('.ca-background-opened');
+
+				// fade in the opened content
+				if (opened.length !== 0) {
+					opened.css({'visibility': 'visible', 'opacity': 0})
+						.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+
+					if (background.length !== 0) {
+						background.stop().animate({'opacity': 0}, that.settings.hoverDuration);
+					}
+				}
+
+				if (event.previousIndex != -1) {
+					// get the previously opened panel
+					var previousPanel = that.getPanelAt(event.previousIndex),
+						previousBackground = previousPanel.$panel.find('.ca-background'),
+						previousOpened = previousPanel.$panel.find('.ca-background-opened');
+
+					// fade out the opened content
+					if (previousOpened.length !== 0) {
+						previousOpened.stop().animate({'opacity': 0}, that.settings.hoverDuration, function() {
+							previousOpened.css({'visibility': 'hidden'});
+						});
+
+						if (previousBackground.length !== 0) {
+							previousBackground.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+						}
+					}
+				}
+			});
+
+			this.on('panelsClose.' + NS, function(event) {
+				if (event.previousIndex == -1)
+					return;
+
+				// get the previously opened panel
+				var panel = that.getPanelAt(event.previousIndex),
+					background = panel.$panel.find('.ca-background'),
+					opened = panel.$panel.find('.ca-background-opened');
+
+				// fade out the opened content
+				if (opened.length !== 0) {
+					opened.stop().animate({'opacity': 0}, that.settings.hoverDuration, function() {
+						opened.css({'visibility': 'hidden'});
+					});
+
+					if (background.length !== 0) {
+						background.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+					}
+				}
+			});
+		}
+	};
+
+	$.ClassicAccordion.addAccordionModule('SwapBackground', SwapBackground);
+
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
 			new ClassicAccordion(this, options);
@@ -903,136 +1034,5 @@
 
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;
-
-	/*
-		Handles object animation by using CSS3 transitions where supported and jQuery animations otherwise
-	*/
-	$.bqTransition = {
-		// indicates whether the plugin was initiated
-		initiated: false,
-
-		/*
-			Check if the browser supports CSS3 transitions
-		*/
-		init: function() {
-
-			// check if 2D and 3D transforms are supported
-			// inspired by Modernizr
-			var div = document.createElement('div');
-
-			// check if 2D transforms are supported
-			this.useTransforms = typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style['transform'] !== 'undefined';
-
-			// check if 3D transforms are supported
-			this.use3DTransforms = typeof div.style['WebkitPerspective'] !== 'undefined' || typeof div.style['perspective'] !== 'undefined';
-
-			// additional checks for Webkit
-			if (this.use3DTransforms && typeof div.style['WebkitPerspective'] !== 'undefined') {
-				var style = document.createElement('style');
-				style.textContent = '@media (transform-3d),(-webkit-transform-3d){#test-3d{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0;}}';
-				document.getElementsByTagName('head')[0].appendChild(style);
-
-				div.id = 'test-3d';
-				document.body.appendChild(div);
-				this.use3DTransforms = div.offsetLeft === 9 && div.offsetHeight === 5;
-
-				style.parentNode.removeChild(style);
-				div.parentNode.removeChild(div);
-			}
-		},
-
-		animate: function(element, properties) {
-			if (this.initiated === false) {
-				this.initiated = true;
-				this.init();
-			}
-
-			if (this.useTransforms) {
-				properties.use3DTransforms = this.use3DTransforms;
-				return this._animateUsingTranslate(element, properties);
-			} else {
-				return this._animateUsingJavaScript(element, properties);
-			}
-		},
-
-		_animateUsingTranslate: function(element, properties) {
-			var css = {},
-				x = 0,
-				y = 0,
-				transition;
-
-			if (typeof properties.x !== 'undefined')
-				x = properties.x;
-
-			if (typeof properties.y !== 'undefined')
-				y = properties.y;
-
-			if (typeof properties.use3DTransforms !== 'undefined' && properties.use3DTransforms === true)
-				css.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0)';
-			else
-				css.transform = 'translate(' + x + 'px, ' + y + 'px)';
-
-			if (typeof properties.width !== 'undefined')
-				css.width = properties.width;
-
-			if (typeof properties.height !== 'undefined')
-				css.height = properties.height;
-
-			if (typeof properties.duration === 'undefined')
-				transition = 'none';
-			else
-				transition = 'all ' + properties.duration / 1000 + 's';
-
-			if (typeof properties.easing !== 'undefined')
-				transition += ' ' + properties.easing;
-
-			if (typeof properties.delay !== 'undefined')
-				transition += ' ' + properties.delay / 1000 + 's';
-
-			if (typeof properties.callback !== 'undefined')
-				element.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
-					element.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
-					properties.callback();
-				});
-
-			css.transition = transition;
-
-			return element.css(css);
-		},
-
-		_animateUsingJavaScript: function(element, properties) {
-			var css = {};
-
-			if (typeof properties.x !== 'undefined')
-				css.left = properties.x;
-
-			if (typeof properties.y !== 'undefined')
-				css.top = properties.y;
-
-			if (typeof properties.width !== 'undefined')
-				css.width = properties.width;
-
-			if (typeof properties.height !== 'undefined')
-				css.height = properties.height;
-
-			if (typeof properties.duration === 'undefined') {
-				return element.css(css);
-			} else {
-				if (typeof properties.delay !== 'undefined')
-					element.delay(properties.delay);
-
-				return element.animate(css, properties.duration, properties.easing);
-			}
-		}
-	};
-
-	/*
-		bqTransition plugin adds animations that support CSS3 transitions
-	*/
-	$.fn.bqTransition = function(options) {
-		return this.each(function() {
-			$.bqTransition.animate($(this), options);
-		});
-	};
 
 })(window, jQuery);

@@ -25,7 +25,7 @@
 						orientation: 'horizontal',
 						openPanelOn: 'hover',
 						closePanelsOnMouseOut: true,
-						panelDistance: 10
+						panelDistance: 0
 						// accordionMouseOver: function(obj) {console.log('accordion mouse over');},
 						// accordionMouseOut: function(obj) {console.log('accordion mouse out');},
 						// panelClick: function(obj) {console.log('panel click', obj.index, obj.element);},
@@ -41,18 +41,6 @@
 	
 </script>
 
-<style>
-	a {
-		display: block;
-		height: 100%;
-	}
-
-	img {
-		display: block;
-		height: 100%;
-	}
-</style>
-
 </head>
 
 <body>
@@ -60,14 +48,14 @@
 	<div class="classic-accordion">
 		<div class="ca-panel">
 			<a href="#">
-				<img src="http://bqworks.com/products/grid-accordion/images/1.jpg"/>
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/1.jpg"/>
 			</a>
 
-			<p class="ca-layer ca-always ca-black" 
-			   data-horizontal="center" 
-			   data-vertical="center" 
-			   data-width="200" 
-			   data-height="30">
+			<a href="#">
+				<img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/9.jpg"/>
+			</a>
+
+			<p class="ca-layer ca-always ca-black ca-vertical ca-padding">
 				Panel 1 Layer 1
 			</p>
 			<div class="ca-layer ca-opened ca-white" 
@@ -92,9 +80,8 @@
 		</div>
 
         <div class="ca-panel">
-			<a href="#">
-				<img src="http://bqworks.com/products/grid-accordion/images/2.jpg"/>
-			</a>
+			<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/2.jpg"/>
+			<img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/10.jpg"/>
 
 			<!-- <p class="ca-layer ca-always ca-black ca-vertical">Panel 1 Layer 1</p>
 			<div class="ca-layer ca-opened ca-white">Panel 1 Layer 2</div>
@@ -103,37 +90,37 @@
 
         <div class="ca-panel">
 			<a href="#">
-				<img src="http://bqworks.com/products/grid-accordion/images/3.jpg"/> 
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/3.jpg"/> 
 			</a>
 		</div>
 
         <div class="ca-panel">
 			<a href="#">
-				<img src="http://bqworks.com/products/grid-accordion/images/4.jpg"/>
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/4.jpg"/>
 			</a>
 		</div>
 
         <div class="ca-panel">
 			<a href="#">
-				<img src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
 			</a>
 		</div>
 
         <div class="ca-panel">
 			<a href="#">
-				<img src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
 			</a>
 		</div>
 
         <div class="ca-panel">
 			<a href="#">
-			<img src="http://bqworks.com/products/grid-accordion/images/7.jpg"/> 
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/7.jpg"/> 
 			</a>
 		</div>
 
         <div class="ca-panel">
 			<a href="#">
-				<img src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
 			</a>
 		</div>
     </div>
