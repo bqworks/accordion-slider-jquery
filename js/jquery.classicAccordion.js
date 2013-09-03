@@ -105,6 +105,17 @@
 					this['init' + modules[i]]();
 			}
 
+			// if there is a panel opened at start handle that panel as if it was manually opened
+			if (this.currentIndex != -1) {
+				this.$accordion.find('.ca-panel').eq(this.currentIndex).addClass('ca-opened');
+
+				// fire 'panelOpen' event
+				var eventObject = {type: 'panelOpen', index: this.currentIndex, previousIndex: -1, element: this.getPanelAt(this.currentIndex)};
+				this.trigger(eventObject);
+				if ($.isFunction(this.settings.panelOpen))
+					this.settings.panelOpen.call(this, eventObject);
+			}
+
 			// listen for 'mouseenter' events
 			this.on('mouseenter.' + NS, function(event) {
 				var eventObject = {type: 'accordionMouseOver'};
@@ -346,6 +357,9 @@
 				startPosition = [],
 				animatedPanels = [],
 				totalPanels = this.getTotalPanels();
+
+			this.$accordion.find('.ca-opened').removeClass('ca-opened');
+			this.$accordion.find('.ca-panel').eq(this.currentIndex).addClass('ca-opened');
 
 			// get the starting and target size and position of each panel
 			for (var i = 0; i < totalPanels; i++) {
