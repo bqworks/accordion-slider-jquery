@@ -1040,6 +1040,56 @@
 
 	$.ClassicAccordion.addAccordionModule('SwapBackground', SwapBackground);
 
+	/*
+		Deep Linking module
+
+		Adds the possibility to access the accordion using hyperlinks
+	*/
+	var DeepLinking = {
+
+		initDeepLinking: function() {
+			var that = this;
+
+			// parse the initial hash
+			this.parseHash(window.location.hash);
+			
+			// check when the hash changes
+			$(window).on('hashchange', function() {
+				that.parseHash(window.location.hash);
+			});
+		},
+
+		parseHash: function(hash) {
+			if (hash !== '') {
+				// eliminate the # symbol
+				hash = hash.substring(1);
+				
+				// get the specified accordion id and panel id
+				var values = hash.split('-'),
+					panelId = values.pop(),
+					accordionId = hash.replace('-' + panelId, '');
+
+				if (this.$accordion.attr('id') == accordionId) {
+					var panelIdNumber = parseInt(panelId, 10);
+
+					// check if the specified panel id is a number or string
+					if (isNaN(panelIdNumber)) {
+						// get the index of the panel based on the specified id
+						var panelIndex = this.$accordion.find('.ca-panel#' + panelId).index();
+
+						if (panelIndex != -1)
+							this.openPanel(panelIndex);
+					} else if (panelIdNumber >= 0 && panelIdNumber < this.getTotalPanels()){
+						this.openPanel(panelIdNumber);
+					}
+				}
+					
+			}
+		}
+	};
+
+	$.ClassicAccordion.addAccordionModule('DeepLinking', DeepLinking);
+
 	$.fn.classicAccordion = function(options) {
 		return this.each(function() {
 			new ClassicAccordion(this, options);

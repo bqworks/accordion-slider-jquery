@@ -4,7 +4,7 @@ classic-accordion
 Features
 
 ** responsive
-* layers - opened, closed, title, rotated
+** layers - opened, closed, title, rotated
 ** synced panel animations
 * responsive content (from layers)
 * pagination
@@ -18,6 +18,6 @@ Features
 * XML
 * easings
 * fullscreen
-* deep linking
+** deep linking
 * size breakpoints
 * shadows ?
