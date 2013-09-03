@@ -335,34 +335,45 @@
 				targetSize = [],
 				targetPosition = [],
 				startSize = [],
-				startPosition = [];
+				startPosition = [],
+				animatedPanels = [],
+				totalPanels = this.getTotalPanels();
 
 			// get the starting and target size and position of each panel
-			$.each(this.panels, function(i) {
+			for (var i = 0; i < totalPanels; i++) {
 				var panel = that.getPanelAt(i);
 				
 				targetPosition[i] = i * (that.collapsedPanelSize + that.computedPanelDistance) + (i > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
 				startPosition[i] = panel.getPosition();
 
+				if (targetPosition[i] != startPosition[i])
+					animatedPanels.push(i);
+
 				if (that.computedPanelDistance !== 0) {
 					targetSize[i] = i === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize;
 					startSize[i] = panel.getSize();
-				}
-			});
 
+					if (targetSize[i] != startSize[i] && !$.inArray(i, animatedPanels))
+						animatedPanels.push(i);
+				}
+			}
+
+			totalPanels = animatedPanels.length;
+			
 			// animate the panels
 			$(this.animationStart).stop().animate(this.animationEnd, {
 				duration: this.settings.openPanelDuration,
 				easing: this.settings.openPanelEasing,
 				step: function(now) {
-					$.each(that.panels, function(i) {
-						var panel = that.getPanelAt(i);
+					for (var i = 0; i < totalPanels; i++) {
+						var value = animatedPanels[i],
+							panel = that.getPanelAt(value);
 
 						if (that.computedPanelDistance !== 0)
-							panel.setSize(now * (targetSize[i] - startSize[i]) + startSize[i]);
+							panel.setSize(now * (targetSize[value] - startSize[value]) + startSize[value]);
 
-						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
-					});
+						panel.setPosition(now * (targetPosition[value] - startPosition[value]) + startPosition[value]);
+					}
 				}
 			});
 
@@ -391,10 +402,11 @@
 				targetSize = [],
 				targetPosition = [],
 				startSize = [],
-				startPosition = [];
+				startPosition = [],
+				totalPanels = this.getTotalPanels();
 
 			// get the starting and target size and position of each panel
-			$.each(this.panels, function(i) {
+			for (var i = 0; i < totalPanels; i++) {
 				var panel = that.getPanelAt(i);
 				
 				targetPosition[i] = i * (that.closedPanelSize + that.computedPanelDistance);
@@ -404,21 +416,21 @@
 					targetSize[i] = that.closedPanelSize;
 					startSize[i] = panel.getSize();
 				}
-			});
+			}
 
 			// animate the panels
 			$(this.animationStart).stop().animate(this.animationEnd, {
 				duration: this.settings.closePanelDuration,
 				easing: this.settings.closePanelEasing,
 				step: function(now) {
-					$.each(that.panels, function(i) {
+					for (var i = 0; i < totalPanels; i++) {
 						var panel = that.getPanelAt(i);
 
 						if (that.computedPanelDistance !== 0)
 							panel.setSize(now * (targetSize[i] - startSize[i]) + startSize[i]);
 
 						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
-					});
+					}
 				}
 			});
 
