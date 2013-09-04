@@ -23,9 +23,9 @@
 						startPanel: 1,
 						aspectRatio: 2,
 						orientation: 'horizontal',
-						openPanelOn: 'click',
+						openPanelOn: 'hover',
 						closePanelsOnMouseOut: true,
-						panelDistance: 0
+						panelDistance: 10
 						// accordionMouseOver: function(obj) {console.log('accordion mouse over');},
 						// accordionMouseOut: function(obj) {console.log('accordion mouse out');},
 						// panelClick: function(obj) {console.log('panel click', obj.index, obj.element);},
@@ -34,8 +34,12 @@
 
 					});
 
-		$('.classic-accordion').on('panelMouseOver', function(event) {
-			$('.classic-accordion').classicAccordion('openPanel', event.index);
+		$(window).on('click', function(event) {
+			$('.classic-accordion').classicAccordion({width: 700, height: 500, responsive: false, orientation: 'vertical'});
+		});
+
+		$(window).on('dblclick', function(event) {
+			$('.classic-accordion').classicAccordion({width: '100%', height: 300, responsive: true, orientation: 'horizontal'});
 		});
 	});
 	

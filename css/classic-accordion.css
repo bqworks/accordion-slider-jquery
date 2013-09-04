@@ -13,10 +13,12 @@
 
 .classic-accordion.ca-horizontal .ca-panel {
 	height: 100%;
+	width: auto;
 }
 
 .classic-accordion.ca-vertical .ca-panel {
 	width: 100%;
+	height: auto;
 }
 
 

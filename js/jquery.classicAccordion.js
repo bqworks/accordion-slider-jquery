@@ -40,7 +40,7 @@
 		this.closedPanelSize = 0;
 
 		// the distance, in pixels, between the accordion's panels
-		this.computedPanelDistance = this.settings.panelDistance;
+		this.computedPanelDistance = 0;
 
 		// array that contains the ClassicAccordionPanel objects
 		this.panels = [];
@@ -62,40 +62,13 @@
 			The starting place for the accordion
 		*/
 		_init: function() {
+			var that = this;
 
-			// create the accordion
-			this.create();
+			// create the panels
+			this.createPanels();
 
-			// add a class to the accordion based on the orientation
-			// to be used in CSS
-			if (this.settings.orientation == 'horizontal')
-				this.$accordion.addClass('ca-horizontal');
-			else if (this.settings.orientation == 'vertical')
-				this.$accordion.addClass('ca-vertical');
-
-			// prepare the accordion for responsiveness
-			if (this.settings.responsive) {
-				// if the accordion is responsive set the width to 100% and use
-				// the specified width and height as a max-width and max-height
-				this.$accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
-
-				// if an aspect ratio was not specified, set the aspect ratio
-				// based on the specified width and height
-				if (this.settings.aspectRatio == -1)
-					this.settings.aspectRatio = this.settings.width / this.settings.height;
-
-				var that = this;
-
-				// resize the accordion when the browser resizes
-				$(window).on('resize.' + NS, function() {
-					that.resize();
-				});
-			} else {
-				this.$accordion.css({width: this.settings.width, height: this.settings.height});
-			}
-
-			// set the initial size of the accordion
-			this.resize();
+			// set the size and orientation of the accordion
+			this.refresh();
 
 			// init accordion modules
 			var modules = $.ClassicAccordion.accordionModules;
@@ -138,9 +111,53 @@
 		},
 
 		/*
+			Refresh the accordion after a property was changed or panels were added/removed
+		*/
+		refresh: function() {
+			var that = this;
+
+			// add a class to the accordion based on the orientation
+			// to be used in CSS
+			if (this.settings.orientation == 'horizontal')
+				this.$accordion.removeClass('ca-vertical').addClass('ca-horizontal');
+			else if (this.settings.orientation == 'vertical')
+				this.$accordion.removeClass('ca-horizontal').addClass('ca-vertical');
+
+			// prepare the accordion for responsiveness
+			if (this.settings.responsive) {
+				// if the accordion is responsive set the width to 100% and use
+				// the specified width and height as a max-width and max-height
+				this.$accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
+
+				// if an aspect ratio was not specified, set the aspect ratio
+				// based on the specified width and height
+				if (this.settings.aspectRatio == -1)
+					this.settings.aspectRatio = this.settings.width / this.settings.height;
+
+				// resize the accordion when the browser resizes
+				$(window).on('resize.' + NS, function() {
+					that.resize();
+				});
+			} else {
+				this.$accordion.css({width: this.settings.width, height: this.settings.height, maxWidth: '', maxHeight: ''});
+			}
+
+			this.computedPanelDistance = this.settings.panelDistance;
+
+			// refresh panels
+			$.each(this.panels, function(index) {
+				var panel = that.panels[index];
+				panel.refresh();
+			});
+
+			// set the size of the accordion
+			this.resize();
+		},
+
+		/*
 			Create the panels based on the HTML specified in the accordion
 		*/
-		create: function() {
+		createPanels: function() {
 			var that = this;
 
 			this.$accordion.find('.ca-panel').each(function(index, element) {
@@ -278,6 +295,20 @@
 		},
 
 		/*
+			Set a property on runtime
+		*/
+		setProperty: function(name, value) {
+			// check if a single property is passed or an array of properties
+			if (typeof name === 'string')
+				this.settings[name] = value;
+			else if (typeof name === 'object')
+				for (var prop in name)
+					this.settings[prop] = name[prop];
+
+			this.refresh();
+		},
+
+		/*
 			Attach an event handler to the accordion
 		*/
 		on: function(type, callback) {
@@ -368,15 +399,16 @@
 				targetPosition[i] = i * (that.collapsedPanelSize + that.computedPanelDistance) + (i > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
 				startPosition[i] = panel.getPosition();
 
-				if (targetPosition[i] != startPosition[i])
+				if (targetPosition[i] !== startPosition[i])
 					animatedPanels.push(i);
 
 				if (that.computedPanelDistance !== 0) {
 					targetSize[i] = i === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize;
 					startSize[i] = panel.getSize();
 
-					if (targetSize[i] != startSize[i] && !$.inArray(i, animatedPanels))
+					if (targetSize[i] !== startSize[i] && $.inArray(i, animatedPanels) == -1) {
 						animatedPanels.push(i);
+					}
 				}
 			}
 
@@ -528,9 +560,6 @@
 		// reference to the global settings of the accordion
 		this.settings = settings;
 
-		this.positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top';
-		this.sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
-
 		// init the panel
 		this._init();
 	};
@@ -558,6 +587,9 @@
 				that.trigger({type: 'panelClick.' + NS, index: that.index});
 			});
 
+			// set position and size properties
+			this.refresh();
+
 			// init panel modules
 			var modules = $.ClassicAccordion.panelModules;
 
@@ -565,6 +597,18 @@
 				if (typeof this['init' + modules[i]] !== 'undefined')
 					this['init' + modules[i]]();
 			}
+		},
+
+		/*
+			Refresh the panel
+		*/
+		refresh: function() {
+			// get the new position and size properties
+			this.positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top';
+			this.sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
+
+			// reset the current size and position
+			this.$panel.css({top: '', left: '', width: '', height: ''});
 		},
 
 		/*
@@ -1094,18 +1138,25 @@
 		var args = Array.prototype.slice.call(arguments, 1);
 
 		return this.each(function() {
-			if (typeof options === 'string') {
+			// instantiate the accordion or alter it
+			if (typeof $(this).data('classicAccordion') === 'undefined') {
+				var newInstance = new ClassicAccordion(this, options);
+
+				// store a reference to the instance created
+				$(this).data('classicAccordion', newInstance);
+			} else if (typeof options !== 'undefined') {
 				var	currentInstance = $(this).data('classicAccordion');
 
+				// check the type of argument passed
 				if (typeof currentInstance[options] === 'function')
 					currentInstance[options].apply(currentInstance, args);
+				else if (typeof currentInstance.settings[options] !== 'undefined')
+					currentInstance.setProperty(options, args[0]);
+				else if (typeof options === 'object')
+					currentInstance.setProperty(options);
 				else
-					$.error('Method ' + options + ' does not exist in classicAccordion.');
-			} else if (typeof $(this).data('classicAccordion') === 'undefined') {
-				var newInstance = new ClassicAccordion(this, options);
-				$(this).data('classicAccordion', newInstance);
+					$.error(options + ' does not exist in classicAccordion.');
 			}
-			
 		});
 	};
 
