@@ -1091,8 +1091,21 @@
 	$.ClassicAccordion.addAccordionModule('DeepLinking', DeepLinking);
 
 	$.fn.classicAccordion = function(options) {
+		var args = Array.prototype.slice.call(arguments, 1);
+
 		return this.each(function() {
-			new ClassicAccordion(this, options);
+			if (typeof options === 'string') {
+				var	currentInstance = $(this).data('classicAccordion');
+
+				if (typeof currentInstance[options] === 'function')
+					currentInstance[options].apply(currentInstance, args);
+				else
+					$.error('Method ' + options + ' does not exist in classicAccordion.');
+			} else if (typeof $(this).data('classicAccordion') === 'undefined') {
+				var newInstance = new ClassicAccordion(this, options);
+				$(this).data('classicAccordion', newInstance);
+			}
+			
 		});
 	};
 

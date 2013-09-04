@@ -23,7 +23,7 @@
 						startPanel: 1,
 						aspectRatio: 2,
 						orientation: 'horizontal',
-						openPanelOn: 'hover',
+						openPanelOn: 'click',
 						closePanelsOnMouseOut: true,
 						panelDistance: 0
 						// accordionMouseOver: function(obj) {console.log('accordion mouse over');},
@@ -34,8 +34,8 @@
 
 					});
 
-		$('.classic-accordion').on('panelClick', function(event) {
-			console.log(event);
+		$('.classic-accordion').on('panelMouseOver', function(event) {
+			$('.classic-accordion').classicAccordion('openPanel', event.index);
 		});
 	});
 	
