@@ -64,10 +64,7 @@
 		_init: function() {
 			var that = this;
 
-			// create the panels
-			this.createPanels();
-
-			// set the size and orientation of the accordion
+			// refresh the accordion
 			this.refresh();
 
 			// init accordion modules
@@ -145,23 +142,37 @@
 			this.computedPanelDistance = this.settings.panelDistance;
 
 			// refresh panels
-			$.each(this.panels, function(index) {
-				var panel = that.panels[index];
-				panel.refresh();
-			});
+			this.refreshPanels();
 
 			// set the size of the accordion
 			this.resize();
 		},
 
 		/*
-			Create the panels based on the HTML specified in the accordion
+			Create, remove or refresh panels based on the HTML specified in the accordion
 		*/
-		createPanels: function() {
+		refreshPanels: function() {
 			var that = this;
 
+			// check if there are removed items in the DOM and remove the from the array of panels
+			for (var i = this.panels.length - 1; i >= 0; i--) {
+				if (that.$accordion.find('.ca-panel[data-index="' + i + '"]').length === 0) {
+					that.panels[i].destroy();
+					that.panels.splice(i, 1);
+				}
+			}
+
+			// parse the DOM and create uninstantiated panels and reset the indexes
 			this.$accordion.find('.ca-panel').each(function(index, element) {
-				that._createPanel(index, element);
+				var panel = $(element);
+
+				if (typeof panel.attr('data-init') === 'undefined') {
+					that._createPanel(index, panel);
+				} else {
+					that.panels[index].setIndex(index);
+					that.panels[index].refresh();
+				}
+
 			});
 		},
 
@@ -173,7 +184,7 @@
 				$element = $(element);
 
 			// create a panel instance and add it to the array of panels
-			var panel = new ClassicAccordionPanel($element, this, index, this.settings);
+			var panel = new ClassicAccordionPanel($element, this, index);
 			this.panels.splice(index, 0, panel);
 
 			// listen for 'panelMouseOver' events
@@ -279,17 +290,15 @@
 			this.closedPanelSize = Math.floor(this.closedPanelSize);
 
 			// set the position and size of each panel
-			$.each(this.panels, function(index) {
-				var panel = that.panels[index];
-
+			$.each(this.panels, function(index, element) {
 				// get the position of the panel based on the currently selected index and the panel's index
 				var position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.computedPanelDistance)) : (index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
-				panel.setPosition(position);
+				element.setPosition(position);
 
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
 				if (that.computedPanelDistance !== 0) {
 					var size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
-					panel.setSize(size);
+					element.setSize(size);
 				}
 			});
 		},
@@ -313,6 +322,13 @@
 		*/
 		on: function(type, callback) {
 			this.$accordion.on(type, callback);
+		},
+
+		/*
+			Deattach an event handler
+		*/
+		off: function(type) {
+			this.$accordion.off(type);
 		},
 
 		/*
@@ -546,7 +562,7 @@
 		}
 	};
 
-	var ClassicAccordionPanel = function(panel, accordion, index, settings) {
+	var ClassicAccordionPanel = function(panel, accordion, index) {
 
 		// reference to the panel jQuery object
 		this.$panel = panel;
@@ -554,11 +570,14 @@
 		// reference to the accordion object
 		this.accordion = accordion;
 
-		// the index of the panel
-		this.index = index;
-
 		// reference to the global settings of the accordion
-		this.settings = settings;
+		this.settings = this.accordion.settings;
+
+		// set a namespace for the panel
+		this.panelNS =  'ClassicAccordionPanel' + index + '.' + NS;
+
+		// set the index of the panel
+		this.setIndex(index);
 
 		// init the panel
 		this._init();
@@ -572,18 +591,20 @@
 		_init: function() {
 			var that = this;
 
+			this.$panel.attr('data-init', true);
+
 			// listen for 'mouseenter' events
-			this.on('mouseenter.' + NS, function() {
+			this.on('mouseenter.' + this.panelNS, function() {
 				that.trigger({type: 'panelMouseOver.' + NS, index: that.index});
 			});
 
 			// listen for 'mouseleave' events
-			this.on('mouseleave.' + NS, function() {
+			this.on('mouseleave.' + this.panelNS, function() {
 				that.trigger({type: 'panelMouseOut.' + NS, index: that.index});
 			});
 
 			// listen for 'click' events
-			this.on('click.' + NS, function() {
+			this.on('click.' + this.panelNS, function() {
 				that.trigger({type: 'panelClick.' + NS, index: that.index});
 			});
 
@@ -612,10 +633,39 @@
 		},
 
 		/*
+			Destroy the panel
+		*/
+		destroy: function() {
+			// deattach all event listeners
+			this.off('.' + this.panelNS);
+
+			// clean the element from attached styles and data
+			this.$panel.attr('style', '');
+			this.$panel.removeAttr('data-init');
+			this.$panel.removeAttr('data-index');
+
+			// init panel modules
+			var modules = $.ClassicAccordion.panelModules;
+
+			for (var i in modules) {
+				if (typeof this['destroy' + modules[i]] !== 'undefined')
+					this['destroy' + modules[i]]();
+			}
+		},
+
+		/*
 			Return the index of the panel
 		*/
 		getIndex: function() {
 			return this.index;
+		},
+
+		/*
+			Set the index of the panel
+		*/
+		setIndex: function(index) {
+			this.index = index;
+			this.$panel.attr('data-index', this.index);
 		},
 
 		/*
@@ -651,6 +701,13 @@
 		*/
 		on: function(type, callback) {
 			this.$panel.on(type, callback);
+		},
+
+		/*
+			Deattach an event handler to the panel
+		*/
+		off: function(type) {
+			this.$panel.off(type);
 		},
 
 		/*
@@ -714,7 +771,7 @@
 
 			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
-			this.accordion.on('panelOpen.' + NS, function(event) {
+			this.accordion.on('panelOpen.' + this.panelNS, function(event) {
 				if (that.index === event.index)
 					that.handleLayersInOpenedState();
 
@@ -722,7 +779,7 @@
 					that.handleLayersInClosedState();
 			});
 
-			this.accordion.on('panelsClose.' + NS, function(event) {
+			this.accordion.on('panelsClose.' + this.panelNS, function(event) {
 				if (that.index === event.previousIndex)
 					that.handleLayersInClosedState();
 			});
@@ -732,9 +789,7 @@
 			var that = this;
 
 			// show 'opened' layers and close 'closed' layers
-			$.each(this.layers, function(index, value) {
-				var layer = that.layers[index];
-
+			$.each(this.layers, function(index, layer) {
 				if (layer.visibleOn == 'opened')
 					layer.show();
 
@@ -747,14 +802,21 @@
 			var that = this;
 
 			// hide 'opened' layers and show 'closed' layers
-			$.each(this.layers, function(index, value) {
-				var layer = that.layers[index];
-
+			$.each(this.layers, function(index, layer) {
 				if (layer.visibleOn == 'opened')
 					layer.hide();
 
 				if (layer.visibleOn == 'closed')
 					layer.show();
+			});
+		},
+
+		destroyLayers: function() {
+			this.accordion.off('panelOpen.' + this.panelNS);
+			this.accordion.off('panelsClose.' + this.panelNS);
+
+			$.each(this.layers, function(index, layer) {
+				layer.destroy();
 			});
 		}
 	};
@@ -1010,6 +1072,10 @@
 						}
 					});
 			}
+		},
+
+		destroy: function() {
+			this.$layer.attr('style', '');
 		}
 	};
 
@@ -1079,6 +1145,11 @@
 					}
 				}
 			});
+		},
+
+		destroySwapBackground: function() {
+			this.off('panelOpen.' + NS);
+			this.off('panelsClose.' + NS);
 		}
 	};
 
@@ -1098,7 +1169,7 @@
 			this.parseHash(window.location.hash);
 			
 			// check when the hash changes
-			$(window).on('hashchange', function() {
+			$(window).on('hashchange.' + NS, function() {
 				that.parseHash(window.location.hash);
 			});
 		},
@@ -1129,6 +1200,10 @@
 				}
 					
 			}
+		},
+
+		destroyDeepLinking: function() {
+			$(window).off('hashchange.' + NS);
 		}
 	};
 

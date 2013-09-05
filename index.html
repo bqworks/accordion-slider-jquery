@@ -33,18 +33,39 @@
 						// panelMouseOut: function(obj) {console.log('panel mouse out', obj.index, obj.element);}
 
 					});
-
-		$(window).on('click', function(event) {
-			$('.classic-accordion').classicAccordion({width: 700, height: 500, responsive: false, orientation: 'vertical'});
-		});
-
-		$(window).on('dblclick', function(event) {
-			$('.classic-accordion').classicAccordion({width: '100%', height: 300, responsive: true, orientation: 'horizontal'});
-		});
 	});
+
+	function onButton1Click() {
+		$('.classic-accordion').classicAccordion({width: 700, height: 500, responsive: false, orientation: 'vertical'});
+	}
+
+	function onButton2Click() {
+		$('.classic-accordion').classicAccordion({width: '100%', height: 300, responsive: true, orientation: 'horizontal'});
+	}
+
+	function onButton3Click() {
+		accordion.find('.ca-panel').eq(3).remove();
+		accordion.append('<div class="ca-panel"><img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/11.jpg"/><img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/12.jpg"/><p class="ca-layer ca-always ca-black ca-vertical">Layer 1</p><div class="ca-layer ca-opened ca-white">Layer 2</div><h4 class="ca-layer ca-closed ca-black ca-padding">Layer 3</h4></div>');
+		$('.classic-accordion').classicAccordion('refresh');
+	}
+
+	function onButton4Click() {
+
+	}
+
+	function onButton5Click() {
+
+	}
 	
 </script>
 
+<style>
+	.controls {
+		position: absolute;
+		bottom: 0;
+		margin: 10px;
+	}
+</style>
 </head>
 
 <body>
@@ -128,6 +149,13 @@
 			</a>
 		</div>
     </div>
-
+	
+	<div class="controls">
+	    <a href="#" onclick="onButton1Click();return false;">Button 1</a>
+	    <a href="#" onclick="onButton2Click();return false;">Button 2</a>
+	    <a href="#" onclick="onButton3Click();return false;">Button 3</a>
+	    <a href="#" onclick="onButton4Click();return false;">Button 4</a>
+	    <a href="#" onclick="onButton5Click();return false;">Button 5</a>
+	<div>
 </body>
 </html>

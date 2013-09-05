@@ -12,7 +12,7 @@ Features
 ** CSS3 transitions ?
 * link & lightbox
 ** swap image on hover
-* add/remove items on runtime
+** add/remove items on runtime
 ** set options on runtime
 * destroy
 * XML
