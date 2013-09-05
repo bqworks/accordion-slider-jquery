@@ -27,7 +27,7 @@
 		// holds the final settings of the accordion
 		this.settings = $.extend({}, this.defaults, this.options);
 
-		// the index of the currently opened panel (starts with 1)
+		// the index of the currently opened panel (starts with 0)
 		this.currentIndex = this.settings.startPanel;
 
 		// the actual size, in pixels, of the opened panel
@@ -51,6 +51,9 @@
 		// simple objects to be used for animation
 		this.animationStart = {progress: 0};
 		this.animationEnd = {progress: 1};
+
+		// generate a unique ID to be used for event listening
+		this.uniqueId = new Date().valueOf();
 
 		// init the accordion
 		this._init();
@@ -132,7 +135,8 @@
 					this.settings.aspectRatio = this.settings.width / this.settings.height;
 
 				// resize the accordion when the browser resizes
-				$(window).on('resize.' + NS, function() {
+				$(window).off('resize.' + this.uniqueId + '.' + NS);
+				$(window).on('resize.' + this.uniqueId + '.' + NS, function() {
 					that.resize();
 				});
 			} else {
@@ -232,13 +236,6 @@
 		},
 
 		/*
-			Destroy the Classic Accordion instance
-		*/
-		destroy: function() {
-
-		},
-
-		/*
 			Called when the accordion needs to resize 
 		*/
 		resize: function() {
@@ -315,6 +312,28 @@
 					this.settings[prop] = name[prop];
 
 			this.refresh();
+		},
+
+		/*
+			Destroy the Classic Accordion instance
+		*/
+		destroy: function() {
+			// remove the stored reference to this instance
+			this.$accordion.removeData('classicAccordion');
+
+			// detach event handlers
+			this.off('mouseenter.' + NS);
+			this.off('mouseleave.' + NS);
+			this.off('panelMouseOver.' + NS);
+			this.off('panelMouseOut.' + NS);
+			this.off('panelClick.' + NS);
+
+			$(window).off('resize.' + this.uniqueId + '.' + NS);
+
+			// destroy all panels
+			$.each(this.panels, function(index, element) {
+				element.destroy();
+			});
 		},
 
 		/*
@@ -541,10 +560,10 @@
 			responsive: true,
 			aspectRatio: -1,
 			orientation: 'horizontal',
-			startPanel: 1,
+			startPanel: -1,
 			openedPanelSize: '50%',
 			openPanelOn: 'hover',
-			closePanelsOnMouseOut:false,
+			closePanelsOnMouseOut: true,
 			mouseDelay: 200,
 			panelDistance: 0,
 			openPanelDuration: 700,
@@ -574,7 +593,7 @@
 		this.settings = this.accordion.settings;
 
 		// set a namespace for the panel
-		this.panelNS =  'ClassicAccordionPanel' + index + '.' + NS;
+		this.panelNS =  'ClassicAccordionPanel' + '.' + NS;
 
 		// set the index of the panel
 		this.setIndex(index);
@@ -636,8 +655,10 @@
 			Destroy the panel
 		*/
 		destroy: function() {
-			// deattach all event listeners
-			this.off('.' + this.panelNS);
+			// detach all event listeners
+			this.off('mouseenter.' + this.panelNS);
+			this.off('mouseleave.' + this.panelNS);
+			this.off('click.' + this.panelNS);
 
 			// clean the element from attached styles and data
 			this.$panel.attr('style', '');
@@ -1169,7 +1190,7 @@
 			this.parseHash(window.location.hash);
 			
 			// check when the hash changes
-			$(window).on('hashchange.' + NS, function() {
+			$(window).on('hashchange.' + this.uniqueId + '.' + NS, function() {
 				that.parseHash(window.location.hash);
 			});
 		},
@@ -1203,7 +1224,7 @@
 		},
 
 		destroyDeepLinking: function() {
-			$(window).off('hashchange.' + NS);
+			$(window).off('hashchange.' + this.uniqueId + '.' + NS);
 		}
 	};
 

@@ -14,7 +14,7 @@ Features
 ** swap image on hover
 ** add/remove items on runtime
 ** set options on runtime
-* destroy
+** destroy
 * XML
 * easings
 * fullscreen
@@ -22,3 +22,4 @@ Features
 * size breakpoints
 * shadows ?
 * open panel to maximum possible size
+* slideshow and disable on interaction
