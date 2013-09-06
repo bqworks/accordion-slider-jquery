@@ -321,6 +321,9 @@
 			// remove the stored reference to this instance
 			this.$accordion.removeData('classicAccordion');
 
+			// remove inline style
+			this.$accordion.attr('style', '');
+
 			// detach event handlers
 			this.off('mouseenter.' + NS);
 			this.off('mouseleave.' + NS);
