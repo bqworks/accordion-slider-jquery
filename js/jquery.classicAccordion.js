@@ -27,6 +27,9 @@
 		// holds the final settings of the accordion
 		this.settings = $.extend({}, this.defaults, this.options);
 
+		// keep a separate reference of the settings which will not be altered by breakpoints or by other means
+		this.originalSettings = $.extend({}, this.settings);
+
 		// the index of the currently opened panel (starts with 0)
 		this.currentIndex = this.settings.startPanel;
 
@@ -55,6 +58,12 @@
 		// generate a unique ID to be used for event listening
 		this.uniqueId = new Date().valueOf();
 
+		// stores size breakpoints in an array for sorting purposes
+		this.sizeBreakpoints = [];
+
+		// indicates the current size breakpoint
+		this.currentSizeBreakpoint = -1;
+
 		// init the accordion
 		this._init();
 	};
@@ -76,6 +85,18 @@
 			for (var i in modules) {
 				if (typeof this['init' + modules[i]] !== 'undefined')
 					this['init' + modules[i]]();
+			}
+
+			// parse the sizeBreakpoints object and store the values into an array
+			// sorting them in ascending order based on the specified size
+			if (this.settings.sizeBreakpoints !== null) {
+				for (var sizes in this.settings.sizeBreakpoints) {
+					this.sizeBreakpoints.push({size: parseInt(sizes, 10), properties:this.settings.sizeBreakpoints[sizes]});
+				}
+
+				this.sizeBreakpoints = this.sizeBreakpoints.sort(function(a, b) {
+					return a.size >= b.size ? 1: -1;
+				});
 			}
 
 			// if there is a panel opened at start handle that panel as if it was manually opened
@@ -137,6 +158,29 @@
 				// resize the accordion when the browser resizes
 				$(window).off('resize.' + this.uniqueId + '.' + NS);
 				$(window).on('resize.' + this.uniqueId + '.' + NS, function() {
+					// check if the current window width is bigger than the biggest breakpoint
+					// and if necessary reset the properties to the original settings
+					// if the window width is smaller than a certain breakpoint, apply the settings specified
+					// for that breakpoint but only after merging them with the original settings
+					// in order to make sure that only the specified settings for the breakpoint are applied
+					if (that.settings.sizeBreakpoints !== null) {
+						if ($(window).width() > that.sizeBreakpoints[that.sizeBreakpoints.length - 1].size && that.currentSizeBreakpoint != -1) {
+							that.setProperties(that.originalSettings, false);
+						} else {
+							for (var i = 0, n = that.sizeBreakpoints.length; i < n; i++) {
+								if ($(window).width() <= that.sizeBreakpoints[i].size) {
+									if (that.currentSizeBreakpoint !== that.sizeBreakpoints[i].size) {
+										that.currentSizeBreakpoint = that.sizeBreakpoints[i].size;
+										var settings = $.extend({}, that.originalSettings, that.sizeBreakpoints[i].properties);
+										that.setProperties(settings, false);
+									}
+									break;
+								}
+							}
+						}
+					}
+
+					// resize the accordion
 					that.resize();
 				});
 			} else {
@@ -301,16 +345,18 @@
 		},
 
 		/*
-			Set a property on runtime
+			Set properties on runtime
 		*/
-		setProperty: function(name, value) {
-			// check if a single property is passed or an array of properties
-			if (typeof name === 'string')
-				this.settings[name] = value;
-			else if (typeof name === 'object')
-				for (var prop in name)
-					this.settings[prop] = name[prop];
+		setProperties: function(properties, store) {
+			// parse the properties passed as an object
+			for (var prop in properties) {
+				this.settings[prop] = properties[prop];
 
+				// alter the original settings as well unless 'false' is passed to the 'store' parameter
+				if (store !== false)
+					this.originalSettings[prop] = properties[prop];
+			}
+			
 			this.refresh();
 		},
 
@@ -574,6 +620,7 @@
 			openPanelEasing: 'swing',
 			closePanelEasing: 'swing',
 			hoverDuration: 700,
+			sizeBreakpoints: null,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -1250,9 +1297,9 @@
 				if (typeof currentInstance[options] === 'function')
 					currentInstance[options].apply(currentInstance, args);
 				else if (typeof currentInstance.settings[options] !== 'undefined')
-					currentInstance.setProperty(options, args[0]);
+					currentInstance.setProperties(options, args[0]);
 				else if (typeof options === 'object')
-					currentInstance.setProperty(options);
+					currentInstance.setProperties(options);
 				else
 					$.error(options + ' does not exist in classicAccordion.');
 			}

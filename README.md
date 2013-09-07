@@ -16,10 +16,9 @@ Features
 ** set options on runtime
 ** destroy
 * XML
-* easings
 * fullscreen
 ** deep linking
-* size breakpoints
+** size breakpoints
 * shadows ?
 * open panel to maximum possible size
 * slideshow and disable on interaction
