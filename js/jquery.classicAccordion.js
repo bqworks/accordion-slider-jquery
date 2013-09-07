@@ -59,7 +59,7 @@
 		this.uniqueId = new Date().valueOf();
 
 		// stores size breakpoints in an array for sorting purposes
-		this.sizeBreakpoints = [];
+		this.breakpoints = [];
 
 		// indicates the current size breakpoint
 		this.currentSizeBreakpoint = -1;
@@ -84,14 +84,14 @@
 					this['init' + modules[i]]();
 			}
 
-			// parse the sizeBreakpoints object and store the values into an array
+			// parse the breakpoints object and store the values into an array
 			// sorting them in ascending order based on the specified size
-			if (this.settings.sizeBreakpoints !== null) {
-				for (var sizes in this.settings.sizeBreakpoints) {
-					this.sizeBreakpoints.push({size: parseInt(sizes, 10), properties:this.settings.sizeBreakpoints[sizes]});
+			if (this.settings.breakpoints !== null) {
+				for (var sizes in this.settings.breakpoints) {
+					this.breakpoints.push({size: parseInt(sizes, 10), properties:this.settings.breakpoints[sizes]});
 				}
 
-				this.sizeBreakpoints = this.sizeBreakpoints.sort(function(a, b) {
+				this.breakpoints = this.breakpoints.sort(function(a, b) {
 					return a.size >= b.size ? 1: -1;
 				});
 			}
@@ -326,16 +326,16 @@
 			// if the window width is smaller than a certain breakpoint, apply the settings specified
 			// for that breakpoint but only after merging them with the original settings
 			// in order to make sure that only the specified settings for the breakpoint are applied
-			if (this.settings.sizeBreakpoints !== null && this.sizeBreakpoints.length > 0) {
-				if ($(window).width() > this.sizeBreakpoints[this.sizeBreakpoints.length - 1].size && this.currentSizeBreakpoint != -1) {
-					this.currentSizeBreakpoint = -1;
+			if (this.settings.breakpoints !== null && this.breakpoints.length > 0) {
+				if ($(window).width() > this.breakpoints[this.breakpoints.length - 1].size && this.currentBreakpoint != -1) {
+					this.currentBreakpoint = -1;
 					this.setProperties(this.originalSettings, false);
 				} else {
-					for (var i = 0, n = this.sizeBreakpoints.length; i < n; i++) {
-						if ($(window).width() <= this.sizeBreakpoints[i].size) {
-							if (this.currentSizeBreakpoint !== this.sizeBreakpoints[i].size) {
-								this.currentSizeBreakpoint = this.sizeBreakpoints[i].size;
-								var settings = $.extend({}, this.originalSettings, this.sizeBreakpoints[i].properties);
+					for (var i = 0, n = this.breakpoints.length; i < n; i++) {
+						if ($(window).width() <= this.breakpoints[i].size) {
+							if (this.currentBreakpoint !== this.breakpoints[i].size) {
+								this.currentBreakpoint = this.breakpoints[i].size;
+								var settings = $.extend({}, this.originalSettings, this.breakpoints[i].properties);
 								this.setProperties(settings, false);
 							}
 							break;
@@ -621,7 +621,7 @@
 			openPanelEasing: 'swing',
 			closePanelEasing: 'swing',
 			hoverDuration: 700,
-			sizeBreakpoints: null,
+			breakpoints: null,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
