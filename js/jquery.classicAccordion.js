@@ -62,7 +62,7 @@
 		this.breakpoints = [];
 
 		// indicates the current size breakpoint
-		this.currentSizeBreakpoint = -1;
+		this.currentBreakpoint = -1;
 
 		// init the accordion
 		this._init();
