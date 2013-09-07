@@ -16,6 +16,7 @@ Features
 * + set options on runtime
 * + destroy
 * XML
+* JSON
 * fullscreen
 * + deep linking
 * + size breakpoints

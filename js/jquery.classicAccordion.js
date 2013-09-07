@@ -76,9 +76,6 @@
 		_init: function() {
 			var that = this;
 
-			// refresh the accordion
-			this.refresh();
-
 			// init accordion modules
 			var modules = $.ClassicAccordion.accordionModules;
 
@@ -98,6 +95,9 @@
 					return a.size >= b.size ? 1: -1;
 				});
 			}
+
+			// refresh the accordion
+			this.refresh();
 
 			// if there is a panel opened at start handle that panel as if it was manually opened
 			if (this.currentIndex != -1) {
@@ -158,29 +158,7 @@
 				// resize the accordion when the browser resizes
 				$(window).off('resize.' + this.uniqueId + '.' + NS);
 				$(window).on('resize.' + this.uniqueId + '.' + NS, function() {
-					// check if the current window width is bigger than the biggest breakpoint
-					// and if necessary reset the properties to the original settings
-					// if the window width is smaller than a certain breakpoint, apply the settings specified
-					// for that breakpoint but only after merging them with the original settings
-					// in order to make sure that only the specified settings for the breakpoint are applied
-					if (that.settings.sizeBreakpoints !== null) {
-						if ($(window).width() > that.sizeBreakpoints[that.sizeBreakpoints.length - 1].size && that.currentSizeBreakpoint != -1) {
-							that.setProperties(that.originalSettings, false);
-						} else {
-							for (var i = 0, n = that.sizeBreakpoints.length; i < n; i++) {
-								if ($(window).width() <= that.sizeBreakpoints[i].size) {
-									if (that.currentSizeBreakpoint !== that.sizeBreakpoints[i].size) {
-										that.currentSizeBreakpoint = that.sizeBreakpoints[i].size;
-										var settings = $.extend({}, that.originalSettings, that.sizeBreakpoints[i].properties);
-										that.setProperties(settings, false);
-									}
-									break;
-								}
-							}
-						}
-					}
-
-					// resize the accordion
+					// resize the accordion when the browser resizes
 					that.resize();
 				});
 			} else {
@@ -342,6 +320,29 @@
 					element.setSize(size);
 				}
 			});
+
+			// check if the current window width is bigger than the biggest breakpoint
+			// and if necessary reset the properties to the original settings
+			// if the window width is smaller than a certain breakpoint, apply the settings specified
+			// for that breakpoint but only after merging them with the original settings
+			// in order to make sure that only the specified settings for the breakpoint are applied
+			if (this.settings.sizeBreakpoints !== null && this.sizeBreakpoints.length > 0) {
+				if ($(window).width() > this.sizeBreakpoints[this.sizeBreakpoints.length - 1].size && this.currentSizeBreakpoint != -1) {
+					this.currentSizeBreakpoint = -1;
+					this.setProperties(this.originalSettings, false);
+				} else {
+					for (var i = 0, n = this.sizeBreakpoints.length; i < n; i++) {
+						if ($(window).width() <= this.sizeBreakpoints[i].size) {
+							if (this.currentSizeBreakpoint !== this.sizeBreakpoints[i].size) {
+								this.currentSizeBreakpoint = this.sizeBreakpoints[i].size;
+								var settings = $.extend({}, this.originalSettings, this.sizeBreakpoints[i].properties);
+								this.setProperties(settings, false);
+							}
+							break;
+						}
+					}
+				}
+			}
 		},
 
 		/*
