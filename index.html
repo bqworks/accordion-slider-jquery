@@ -24,11 +24,13 @@
 						aspectRatio: 2,
 						orientation: 'horizontal',
 						openPanelOn: 'hover',
-						closePanelsOnMouseOut: true,
-						panelDistance: 10,
-						autoplay: true,
-						autoplayDirection: 'backwards',
+						closePanelsOnMouseOut: false,
+						panelDistance: 0,
+						autoplay: false,
+						autoplayDirection: 'normal',
 						autoplayOnHover: 'pause',
+						autoplayDelay: 2000,
+						visiblePanels: 3,
 						breakpoints: {
 							700: {height: 400, aspectRatio: -1},
 							1000: {width: 800, responsive: false},
@@ -64,7 +66,7 @@
 	}
 
 	function onButton5Click() {
-
+		$('#my-accordion').classicAccordion('nextPage');
 	}
 	
 </script>
@@ -81,82 +83,84 @@
 <body>
 
 	<div id="my-accordion" class="classic-accordion">
-		<div class="ca-panel" id="first">
-			<a href="#">
-				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/1.jpg"/>
-			</a>
+		<div class="ca-panels">
+			<div class="ca-panel" id="first">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/1.jpg"/>
+				</a>
 
-			<a href="#">
-				<img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/9.jpg"/>
-			</a>
+				<a href="#">
+					<img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/9.jpg"/>
+				</a>
 
-			<p class="ca-layer ca-always ca-black ca-vertical ca-padding">
-				Panel 1 Layer 1
-			</p>
-			<div class="ca-layer ca-opened ca-white" 
-				 data-horizontal="50" 
-				 data-vertical="300" 
-				 data-width="150" 
-				 data-height="40"
-				 data-show-offset="100"
-				 data-show-transition="down"
-				 data-hide-transition="up">
-				Panel 1 Layer 2
+				<p class="ca-layer ca-always ca-black ca-vertical ca-padding">
+					Panel 1 Layer 1
+				</p>
+				<div class="ca-layer ca-opened ca-white" 
+					 data-horizontal="50" 
+					 data-vertical="300" 
+					 data-width="150" 
+					 data-height="40"
+					 data-show-offset="100"
+					 data-show-transition="down"
+					 data-hide-transition="up">
+					Panel 1 Layer 2
+				</div>
+				<h4 class="ca-layer ca-closed ca-black ca-padding" 
+					data-horizontal="130" 
+					data-vertical="bottom" 
+					data-width="120" 
+					data-height="50"
+					data-show-transition="left"
+					data-hide-transition="right">
+					Panel 1 Layer 3
+				</h4>
 			</div>
-			<h4 class="ca-layer ca-closed ca-black ca-padding" 
-				data-horizontal="130" 
-				data-vertical="bottom" 
-				data-width="120" 
-				data-height="50"
-				data-show-transition="left"
-				data-hide-transition="right">
-				Panel 1 Layer 3
-			</h4>
-		</div>
 
-        <div class="ca-panel" id="second">
-			<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/2.jpg"/>
-			<img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/10.jpg"/>
+	        <div class="ca-panel" id="second">
+				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/2.jpg"/>
+				<img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/10.jpg"/>
 
-			<p class="ca-layer ca-always ca-black ca-vertical">Panel 1 Layer 1</p>
-			<div class="ca-layer ca-opened ca-white">Panel 1 Layer 2</div>
-			<h4 class="ca-layer ca-closed ca-black ca-padding">Panel 1 Layer 3</h4>
-		</div>
+				<p class="ca-layer ca-always ca-black ca-vertical">Panel 1 Layer 1</p>
+				<div class="ca-layer ca-opened ca-white">Panel 1 Layer 2</div>
+				<h4 class="ca-layer ca-closed ca-black ca-padding">Panel 1 Layer 3</h4>
+			</div>
 
-        <div class="ca-panel" id="third">
-			<a href="#">
-				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/3.jpg"/> 
-			</a>
-		</div>
+	        <div class="ca-panel" id="third">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/3.jpg"/> 
+				</a>
+			</div>
 
-        <div class="ca-panel" id="fourth">
-			<a href="#">
-				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/4.jpg"/>
-			</a>
-		</div>
+	        <div class="ca-panel" id="fourth">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/4.jpg"/>
+				</a>
+			</div>
 
-        <div class="ca-panel">
-			<a href="#">
-				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
-			</a>
-		</div>
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
+				</a>
+			</div>
 
-        <div class="ca-panel">
-			<a href="#">
-				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
-			</a>
-		</div>
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
+				</a>
+			</div>
 
-        <div class="ca-panel">
-			<a href="#">
-				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/7.jpg"/> 
-			</a>
-		</div>
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/7.jpg"/> 
+				</a>
+			</div>
 
-        <div class="ca-panel">
-			<a href="#">
-				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
-			</a>
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
+				</a>
+			</div>
 		</div>
     </div>
 

@@ -4,6 +4,18 @@
 	border: 4px solid #000;
 }
 
+.classic-accordion .ca-panels {
+	position: absolute;
+}
+
+.classic-accordion.ca-horizontal .ca-panels {
+	height: 100%;
+}
+
+.classic-accordion.ca-vertical .ca-panels {
+	width: 100%;
+}
+
 .classic-accordion .ca-panel {
 	position: absolute;
 	display: block;

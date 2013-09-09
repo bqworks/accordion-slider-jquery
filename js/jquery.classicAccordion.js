@@ -21,6 +21,9 @@
 		// reference to the accordion jQuery object
 		this.$accordion = $(instance);
 
+		// reference to the container of the panels
+		this.$panelsContainer = this.$accordion.find('.ca-panels');
+
 		// holds the options specified when the accordion was instantiated
 		this.options = options;
 
@@ -32,6 +35,12 @@
 
 		// the index of the currently opened panel (starts with 0)
 		this.currentIndex = -1;
+
+		// the index of the current page
+		this.currentPage = 0;
+
+		// the size, in pixels, of the accordion
+		this.totalSize = 0;
 
 		// the actual size, in pixels, of the opened panel
 		this.computedOpenedPanelSize = 0;
@@ -277,12 +286,12 @@
 			this.computedOpenedPanelSize = this.settings.openedPanelSize;
 
 			// get the total size, in pixels, of the accordion
-			var totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
+			this.totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 
 			// parse computedOpenedPanelSize and set it to a pixel value
 			if (typeof this.computedOpenedPanelSize == 'string') {
 				if (this.computedOpenedPanelSize.indexOf('%') != -1) {
-					this.computedOpenedPanelSize = totalSize * (parseInt(this.computedOpenedPanelSize, 10)/ 100);
+					this.computedOpenedPanelSize = this.totalSize * (parseInt(this.computedOpenedPanelSize, 10)/ 100);
 				} else if (this.computedOpenedPanelSize.indexOf('px') != -1) {
 					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
 				} else if (this.computedOpenedPanelSize == 'max') {
@@ -297,17 +306,17 @@
 			// parse computedPanelDistance and set it to a pixel value
 			if (typeof this.computedPanelDistance == 'string') {
 				if (this.computedPanelDistance.indexOf('%') != -1) {
-					this.computedPanelDistance = totalSize * (parseInt(this.computedPanelDistance, 10)/ 100);
+					this.computedPanelDistance = this.totalSize * (parseInt(this.computedPanelDistance, 10)/ 100);
 				} else if (this.computedPanelDistance.indexOf('px') != -1) {
 					this.computedPanelDistance = parseInt(this.computedPanelDistance, 10);
 				}
 			}
 
 			// set the size, in pixels, of the collapsed panels
-			this.collapsedPanelSize = (totalSize - this.computedOpenedPanelSize - (this.getTotalPanels() - 1) * that.computedPanelDistance) / (this.getTotalPanels() - 1);
+			this.collapsedPanelSize = (this.totalSize - this.computedOpenedPanelSize - (this.getVisiblePanels() - 1) * that.computedPanelDistance) / (this.getVisiblePanels() - 1);
 
 			// set the size, in pixels, of the closed panels
-			this.closedPanelSize = (totalSize - (this.getTotalPanels() - 1) * that.computedPanelDistance) / this.getTotalPanels();
+			this.closedPanelSize = (this.totalSize - (this.getVisiblePanels() - 1) * that.computedPanelDistance) / this.getVisiblePanels();
 
 			// round the values
 			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
@@ -326,6 +335,9 @@
 					element.setSize(size);
 				}
 			});
+
+			if (this.settings.visiblePanels != -1)
+				this.$panelsContainer.css('left', - this.totalSize * this.currentPage);
 
 			// check if the current window width is bigger than the biggest breakpoint
 			// and if necessary reset the properties to the original settings
@@ -431,7 +443,7 @@
 			Return the total amount of panels
 		*/
 		getTotalPanels: function() {
-			return this.$accordion.find('.ca-panel').length;
+			return this.panels.length;
 		},
 
 		/*
@@ -472,22 +484,31 @@
 			this.animationStart = {progress: 0};
 			this.animationEnd = {progress: 1};
 
+			if (this.settings.visiblePanels != -1) {
+				var page = Math.floor(this.currentIndex / this.settings.visiblePanels);
+
+				if (page != this.currentPage)
+					this.gotoPage(page);
+			}
+
 			var that = this,
 				targetSize = [],
 				targetPosition = [],
 				startSize = [],
 				startPosition = [],
 				animatedPanels = [],
-				totalPanels = this.getTotalPanels();
+				firstPanel = this.getFirstPanelFromPage(),
+				lastPanel = this.getLastPanelFromPage(),
+				counter = 0;
 
 			this.$accordion.find('.ca-opened').removeClass('ca-opened');
 			this.$accordion.find('.ca-panel').eq(this.currentIndex).addClass('ca-opened');
 
 			// get the starting and target size and position of each panel
-			for (var i = 0; i < totalPanels; i++) {
+			for (var i = firstPanel; i <= lastPanel; i++) {
 				var panel = that.getPanelAt(i);
 				
-				targetPosition[i] = i * (that.collapsedPanelSize + that.computedPanelDistance) + (i > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+				targetPosition[i] = this.currentPage * this.totalSize + counter * (that.collapsedPanelSize + that.computedPanelDistance) + (i > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
 				startPosition[i] = panel.getPosition();
 
 				if (targetPosition[i] !== startPosition[i])
@@ -501,9 +522,11 @@
 						animatedPanels.push(i);
 					}
 				}
+
+				counter++;
 			}
 
-			totalPanels = animatedPanels.length;
+			var totalPanels = animatedPanels.length;
 
 			// animate the panels
 			$(this.animationStart).stop().animate(this.animationEnd, {
@@ -548,19 +571,23 @@
 				targetPosition = [],
 				startSize = [],
 				startPosition = [],
-				totalPanels = this.getTotalPanels();
+				firstPanel = this.getFirstPanelFromPage(),
+				lastPanel = this.getLastPanelFromPage(),
+				counter = 0;
 
 			// get the starting and target size and position of each panel
-			for (var i = 0; i < totalPanels; i++) {
+			for (var i = firstPanel; i <= lastPanel; i++) {
 				var panel = that.getPanelAt(i);
 				
-				targetPosition[i] = i * (that.closedPanelSize + that.computedPanelDistance);
+				targetPosition[i] = this.currentPage * this.totalSize + counter * (that.closedPanelSize + that.computedPanelDistance);
 				startPosition[i] = panel.getPosition();
 
 				if (that.computedPanelDistance !== 0) {
 					targetSize[i] = that.closedPanelSize;
 					startSize[i] = panel.getSize();
 				}
+
+				counter++;
 			}
 
 			// animate the panels
@@ -568,7 +595,7 @@
 				duration: this.settings.closePanelDuration,
 				easing: this.settings.closePanelEasing,
 				step: function(now) {
-					for (var i = 0; i < totalPanels; i++) {
+					for (var i = firstPanel; i <= lastPanel; i++) {
 						var panel = that.getPanelAt(i);
 
 						if (that.computedPanelDistance !== 0)
@@ -586,20 +613,66 @@
 				this.settings.panelsClose.call(this, eventObject);
 		},
 
-		startSlideshow: function() {
-
+		/*
+			Return the number of visible panels
+		*/
+		getVisiblePanels: function() {
+			return this.settings.visiblePanels == -1 ? this.getTotalPanels() : this.settings.visiblePanels;
 		},
 
-		stopSlideshow: function() {
-
+		/*
+			Return the total number of pages
+		*/
+		getTotalPages: function() {
+			return Math.ceil(this.getTotalPanels() / this.settings.visiblePanels);
 		},
 
-		toggleSlideshow: function() {
-
+		/*
+			Return the current page
+		*/
+		getPage: function() {
+			return this.settings.visiblePanels == -1 ? 0 : this.currentPage;
 		},
 
-		getSlideshowState: function() {
+		gotoPage: function(index) {
+			this.currentPage = index;
 
+			var targetPosition = index * this.totalSize;
+			
+			if (this.currentPage == this.getTotalPages() - 1)
+				targetPosition = this.closedPanelSize * this.getTotalPanels() - this.totalSize;
+
+			this.$panelsContainer.animate({left: - targetPosition});
+		},
+
+		nextPage: function() {
+			var index = (this.currentPage >= this.getTotalPages() - 1) ? 0 : (this.currentPage + 1);
+			this.gotoPage(index);
+		},
+
+		previousPage: function() {
+			var index = this.currentPage <= 0 ? (this.getTotalPages() - 1) : (this.currentPage - 1);
+			this.gotoPage(index);
+		},
+
+		getFirstPanelFromPage: function() {
+			if (this.settings.visiblePanels == -1) {
+				return 0;
+			} else if (this.currentPage == this.getTotalPages() - 1 && this.currentPage !== 0) {
+				return this.getTotalPanels() - this.settings.visiblePanels;
+			} else {
+				return this.currentPage * this.settings.visiblePanels;
+			}
+		},
+
+		getLastPanelFromPage: function() {
+			if (this.settings.visiblePanels == -1) {
+				return this.getTotalPanels() - 1;
+			} else if (this.currentPage == this.getTotalPages() - 1) {
+				return this.getTotalPanels() - 1;
+			} else {
+				return (this.currentPage + 1) * this.settings.visiblePanels - 1;
+			}
 		},
 
 		getAccordionState: function() {
@@ -628,6 +701,7 @@
 			closePanelEasing: 'swing',
 			hoverDuration: 700,
 			breakpoints: null,
+			visiblePanels: -1,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
