@@ -25,13 +25,13 @@
 		this.options = options;
 
 		// holds the final settings of the accordion
-		this.settings = $.extend({}, this.defaults, this.options);
+		this.settings = {};
 
 		// keep a separate reference of the settings which will not be altered by breakpoints or by other means
-		this.originalSettings = $.extend({}, this.settings);
+		this.originalSettings = {};
 
 		// the index of the currently opened panel (starts with 0)
-		this.currentIndex = this.settings.startPanel;
+		this.currentIndex = -1;
 
 		// the actual size, in pixels, of the opened panel
 		this.computedOpenedPanelSize = 0;
@@ -76,6 +76,8 @@
 		_init: function() {
 			var that = this;
 
+			this.settings = $.extend({}, this.defaults, this.options);
+
 			// init accordion modules
 			var modules = $.ClassicAccordion.accordionModules;
 
@@ -83,6 +85,10 @@
 				if (typeof this['init' + modules[i]] !== 'undefined')
 					this['init' + modules[i]]();
 			}
+			
+			this.originalSettings = $.extend({}, this.settings);
+
+			this.currentIndex = this.settings.startPanel;
 
 			// parse the breakpoints object and store the values into an array
 			// sorting them in ascending order based on the specified size
@@ -1306,6 +1312,31 @@
 			}
 		});
 	};
+
+	/*
+		Autoplay module
+
+		Adds autoplay functionality to the accordion
+	*/
+	var Autoplay = {
+
+		initAutoplay: function() {
+			$.extend(this.settings, this.autoplayDefaults, this.options);
+		},
+
+		destroyAutoplay: function() {
+
+		},
+
+		autoplayDefaults: {
+			autoplay: true,
+			autoplayDelay: 5000,
+			autoplayDirection: 'normal',
+			autoplayOnHover: 'pause'
+		}
+	};
+
+	$.ClassicAccordion.addAccordionModule('Autoplay', Autoplay);
 
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;
