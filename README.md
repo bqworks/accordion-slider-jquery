@@ -17,9 +17,8 @@ Features
 * + destroy
 * XML
 * JSON
-* fullscreen
 * + deep linking
 * + size breakpoints
 * shadows ?
 * open panel to maximum possible size
-* slideshow and disable on interaction
+* + autoplay

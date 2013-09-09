@@ -85,7 +85,7 @@
 				if (typeof this['init' + modules[i]] !== 'undefined')
 					this['init' + modules[i]]();
 			}
-			
+
 			this.originalSettings = $.extend({}, this.settings);
 
 			this.currentIndex = this.settings.startPanel;
@@ -445,7 +445,7 @@
 			Open the next panel
 		*/
 		nextPanel: function() {
-			var index = (this.currentIndex === this.getTotalPanels() - 1) ? 0 : (this.currentIndex + 1);
+			var index = (this.currentIndex >= this.getTotalPanels() - 1) ? 0 : (this.currentIndex + 1);
 			this.openPanel(index);
 		},
 
@@ -453,7 +453,7 @@
 			Open the previous panel
 		*/
 		previousPanel: function() {
-			var index = this.currentIndex === 0 ? (this.getTotalPanels() - 1) : (this.currentIndex - 1);
+			var index = this.currentIndex <= 0 ? (this.getTotalPanels() - 1) : (this.currentIndex - 1);
 			this.openPanel(index);
 		},
 
@@ -1320,12 +1320,74 @@
 	*/
 	var Autoplay = {
 
+		autoplayTimer: null,
+
+		isTimerRunning: false,
+
+		isTimerPaused: false,
+
 		initAutoplay: function() {
+			var that = this;
+
 			$.extend(this.settings, this.autoplayDefaults, this.options);
+
+			if (this.settings.autoplay)
+				this.startAutoplay();
+
+			// start the autoplay timer each time the panel opens
+			this.on('panelOpen.' + NS, function(event) {
+				if (that.settings.autoplay) {
+					// stop previous timers before starting a new one
+					if (that.isTimerRunning === true)
+						that.stopAutoplay();
+					
+					if (that.isTimerPaused === false)
+						that.startAutoplay();
+				}
+			});
+
+			// on accordion hover stop the autoplay if autoplayOnHover is set to pause or stop
+			this.on('mouseenter.' + NS, function(event) {
+				if (that.settings.autoplay && that.isTimerRunning && (that.settings.autoplayOnHover == 'pause' || that.settings.autoplayOnHover == 'stop')) {
+					that.stopAutoplay();
+					that.isTimerPaused = true;
+				}
+			});
+
+			// on accordion hover out restart the autoplay
+			this.on('mouseleave.' + NS, function(event) {
+				if (that.settings.autoplay && that.isTimerRunning === false && that.settings.autoplayOnHover != 'stop') {
+					that.startAutoplay();
+					that.isTimerPaused = false;
+				}
+			});
+		},
+
+		startAutoplay: function() {
+			var that = this;
+			this.isTimerRunning = true;
+
+			this.autoplayTimer = setTimeout(function() {
+				if (that.settings.autoplayDirection == 'normal') {
+					that.nextPanel();
+				} else if (that.settings.autoplayDirection == 'backwards') {
+					that.previousPanel();
+				}
+			}, this.settings.autoplayDelay);
+		},
+
+		stopAutoplay: function() {
+			this.isTimerRunning = false;
+
+			clearTimeout(this.autoplayTimer);
 		},
 
 		destroyAutoplay: function() {
+			clearTimeout(this.autoplayTimer);
 
+			this.off('panelOpen.' + NS);
+			this.off('mouseenter.' + NS);
+			this.off('mouseleave.' + NS);
 		},
 
 		autoplayDefaults: {
