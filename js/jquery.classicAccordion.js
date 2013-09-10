@@ -576,6 +576,13 @@
 
 						panel.setPosition(now * (targetPosition[value] - startPosition[value]) + startPosition[value]);
 					}
+				},
+				complete: function() {
+					// fire 'panelOpenComplete' event
+					var eventObject = {type: 'panelOpenComplete', index: that.currentIndex};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.panelOpenComplete))
+						that.settings.panelOpenComplete.call(that, eventObject);
 				}
 			});
 
@@ -641,6 +648,13 @@
 
 						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
 					}
+				},
+				complete: function() {
+					// fire 'panelsCloseComplete' event
+					var eventObject = {type: 'panelsCloseComplete', previousIndex: previousIndex};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.panelsCloseComplete))
+						that.settings.panelsCloseComplete.call(that, eventObject);
 				}
 			});
 
@@ -678,7 +692,8 @@
 		gotoPage: function(index) {
 			this.currentPage = index;
 
-			var positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
+			var that = this,
+				positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
 				animObj = {},
 				targetPosition = - (index * this.totalSize + this.currentPage * this.computedPanelDistance);
 			
@@ -688,7 +703,11 @@
 			animObj[positionProperty] = targetPosition;
 
 			this.$panelsContainer.animate(animObj, this.settings.pageScrollDuration, this.settings.pageScrollEasing, function() {
-				
+				// fire 'pageScrollComplete' event
+				var eventObject = {type: 'pageScrollComplete', index: that.currentPage};
+				that.trigger(eventObject);
+				if ($.isFunction(that.settings.pageScrollComplete))
+					that.settings.pageScrollComplete.call(that, eventObject);
 			});
 		},
 
@@ -768,7 +787,10 @@
 			panelMouseOver: function() {},
 			panelMouseOut: function() {},
 			panelOpen: function() {},
-			panelsClose: function() {}
+			panelsClose: function() {},
+			panelOpenComplete: function() {},
+			panelsCloseComplete: function() {},
+			pageScrollComplete: function() {}
 		}
 	};
 

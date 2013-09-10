@@ -7,7 +7,7 @@ Features
 * + layers - opened, closed, title, rotated
 * + synced panel animations
 * responsive content (from layers)
-* pagination
+* + pagination
 * lazy loading
 * touch-swipe ?
 * + CSS3 transitions ?
