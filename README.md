@@ -23,3 +23,4 @@ Features
 * shadows ?
 * open panel to maximum possible size
 * + autoplay
+* auto video handling

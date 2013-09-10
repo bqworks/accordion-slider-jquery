@@ -159,6 +159,9 @@
 			else if (this.settings.orientation == 'vertical')
 				this.$accordion.removeClass('ca-horizontal').addClass('ca-vertical');
 
+			// reset the panels' container position
+			this.$panelsContainer.attr('style', '');
+
 			// prepare the accordion for responsiveness
 			if (this.settings.responsive) {
 				// if the accordion is responsive set the width to 100% and use
@@ -313,10 +316,10 @@
 			}
 
 			// set the size, in pixels, of the collapsed panels
-			this.collapsedPanelSize = (this.totalSize - this.computedOpenedPanelSize - (this.getVisiblePanels() - 1) * that.computedPanelDistance) / (this.getVisiblePanels() - 1);
+			this.collapsedPanelSize = (this.totalSize - this.computedOpenedPanelSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / (this.getVisiblePanels() - 1);
 
 			// set the size, in pixels, of the closed panels
-			this.closedPanelSize = (this.totalSize - (this.getVisiblePanels() - 1) * that.computedPanelDistance) / this.getVisiblePanels();
+			this.closedPanelSize = (this.totalSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / this.getVisiblePanels();
 
 			// round the values
 			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
@@ -336,8 +339,22 @@
 				}
 			});
 
-			if (this.settings.visiblePanels != -1)
-				this.$panelsContainer.css('left', - this.totalSize * this.currentPage);
+			// if there are multiple pages, set the correct position of the panels' container
+			if (this.settings.visiblePanels != -1) {
+				// recalculate the totalSize due to the fact that rounded sizes can cause incorrect positioning
+				// since the actual size of all panels from a page might be smaller than the whole width of the accordion
+				this.totalSize = this.closedPanelSize * this.settings.visiblePanels + this.computedPanelDistance * (this.settings.visiblePanels - 1);
+				
+				var positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
+					cssObj = {},
+					targetPosition = - (this.totalSize + this.computedPanelDistance) * this.currentPage;
+				
+				if (this.currentPage == this.getTotalPages() - 1)
+					targetPosition = - (this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1) - this.totalSize);
+
+				cssObj[positionProperty] = targetPosition;
+				this.$panelsContainer.css(cssObj);
+			}
 
 			// check if the current window width is bigger than the biggest breakpoint
 			// and if necessary reset the properties to the original settings
@@ -483,8 +500,13 @@
 			//reset the animation objects
 			this.animationStart = {progress: 0};
 			this.animationEnd = {progress: 1};
-
-			if (this.settings.visiblePanels != -1) {
+			
+			// synchronize the page with the selected panel by navigating to the page that
+			// contains the panel if necessary.
+			// if the last page is already selected and the selected panel is on this last page 
+			// don't navigate to a different page no matter what panel is selected and whether
+			// the panel actually belongs to the previous page
+			if (this.settings.visiblePanels != -1 && !(this.currentPage == this.getTotalPages() - 1 && index >= this.getTotalPanels() - this.settings.visiblePanels)) {
 				var page = Math.floor(this.currentIndex / this.settings.visiblePanels);
 
 				if (page != this.currentPage)
@@ -504,23 +526,35 @@
 			this.$accordion.find('.ca-opened').removeClass('ca-opened');
 			this.$accordion.find('.ca-panel').eq(this.currentIndex).addClass('ca-opened');
 
-			// get the starting and target size and position of each panel
+			// get the starting and target position and size of each panel
 			for (var i = firstPanel; i <= lastPanel; i++) {
-				var panel = that.getPanelAt(i);
+				var panel = this.getPanelAt(i);
 				
-				targetPosition[i] = this.currentPage * this.totalSize + counter * (that.collapsedPanelSize + that.computedPanelDistance) + (i > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
 				startPosition[i] = panel.getPosition();
+				targetPosition[i] = this.currentPage * (this.totalSize + this.computedPanelDistance) + counter * (this.collapsedPanelSize + this.computedPanelDistance) + (i > this.currentIndex ? this.computedOpenedPanelSize - this.collapsedPanelSize : 0);
 
+				// the last page might contain less panels than the set number of visible panels.
+				// in this situation, the last page will contain some panels from the previous page
+				// and this requires the panels from the last page to be positioned differently than
+				// the rest of the panels. this requires some amendments to the position of the last panels
+				// by replacing the current page index with a float number: this.getTotalPanels() / this.settings.visiblePanels, 
+				// which would represent the actual number of existing pages.
+				// here we substract the float number from the formal number of pages in order to calculate
+				// how much length it's necessary to subtract from the initially calculated value
+				if (this.settings.visiblePanels != -1 && this.currentPage == this.getTotalPages() - 1)
+					targetPosition[i] -= (this.getTotalPages() - this.getTotalPanels() / this.settings.visiblePanels) * (this.totalSize + this.computedPanelDistance);
+
+				// check if the panel's position needs to change
 				if (targetPosition[i] !== startPosition[i])
 					animatedPanels.push(i);
 
-				if (that.computedPanelDistance !== 0) {
-					targetSize[i] = i === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize;
+				if (this.computedPanelDistance !== 0) {
 					startSize[i] = panel.getSize();
+					targetSize[i] = i === this.currentIndex ? this.computedOpenedPanelSize : this.collapsedPanelSize;
 
-					if (targetSize[i] !== startSize[i] && $.inArray(i, animatedPanels) == -1) {
+					// check if the panel's size needs to change
+					if (targetSize[i] !== startSize[i] && $.inArray(i, animatedPanels) == -1)
 						animatedPanels.push(i);
-					}
 				}
 
 				counter++;
@@ -577,14 +611,18 @@
 
 			// get the starting and target size and position of each panel
 			for (var i = firstPanel; i <= lastPanel; i++) {
-				var panel = that.getPanelAt(i);
+				var panel = this.getPanelAt(i);
 				
-				targetPosition[i] = this.currentPage * this.totalSize + counter * (that.closedPanelSize + that.computedPanelDistance);
 				startPosition[i] = panel.getPosition();
+				targetPosition[i] = this.currentPage * (this.totalSize + this.computedPanelDistance) + counter * (this.closedPanelSize + this.computedPanelDistance);
+				
+				// same calculations as in openPanel
+				if (this.settings.visiblePanels != -1 && this.currentPage == this.getTotalPages() - 1)
+					targetPosition[i] -= (this.getTotalPages() - this.getTotalPanels() / this.settings.visiblePanels) * (this.totalSize + this.computedPanelDistance);
 
-				if (that.computedPanelDistance !== 0) {
-					targetSize[i] = that.closedPanelSize;
+				if (this.computedPanelDistance !== 0) {
 					startSize[i] = panel.getSize();
+					targetSize[i] = this.closedPanelSize;
 				}
 
 				counter++;
@@ -634,27 +672,45 @@
 			return this.settings.visiblePanels == -1 ? 0 : this.currentPage;
 		},
 
+		/*
+			Navigate to the indicated page
+		*/
 		gotoPage: function(index) {
 			this.currentPage = index;
 
-			var targetPosition = index * this.totalSize;
+			var positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
+				animObj = {},
+				targetPosition = - (index * this.totalSize + this.currentPage * this.computedPanelDistance);
 			
 			if (this.currentPage == this.getTotalPages() - 1)
-				targetPosition = this.closedPanelSize * this.getTotalPanels() - this.totalSize;
+				targetPosition = - (this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1) - this.totalSize);
 
-			this.$panelsContainer.animate({left: - targetPosition});
+			animObj[positionProperty] = targetPosition;
+
+			this.$panelsContainer.animate(animObj, this.settings.pageScrollDuration, this.settings.pageScrollEasing, function() {
+				
+			});
 		},
 
+		/*
+			Navigate to the next page
+		*/
 		nextPage: function() {
 			var index = (this.currentPage >= this.getTotalPages() - 1) ? 0 : (this.currentPage + 1);
 			this.gotoPage(index);
 		},
 
+		/*
+			Navigate to the previous page
+		*/
 		previousPage: function() {
 			var index = this.currentPage <= 0 ? (this.getTotalPages() - 1) : (this.currentPage - 1);
 			this.gotoPage(index);
 		},
 
+		/*
+			Calculate and return the first panel from the current page
+		*/
 		getFirstPanelFromPage: function() {
 			if (this.settings.visiblePanels == -1) {
 				return 0;
@@ -665,6 +721,9 @@
 			}
 		},
 
+		/*
+			Calculate and return the last panel from the current page
+		*/
 		getLastPanelFromPage: function() {
 			if (this.settings.visiblePanels == -1) {
 				return this.getTotalPanels() - 1;
@@ -695,11 +754,12 @@
 			closePanelsOnMouseOut: true,
 			mouseDelay: 200,
 			panelDistance: 0,
-			openPanelDuration: 700,
-			closePanelDuration: 700,
+			openPanelDuration: 500,
+			closePanelDuration: 500,
 			openPanelEasing: 'swing',
 			closePanelEasing: 'swing',
-			hoverDuration: 700,
+			pageScrollDuration: 500,
+			pageScrollEasing: 'swing',
 			breakpoints: null,
 			visiblePanels: -1,
 			accordionMouseOver: function() {},
@@ -1242,6 +1302,8 @@
 		initSwapBackground: function() {
 			var that = this;
 
+			$.extend(this.settings, this.swapBackgroundDefaults, this.options);
+
 			this.on('panelOpen.' + NS, function(event) {
 				// get the currently opened panel
 				var panel = that.getPanelAt(event.index),
@@ -1251,10 +1313,10 @@
 				// fade in the opened content
 				if (opened.length !== 0) {
 					opened.css({'visibility': 'visible', 'opacity': 0})
-						.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+						.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
 
 					if (background.length !== 0) {
-						background.stop().animate({'opacity': 0}, that.settings.hoverDuration);
+						background.stop().animate({'opacity': 0}, that.settings.swapBackgroundDuration);
 					}
 				}
 
@@ -1266,12 +1328,12 @@
 
 					// fade out the opened content
 					if (previousOpened.length !== 0) {
-						previousOpened.stop().animate({'opacity': 0}, that.settings.hoverDuration, function() {
+						previousOpened.stop().animate({'opacity': 0}, that.settings.swapBackgroundDuration, function() {
 							previousOpened.css({'visibility': 'hidden'});
 						});
 
 						if (previousBackground.length !== 0) {
-							previousBackground.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+							previousBackground.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
 						}
 					}
 				}
@@ -1288,12 +1350,12 @@
 
 				// fade out the opened content
 				if (opened.length !== 0) {
-					opened.stop().animate({'opacity': 0}, that.settings.hoverDuration, function() {
+					opened.stop().animate({'opacity': 0}, that.settings.swapBackgroundDuration, function() {
 						opened.css({'visibility': 'hidden'});
 					});
 
 					if (background.length !== 0) {
-						background.stop().animate({'opacity': 1}, that.settings.hoverDuration);
+						background.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
 					}
 				}
 			});
@@ -1302,6 +1364,10 @@
 		destroySwapBackground: function() {
 			this.off('panelOpen.' + NS);
 			this.off('panelsClose.' + NS);
+		},
+
+		swapBackgroundDefaults: {
+			swapBackgroundDuration: 700,
 		}
 	};
 

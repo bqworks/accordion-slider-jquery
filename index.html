@@ -17,20 +17,20 @@
 
 	$(document).ready(function() {
 		accordion = $('#my-accordion').classicAccordion({
-						width: '80%', 
-						height: '400px',
+						width: '40%', 
+						height: '250px',
 						openedPanelSize: '50%',
 						//startPanel: 1,
 						aspectRatio: 2,
 						orientation: 'horizontal',
 						openPanelOn: 'hover',
-						closePanelsOnMouseOut: false,
-						panelDistance: 0,
+						closePanelsOnMouseOut: true,
+						panelDistance: 10,
 						autoplay: false,
 						autoplayDirection: 'normal',
 						autoplayOnHover: 'pause',
 						autoplayDelay: 2000,
-						visiblePanels: 3,
+						visiblePanels: 4,
 						breakpoints: {
 							700: {height: 400, aspectRatio: -1},
 							1000: {width: 800, responsive: false},
@@ -62,7 +62,7 @@
 	}
 
 	function onButton4Click() {
-		$('#my-accordion-2').classicAccordion('destroy');
+		$('#my-accordion').classicAccordion('previousPage');
 	}
 
 	function onButton5Click() {
@@ -72,6 +72,11 @@
 </script>
 
 <style>
+	#my-accordion {
+		margin: 0 auto;
+		/*overflow: visible;*/
+	}
+
 	.controls {
 		position: absolute;
 		bottom: 0;
@@ -161,10 +166,76 @@
 					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
 				</a>
 			</div>
+
+			<div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
+				</a>
+			</div>
+
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
+				</a>
+			</div>
+
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/7.jpg"/> 
+				</a>
+			</div>
+
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
+				</a>
+			</div>
+
+			<div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
+				</a>
+			</div>
+
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
+				</a>
+			</div>
+
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/7.jpg"/> 
+				</a>
+			</div>
+
+	        <div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
+				</a>
+			</div>
+
+			<div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
+				</a>
+			</div>
+
+			<div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
+				</a>
+			</div>
+
+			<div class="ca-panel">
+				<a href="#">
+					<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/7.jpg"/>
+				</a>
+			</div>
 		</div>
     </div>
 
-    <div id="my-accordion-2" class="classic-accordion">
+    <!-- <div id="my-accordion-2" class="classic-accordion">
         <div class="ca-panel">
 			<a href="#">
 				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
@@ -188,7 +259,7 @@
 				<img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
 			</a>
 		</div>
-    </div>
+    </div> -->
 	
 	<div class="controls">
 	    <a href="#" onclick="onButton1Click();return false;">Button 1</a>
