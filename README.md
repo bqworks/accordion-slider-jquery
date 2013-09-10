@@ -24,3 +24,5 @@ Features
 * open panel to maximum possible size
 * + autoplay
 * auto video handling
+* controls for pagination
+* mouse wheel scroll (panels or pages)
