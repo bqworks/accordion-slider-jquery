@@ -48,6 +48,9 @@
 		// the actual size, in pixels, of the opened panel
 		this.computedOpenedPanelSize = 0;
 
+		// the actual maximum allowed size, in pixels, of the opened panel
+		this.maxComputedOpenedPanelSize = 0;
+
 		// the size, in pixels, of the collapsed panels
 		this.collapsedPanelSize = 0;
 
@@ -317,8 +320,22 @@
 				} else if (this.computedOpenedPanelSize.indexOf('px') != -1) {
 					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
 				} else if (this.computedOpenedPanelSize == 'max') {
-					this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex).outerWidth(true);
+					this.computedOpenedPanelSize = this.currentIndex == -1 ? this.totalSize * 0.5 : this.getPanelAt(this.currentIndex).getContentSize();
+				}
+			}
 
+			// if the panels are set to open to their maximum size,
+			// parse maxComputedOpenedPanelSize and set it to a pixel value
+			if (this.settings.openedPanelSize == 'max') {
+				// set the initial maxComputedOpenedPanelSize to the value defined in the options
+				this.maxComputedOpenedPanelSize = this.settings.maxOpenedPanelSize;
+
+				if (typeof this.maxComputedOpenedPanelSize == 'string') {
+					if (this.maxComputedOpenedPanelSize.indexOf('%') != -1) {
+						this.maxComputedOpenedPanelSize = this.totalSize * (parseInt(this.maxComputedOpenedPanelSize, 10)/ 100);
+					} else if (this.maxComputedOpenedPanelSize.indexOf('px') != -1) {
+						this.maxComputedOpenedPanelSize = parseInt(this.maxComputedOpenedPanelSize, 10);
+					}
 				}
 			}
 
@@ -544,6 +561,17 @@
 
 			this.$accordion.find('.ca-opened').removeClass('ca-opened');
 			this.$accordion.find('.ca-panel').eq(this.currentIndex).addClass('ca-opened');
+
+			// check if the panel needs to open to its maximum size and recalculate
+			// the size of the opened panel and the size of the collapsed panel
+			if (this.settings.openedPanelSize == 'max') {
+				this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex).getContentSize();
+
+				if (this.computedOpenedPanelSize > this.maxComputedOpenedPanelSize)
+					this.computedOpenedPanelSize = this.maxComputedOpenedPanelSize;
+
+				this.collapsedPanelSize = (this.totalSize - this.computedOpenedPanelSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / (this.getVisiblePanels() - 1);
+			}
 
 			// get the starting and target position and size of each panel
 			for (var i = firstPanel; i <= lastPanel; i++) {
@@ -810,6 +838,7 @@
 			orientation: 'horizontal',
 			startPanel: -1,
 			openedPanelSize: '50%',
+			maxOpenedPanelSize: '90%',
 			openPanelOn: 'hover',
 			closePanelsOnMouseOut: true,
 			mouseDelay: 200,
@@ -969,6 +998,13 @@
 		*/
 		setSize: function(value) {
 			this.$panel.css(this.sizeProperty, value);
+		},
+
+		/*
+			Get the whole size of the panel's content
+		*/
+		getContentSize: function() {
+			return this.sizeProperty == 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
 		},
 
 		/*

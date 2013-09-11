@@ -9,9 +9,9 @@ Features
 * responsive content (from layers)
 * + pagination
 * lazy loading
-* touch-swipe ?
+* ? touch-swipe
 * + CSS3 transitions ?
-* link & lightbox ?
+* ? link & lightbox
 * + swap image on hover
 * + add/remove items on runtime
 * + set options on runtime
@@ -20,9 +20,10 @@ Features
 * JSON
 * + deep linking
 * + size breakpoints
-* shadows ?
-* open panel to maximum possible size
+* ? shadows
+* + open panel to maximum possible size
 * + autoplay
 * auto video handling
 * controls for pagination and responsive behaviour
 * mouse wheel scroll (panels or pages)
+* ? resize while maintaining size and position
