@@ -113,3 +113,25 @@
 	width: 100%;
 	height: 25px;
 }
+
+.classic-accordion .ca-pagination-buttons {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.classic-accordion .ca-pagination-button {
+	width: 10px;
+	height: 10px;
+	border: 2px solid #000;
+	border-radius: 50%;
+	margin: 4px;
+	display: inline-block;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	cursor: pointer;
+}
+
+.classic-accordion .ca-pagination-buttons .ca-selected {
+	background-color: #000;
+}

@@ -197,18 +197,23 @@
 
 			this.computedPanelDistance = this.settings.panelDistance;
 
-			/*if (this.settings.visiblePanels != -1) {
+			if (this.settings.visiblePanels != -1) {
 				if (this.currentIndex != -1) {
 					var correctPage = this.getPageOfPanel(this.currentIndex);
 					
 					if (this.currentPage !== correctPage) {
 						this.currentPage = correctPage;
 					}
+				} else {
+					var index = 1;
 				}
-			}*/
+			}
 
 			// refresh panels
 			this.refreshPanels();
+
+			// create or update the pagination buttons
+			this.refreshPaginationButtons();
 
 			// set the size of the accordion
 			this.resize();
@@ -565,6 +570,8 @@
 			// check if the panel needs to open to its maximum size and recalculate
 			// the size of the opened panel and the size of the collapsed panel
 			if (this.settings.openedPanelSize == 'max') {
+				console.log(this.currentIndex);
+				console.log(this.getPanelAt(this.currentIndex));
 				this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex).getContentSize();
 
 				if (this.computedOpenedPanelSize > this.maxComputedOpenedPanelSize)
@@ -753,6 +760,12 @@
 
 			animObj[positionProperty] = targetPosition;
 
+			// fire 'pageScroll' event
+			var eventObject = {type: 'pageScroll', index: this.currentPage};
+			this.trigger(eventObject);
+			if ($.isFunction(this.settings.pageScroll))
+				this.settings.pageScroll.call(this, eventObject);
+
 			this.$panelsContainer.animate(animObj, this.settings.pageScrollDuration, this.settings.pageScrollEasing, function() {
 				// fire 'pageScrollComplete' event
 				var eventObject = {type: 'pageScrollComplete', index: that.currentPage};
@@ -822,6 +835,59 @@
 			return false;
 		},
 
+		/*
+			Create or update the pagination buttons
+		*/
+		refreshPaginationButtons: function() {
+			var paginationButtons = this.$accordion.find('.ca-pagination-buttons'),
+				that = this;
+
+			// remove the buttons if there are no more pages
+			if (this.settings.visiblePanels == -1 && paginationButtons.length !== 0) {
+				paginationButtons.remove();
+				paginationButtons.off('click.' + NS, '.ca-pagination-button');
+				this.off('pageScroll.' + NS);
+			
+			// if there are pages and the buttons were not created yet, create them now
+			} else if (this.settings.visiblePanels != -1 && paginationButtons.length === 0) {
+				// create the buttons' container
+				paginationButtons = $('<div class="ca-pagination-buttons"></div>').appendTo(this.$accordion);
+
+				// create the buttons
+				for (var i = 0; i < this.getTotalPages(); i++) {
+					$('<div class="ca-pagination-button"></div>').appendTo(paginationButtons);
+				}
+
+				// listen for button clicks 
+				paginationButtons.on('click.' + NS, '.ca-pagination-button', function() {
+					that.gotoPage($(this).index());
+				});
+
+				// set the initially selected button
+				paginationButtons.find('.ca-pagination-button').eq(this.currentPage).addClass('ca-selected');
+
+				// select the corresponding panel when the page changes and change the selected button
+				this.on('pageScroll.' + NS, function(event) {
+					paginationButtons.find('.ca-selected').removeClass('ca-selected');
+					paginationButtons.find('.ca-pagination-button').eq(event.index).addClass('ca-selected');
+				});
+
+			// update the panels if they already exist but their number differs from
+			// the number of existing pages
+			} else if (this.settings.visiblePanels != -1 && paginationButtons.length !== 0) {
+				paginationButtons.empty();
+
+				// create the buttons
+				for (var j = 0; j < this.getTotalPages(); j++) {
+					$('<div class="ca-pagination-button"></div>').appendTo(paginationButtons);
+				}
+
+				// change the selected the buttons
+				paginationButtons.find('.ca-selected').removeClass('ca-selected');
+				paginationButtons.find('.ca-pagination-button').eq(this.currentPage).addClass('ca-selected');
+			}
+		},
+
 		getAccordionState: function() {
 
 		},
@@ -858,6 +924,7 @@
 			panelMouseOut: function() {},
 			panelOpen: function() {},
 			panelsClose: function() {},
+			pageScroll: function() {},
 			panelOpenComplete: function() {},
 			panelsCloseComplete: function() {},
 			pageScrollComplete: function() {}

@@ -9,7 +9,7 @@ Features
 * responsive content (from layers)
 * + pagination
 * lazy loading
-* ? touch-swipe
+* touch-swipe for pages and tap for panels
 * + CSS3 transitions ?
 * ? link & lightbox
 * + swap image on hover
