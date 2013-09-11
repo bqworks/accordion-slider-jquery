@@ -194,6 +194,16 @@
 
 			this.computedPanelDistance = this.settings.panelDistance;
 
+			/*if (this.settings.visiblePanels != -1) {
+				if (this.currentIndex != -1) {
+					var correctPage = this.getPageOfPanel(this.currentIndex);
+					
+					if (this.currentPage !== correctPage) {
+						this.currentPage = correctPage;
+					}
+				}
+			}*/
+
 			// refresh panels
 			this.refreshPanels();
 
@@ -338,12 +348,28 @@
 			// set the position and size of each panel
 			$.each(this.panels, function(index, element) {
 				// get the position of the panel based on the currently selected index and the panel's index
-				var position = (that.currentIndex == -1) ? (index * (that.closedPanelSize + that.computedPanelDistance)) : (index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0));
+				var position;
+
+				if (that.currentIndex == -1) {
+					position = index * (that.closedPanelSize + that.computedPanelDistance);
+				} else if (that.settings.visiblePanels == -1) {
+					position = index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+				} else {
+					if (that.isPanelInPage(index)) {
+						position = that.currentPage * (that.totalSize + that.computedPanelDistance) + (index - that.currentPage * that.settings.visiblePanels) * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+					
+						if (that.currentPage == that.getTotalPages() - 1)
+							position -= (that.getTotalPages() - that.getTotalPanels() / that.settings.visiblePanels) * (that.totalSize + that.computedPanelDistance);
+					} else {
+						position = index * (that.closedPanelSize + that.computedPanelDistance);
+					}
+				}
+
 				element.setPosition(position);
 
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
 				if (that.computedPanelDistance !== 0) {
-					var size = (that.currentIndex == -1) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+					var size = (that.currentIndex == -1 || (that.settings.visiblePanels != -1 && that.getPageOfPanel(index) != that.currentPage)) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
 					element.setSize(size);
 				}
 			});
@@ -699,6 +725,10 @@
 			Navigate to the indicated page
 		*/
 		gotoPage: function(index) {
+			// close any opened panels before scrolling to a different page
+			if (this.currentIndex != -1)
+				this.closePanels();
+
 			this.currentPage = index;
 
 			var that = this,
@@ -760,6 +790,24 @@
 			} else {
 				return (this.currentPage + 1) * this.settings.visiblePanels - 1;
 			}
+		},
+
+		/*
+			Return the page that the specified panel belongs to
+		*/
+		getPageOfPanel: function(index) {
+			return Math.floor(index / this.settings.visiblePanels);
+
+		},
+
+		/*
+			Check if the specified panel belongs to the current page 
+		*/
+		isPanelInPage: function(index) {
+			if (this.getPageOfPanel(index) == this.currentPage || this.currentPage == this.getTotalPages() - 1 && index >= this.getTotalPanels() - this.settings.visiblePanels)
+				return true;
+
+			return false;
 		},
 
 		getAccordionState: function() {
