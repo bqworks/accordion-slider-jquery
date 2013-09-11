@@ -67,8 +67,8 @@
 		this.mouseDelayTimer = 0;
 
 		// simple objects to be used for animation
-		this.animationStart = {progress: 0};
-		this.animationEnd = {progress: 1};
+		this.openPanelAnimation = {progress: 0};
+		this.closePanelsAnimation = {progress: 0};
 
 		// generate a unique ID to be used for event listening
 		this.uniqueId = new Date().valueOf();
@@ -538,9 +538,8 @@
 
 			this.currentIndex = index;
 
-			//reset the animation objects
-			this.animationStart = {progress: 0};
-			this.animationEnd = {progress: 1};
+			//reset the animation object
+			this.openPanelAnimation = {progress: 0, page: this.currentPage};
 			
 			// synchronize the page with the selected panel by navigating to the page that
 			// contains the panel if necessary.
@@ -552,6 +551,9 @@
 
 				if (page != this.currentPage)
 					this.gotoPage(page);
+
+				// reset the current index because when the closePanels was called inside gotoPage the current index became -1
+				this.currentIndex = index;
 			}
 
 			var that = this,
@@ -570,8 +572,6 @@
 			// check if the panel needs to open to its maximum size and recalculate
 			// the size of the opened panel and the size of the collapsed panel
 			if (this.settings.openedPanelSize == 'max') {
-				console.log(this.currentIndex);
-				console.log(this.getPanelAt(this.currentIndex));
 				this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex).getContentSize();
 
 				if (this.computedOpenedPanelSize > this.maxComputedOpenedPanelSize)
@@ -616,8 +616,12 @@
 
 			var totalPanels = animatedPanels.length;
 
+			// stop the close panels animation if it's on the same page
+			if (this.closePanelsAnimation.page == this.currentPage)
+				$(this.closePanelsAnimation).stop();
+
 			// animate the panels
-			$(this.animationStart).stop().animate(this.animationEnd, {
+			$(this.openPanelAnimation).stop().animate({progress: 1}, {
 				duration: this.settings.openPanelDuration,
 				easing: this.settings.openPanelEasing,
 				step: function(now) {
@@ -655,9 +659,8 @@
 
 			this.currentIndex = -1;
 
-			//reset the animation objects
-			this.animationStart = {progress: 0};
-			this.animationEnd = {progress: 1};
+			//reset the animation object
+			this.closePanelsAnimation = {progress: 0, page: this.currentPage};
 
 			clearTimeout(this.mouseDelayTimer);
 
@@ -689,8 +692,12 @@
 				counter++;
 			}
 
+			// stop the open panel animation if it's on the same page
+			if (this.openPanelAnimation.page == this.currentPage)
+				$(this.openPanelAnimation).stop();
+
 			// animate the panels
-			$(this.animationStart).stop().animate(this.animationEnd, {
+			$(this.closePanelsAnimation).stop().animate({progress: 1}, {
 				duration: this.settings.closePanelDuration,
 				easing: this.settings.closePanelEasing,
 				step: function(now) {
