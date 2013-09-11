@@ -22,7 +22,10 @@
 		this.$accordion = $(instance);
 
 		// reference to the container of the panels
-		this.$panelsContainer = this.$accordion.find('.ca-panels');
+		this.$panelsContainer = null;
+
+		// reference to the container that will mask the panels
+		this.$maskContainer = null;
 
 		// holds the options specified when the accordion was instantiated
 		this.options = options;
@@ -86,6 +89,12 @@
 			var that = this;
 
 			this.settings = $.extend({}, this.defaults, this.options);
+
+			// get reference to the panels' container and 
+			// create additional mask container, which will maks the panels'container
+			this.$maskContainer = $('<div class="ca-mask"></div>').appendTo(this.$accordion);
+			this.$panelsContainer = this.$accordion.find('.ca-panels').appendTo(this.$maskContainer);
+			this.$accordion.find('.ca-panel').appendTo(this.$panelsContainer);
 
 			// init accordion modules
 			var modules = $.ClassicAccordion.accordionModules;
