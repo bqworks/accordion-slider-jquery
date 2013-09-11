@@ -345,32 +345,16 @@
 			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
 			this.closedPanelSize = Math.floor(this.closedPanelSize);
 
-			// set the position and size of each panel
+			// reset the position and size of each panel
 			$.each(this.panels, function(index, element) {
-				// get the position of the panel based on the currently selected index and the panel's index
-				var position;
+				if (that.currentIndex != -1)
+					that.currentIndex = -1;
 
-				if (that.currentIndex == -1) {
-					position = index * (that.closedPanelSize + that.computedPanelDistance);
-				} else if (that.settings.visiblePanels == -1) {
-					position = index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
-				} else {
-					if (that.isPanelInPage(index)) {
-						position = that.currentPage * (that.totalSize + that.computedPanelDistance) + (index - that.currentPage * that.settings.visiblePanels) * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
-					
-						if (that.currentPage == that.getTotalPages() - 1)
-							position -= (that.getTotalPages() - that.getTotalPanels() / that.settings.visiblePanels) * (that.totalSize + that.computedPanelDistance);
-					} else {
-						position = index * (that.closedPanelSize + that.computedPanelDistance);
-					}
-				}
-
+				var position = index * (that.closedPanelSize + that.computedPanelDistance);
 				element.setPosition(position);
 
-				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
 				if (that.computedPanelDistance !== 0) {
-					var size = (that.currentIndex == -1 || (that.settings.visiblePanels != -1 && that.getPageOfPanel(index) != that.currentPage)) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
-					element.setSize(size);
+					element.setSize(that.closedPanelSize);
 				}
 			});
 
