@@ -10,10 +10,10 @@
 
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script type="text/javascript" src="js/jquery.classicAccordion.js"></script>
+<script type="text/javascript" src="js/jquery.mousewheel.js"></script>
 
 <script type="text/javascript">
 	var accordion;
-
 
 	$(document).ready(function() {
 		accordion = $('#my-accordion').classicAccordion({
@@ -33,6 +33,8 @@
 						autoplayDelay: 2000,
 						visiblePanels: 5,
 						startPage: 2,
+						mouseWheelTarget: 'page',
+						mouseWheelSensitivity: 500,
 						breakpoints: {
 							700: {height: 400, aspectRatio: -1, visiblePanels: 3},
 							1000: {width: 800, responsive: false, visiblePanels: 4},
@@ -72,6 +74,10 @@
 
 	function onButton5Click() {
 		$('#my-accordion').classicAccordion('nextPage');
+	}
+
+	function onButton6Click() {
+		$('#my-accordion').classicAccordion('autoplay', false);
 	}
 	
 </script>
@@ -276,6 +282,7 @@
 	    <a href="#" onclick="onButton3Click();return false;">Button 3</a>
 	    <a href="#" onclick="onButton4Click();return false;">Button 4</a>
 	    <a href="#" onclick="onButton5Click();return false;">Button 5</a>
+	    <a href="#" onclick="onButton6Click();return false;">Button 6</a>
 	<div>
 </body>
 </html>

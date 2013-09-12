@@ -25,7 +25,6 @@ Features
 * + autoplay
 * auto video handling
 * + controls for pagination and responsive behaviour
-* mouse wheel scroll (panels or pages)
+* + mouse wheel scroll (panels or pages)
 * ? resize while maintaining size and position
-* get content size of panel
-* ? breakpoints use settings from larger sizes
+* + get content size of panel

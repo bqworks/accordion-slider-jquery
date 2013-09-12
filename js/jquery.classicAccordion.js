@@ -1745,6 +1745,56 @@
 
 	$.ClassicAccordion.addAccordionModule('Autoplay', Autoplay);
 
+	/*
+		MouseWheel module
+
+		Adds mousewheel support for scrolling through pages or individual panels
+	*/
+	var MouseWheel = {
+
+		allowMouseWheelScroll: true,
+
+		initMouseWheel: function() {
+			var that = this;
+
+			$.extend(this.settings, this.mouseWheelDefaults, this.options);
+
+			this.on('mousewheel.' + NS, function(event, delta) {
+				event.preventDefault();
+
+				if (that.allowMouseWheelScroll) {
+					that.allowMouseWheelScroll = false;
+
+					setTimeout(function() {
+						that.allowMouseWheelScroll = true;
+					}, that.settings.mouseWheelSensitivity);
+
+					if (delta <= -1)
+						if (that.settings.mouseWheelTarget == 'page')
+							that.nextPage();
+						else
+							that.nextPanel();
+					else if (delta >= 1)
+						if (that.settings.mouseWheelTarget == 'page')
+							that.previousPage();
+						else
+							that.previousPanel();
+				}
+			});
+		},
+
+		destroyMouseWheel: function() {
+			this.on('mousewheel.' + NS);
+		},
+
+		mouseWheelDefaults: {
+			mouseWheelSensitivity: 500,
+			mouseWheelTarget: 'panel'
+		}
+	};
+
+	$.ClassicAccordion.addAccordionModule('MouseWheel', MouseWheel);
+
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;
 
