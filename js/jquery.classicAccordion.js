@@ -107,9 +107,17 @@
 					this['init' + modules[i]]();
 			}
 
+			// keep a reference of the original settings and use it
+			// to restore the settings when the breakpoints are used
 			this.originalSettings = $.extend({}, this.settings);
 
+			// set a panel to be opened from the start
 			this.currentIndex = this.settings.startPanel;
+
+			// if a panels was not set to be opened but a page was specified,
+			// set that page index to be opened
+			if (this.currentIndex == -1 && this.settings.startPage !== 0)
+				this.currentPage = this.settings.startPage;
 
 			// parse the breakpoints object and store the values into an array
 			// sorting them in ascending order based on the specified size
@@ -629,10 +637,10 @@
 						var value = animatedPanels[i],
 							panel = that.getPanelAt(value);
 
+						panel.setPosition(now * (targetPosition[value] - startPosition[value]) + startPosition[value]);
+
 						if (that.computedPanelDistance !== 0)
 							panel.setSize(now * (targetSize[value] - startSize[value]) + startSize[value]);
-
-						panel.setPosition(now * (targetPosition[value] - startPosition[value]) + startPosition[value]);
 					}
 				},
 				complete: function() {
@@ -704,10 +712,10 @@
 					for (var i = firstPanel; i <= lastPanel; i++) {
 						var panel = that.getPanelAt(i);
 
+						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
+
 						if (that.computedPanelDistance !== 0)
 							panel.setSize(now * (targetSize[i] - startSize[i]) + startSize[i]);
-
-						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
 					}
 				},
 				complete: function() {
@@ -924,6 +932,7 @@
 			pageScrollEasing: 'swing',
 			breakpoints: null,
 			visiblePanels: -1,
+			startPage: 0,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},

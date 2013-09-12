@@ -24,6 +24,7 @@ Features
 * + open panel to maximum possible size
 * + autoplay
 * auto video handling
-* controls for pagination and responsive behaviour
+* + controls for pagination and responsive behaviour
 * mouse wheel scroll (panels or pages)
 * ? resize while maintaining size and position
+* get content size of panel
