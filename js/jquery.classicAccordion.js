@@ -1089,10 +1089,28 @@
 		},
 
 		/*
-			Get the whole size of the panel's content
+			Get the real size of the panel's content
 		*/
 		getContentSize: function() {
-			return this.sizeProperty == 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
+			var size;
+
+			if (this.settings.panelDistance !== 0) {
+				size = this.sizeProperty == 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
+			} else {
+				// workaround for when scrollWidth and scrollHeight return incorrect values
+				// this happens in some browsers (Firefox a.t.m.) unless there is a set width and height for the element
+				if (this.sizeProperty == 'width') {
+					this.$panel.css('width', 100);
+					size = this.$panel[0].scrollWidth;
+					this.$panel.css('width', '');
+				} else {
+					this.$panel.css('height', 100);
+					size = this.$panel[0].scrollHeight;
+					this.$panel.css('height', '');
+				}
+			}
+
+			return size;
 		},
 
 		/*
