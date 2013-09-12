@@ -79,6 +79,9 @@
 		// indicates the current size breakpoint
 		this.currentBreakpoint = -1;
 
+		// keeps a reference to the previous number of visible panels
+		this.previousVisiblePanels = -1;
+
 		// init the accordion
 		this._init();
 	};
@@ -203,18 +206,17 @@
 				this.$accordion.css({width: this.settings.width, height: this.settings.height, maxWidth: '', maxHeight: ''});
 			}
 
-			this.computedPanelDistance = this.settings.panelDistance;
+			// if the number of visible panels has change, update the current page to reflect
+			// the same relative position of the panels
+			if (this.settings.visiblePanels == -1) {
+				this.currentPage = 0;
+			} else if (this.settings.visiblePanels != this.previousVisiblePanels && this.previousVisiblePanels !== -1) {
+				var correctPage = Math.round((this.currentPage * this.previousVisiblePanels) / this.settings.visiblePanels);
 
-			if (this.settings.visiblePanels != -1) {
-				if (this.currentIndex != -1) {
-					var correctPage = this.getPageOfPanel(this.currentIndex);
-					
-					if (this.currentPage !== correctPage) {
-						this.currentPage = correctPage;
-					}
-				} else {
-					var index = 1;
-				}
+				console.log(this.currentPage * this.previousVisiblePanels, correctPage * this.settings.visiblePanels);
+
+				if (this.currentPage !== correctPage)
+					this.currentPage = correctPage;
 			}
 
 			// refresh panels
@@ -435,6 +437,11 @@
 		setProperties: function(properties, store) {
 			// parse the properties passed as an object
 			for (var prop in properties) {
+				// if the number of visible panels is changed, store a reference of the previous value
+				// which will be used to move the panels to the corresponding page
+				if (prop == 'visiblePanels' && this.settings.visiblePanels != -1)
+					this.previousVisiblePanels = this.settings.visiblePanels;
+
 				this.settings[prop] = properties[prop];
 
 				// alter the original settings as well unless 'false' is passed to the 'store' parameter

@@ -28,3 +28,4 @@ Features
 * mouse wheel scroll (panels or pages)
 * ? resize while maintaining size and position
 * get content size of panel
+* ? breakpoints use settings from larger sizes
