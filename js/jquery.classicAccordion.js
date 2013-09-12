@@ -134,8 +134,8 @@
 				});
 			}
 
-			// refresh the accordion
-			this.refresh();
+			// update the accordion
+			this.update();
 
 			// if there is a panel opened at start handle that panel as if it was manually opened
 			if (this.currentIndex != -1) {
@@ -170,9 +170,9 @@
 		},
 
 		/*
-			Refresh the accordion after a property was changed or panels were added/removed
+			Update the accordion after a property was changed or panels were added/removed
 		*/
-		refresh: function() {
+		update: function() {
 			var that = this;
 
 			// add a class to the accordion based on the orientation
@@ -213,26 +213,24 @@
 			} else if (this.settings.visiblePanels != this.previousVisiblePanels && this.previousVisiblePanels !== -1) {
 				var correctPage = Math.round((this.currentPage * this.previousVisiblePanels) / this.settings.visiblePanels);
 
-				console.log(this.currentPage * this.previousVisiblePanels, correctPage * this.settings.visiblePanels);
-
 				if (this.currentPage !== correctPage)
 					this.currentPage = correctPage;
 			}
 
-			// refresh panels
-			this.refreshPanels();
+			// update panels
+			this.updatePanels();
 
 			// create or update the pagination buttons
-			this.refreshPaginationButtons();
+			this.updatePaginationButtons();
 
 			// set the size of the accordion
 			this.resize();
 		},
 
 		/*
-			Create, remove or refresh panels based on the HTML specified in the accordion
+			Create, remove or update panels based on the HTML specified in the accordion
 		*/
-		refreshPanels: function() {
+		updatePanels: function() {
 			var that = this;
 
 			// check if there are removed items in the DOM and remove the from the array of panels
@@ -251,7 +249,7 @@
 					that._createPanel(index, panel);
 				} else {
 					that.panels[index].setIndex(index);
-					that.panels[index].refresh();
+					that.panels[index].update();
 				}
 
 			});
@@ -449,7 +447,7 @@
 					this.originalSettings[prop] = properties[prop];
 			}
 			
-			this.refresh();
+			this.update();
 		},
 
 		/*
@@ -860,7 +858,7 @@
 		/*
 			Create or update the pagination buttons
 		*/
-		refreshPaginationButtons: function() {
+		updatePaginationButtons: function() {
 			var paginationButtons = this.$accordion.find('.ca-pagination-buttons'),
 				that = this;
 
@@ -1001,7 +999,7 @@
 			});
 
 			// set position and size properties
-			this.refresh();
+			this.update();
 
 			// init panel modules
 			var modules = $.ClassicAccordion.panelModules;
@@ -1013,9 +1011,9 @@
 		},
 
 		/*
-			Refresh the panel
+			Update the panel
 		*/
-		refresh: function() {
+		update: function() {
 			// get the new position and size properties
 			this.positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top';
 			this.sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height';
