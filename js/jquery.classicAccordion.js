@@ -45,6 +45,9 @@
 		// the size, in pixels, of the accordion
 		this.totalSize = 0;
 
+		// the size of the panels' container
+		this.totalPanelsSize = 0;
+
 		// the actual size, in pixels, of the opened panel
 		this.computedOpenedPanelSize = 0;
 
@@ -374,6 +377,8 @@
 			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
 			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
 			this.closedPanelSize = Math.floor(this.closedPanelSize);
+
+			this.totalPanelsSize = this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1);
 
 			// reset the position and size of each panel
 			$.each(this.panels, function(index, element) {
@@ -776,7 +781,7 @@
 				targetPosition = - (index * this.totalSize + this.currentPage * this.computedPanelDistance);
 			
 			if (this.currentPage == this.getTotalPages() - 1)
-				targetPosition = - (this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1) - this.totalSize);
+				targetPosition = - (this.totalPanelsSize - this.totalSize);
 
 			animObj[positionProperty] = targetPosition;
 
@@ -1784,7 +1789,7 @@
 		},
 
 		destroyMouseWheel: function() {
-			this.on('mousewheel.' + NS);
+			this.off('mousewheel.' + NS);
 		},
 
 		mouseWheelDefaults: {
@@ -1794,6 +1799,148 @@
 	};
 
 	$.ClassicAccordion.addAccordionModule('MouseWheel', MouseWheel);
+
+	/*
+		TouchSwipe module
+
+		Adds touch swipe support for scrolling through pages
+	*/
+	var TouchSwipe = {
+
+		isTouchSupport: false,
+
+		touchStartPoint: {x: 0, y: 0},
+
+		touchEndPoint: {x: 0, y: 0},
+
+		touchStartPosition: 0,
+
+		isMoving: false,
+
+		initTouchSwipe: function() {
+			var that = this;
+
+			$.extend(this.settings, this.touchSwipeDefaults, this.options);
+
+			// check if there is touch support
+			this.isTouchSupport = 'ontouchstart' in window;
+
+			// listen to touch events or, if touch support doesn't exist, listen to mouse events
+			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown',
+				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
+
+			this.$panelsContainer.on(startEvent + '.' + NS, this.onTouchStart.bind(this));
+			this.$panelsContainer.on(endEvent + '.' + NS, this.onTouchEnd.bind(this));
+		},
+
+		onTouchStart: function(event) {
+			event.preventDefault();
+
+			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent,
+				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
+
+			// get the initial position of the mouse pointer and the initial position of the panels' container
+			this.touchStartPoint.x = eventObject.pageX;
+			this.touchStartPoint.y = eventObject.pageY;
+			this.touchStartPosition = this.settings.orientation == 'horizontal' ? this.$panelsContainer.position().left : this.$panelsContainer.position().top;
+
+			// listen for move events
+			this.$panelsContainer.on(moveEvent + '.' + NS, this.onTouchMove.bind(this));
+		},
+
+		onTouchMove: function(event) {
+			event.preventDefault();
+
+			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent;
+
+			// indicate that the move event is being fired
+			this.isMoving = true;
+
+			// get the current position of the mouse pointer
+			this.touchEndPoint.x = eventObject.pageX;
+			this.touchEndPoint.y = eventObject.pageY;
+
+			// calculate the distance of the movement on both axis
+			var xDistance = this.touchEndPoint.x - this.touchStartPoint.x,
+				yDistance = this.touchEndPoint.y - this.touchStartPoint.y,
+				distance = this.settings.orientation == 'horizontal' ? xDistance : yDistance;
+			
+			// get the current position of panels' container
+			var positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
+				sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height',
+				currentPanelsPosition = this.settings.orientation == 'horizontal' ? this.$panelsContainer.position().left : this.$panelsContainer.position().top;
+			
+			// reduce the movement speed if the panels' container is outside its bounds
+			if (currentPanelsPosition > 0 || currentPanelsPosition < - this.totalPanelsSize + this.totalSize)
+				distance = distance * 0.2;
+
+			// move the panels' container
+			this.$panelsContainer.css(positionProperty, this.touchStartPosition + distance);
+		},
+
+		onTouchEnd: function(event) {
+			event.preventDefault();
+
+			// remove the move listener
+			var moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
+			this.$panelsContainer.off(moveEvent + '.' + NS);
+
+			// return if there was no movement
+			if (!this.isMoving)
+				return;
+
+			this.isMoving = false;
+
+			// calculate the distance of the movement
+			var xDistance = this.touchEndPoint.x - this.touchStartPoint.x,
+				yDistance = this.touchEndPoint.y - this.touchStartPoint.y;
+
+			// set the accordion's page based on the distance of the movement and the accordion's settings
+			if (this.settings.orientation == 'horizontal') {
+				if (xDistance > this.settings.touchSwipeThreshold) {
+					if (this.currentPage > 0)
+						this.previousPage();
+					else
+						this.gotoPage(this.currentPage);
+				} else if (- xDistance > this.settings.touchSwipeThreshold) {
+					if (this.currentPage < this.getTotalPages() - 1)
+						this.nextPage();
+					else
+						this.gotoPage(this.currentPage);
+				} else if (Math.abs(xDistance) < this.settings.touchSwipeThreshold) {
+					this.gotoPage(this.currentPage);
+				}
+			} else if (this.settings.orientation == 'vertical') {
+				if (yDistance > this.settings.touchSwipeThreshold) {
+					if (this.currentPage > 0)
+						this.previousPage();
+					else
+						this.gotoPage(this.currentPage);
+				} else if (- yDistance > this.settings.touchSwipeThreshold) {
+					if (this.currentPage < this.getTotalPages() - 1)
+						this.nextPage();
+					else
+						this.gotoPage(this.currentPage);
+				} else if (Math.abs(yDistance) < this.settings.touchSwipeThreshold) {
+					this.gotoPage(this.currentPage);
+				}
+			}
+		},
+
+		destroyTouchSwipe: function() {
+			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown',
+				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
+
+			this.$panelsContainer.off(startEvent + '.' + NS);
+			this.$panelsContainer.off(endEvent + '.' + NS);
+		},
+
+		touchSwipeDefaults: {
+			touchSwipeThreshold: 50
+		}
+	};
+
+	$.ClassicAccordion.addAccordionModule('TouchSwipe', TouchSwipe);
 
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;
