@@ -32,3 +32,4 @@ Features
 * + addModule
 * + remove/replace that
 * test CSS3 transforms
+* add underscore to private methods

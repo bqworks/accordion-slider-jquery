@@ -379,7 +379,7 @@
 
 			// get the total size of the panels' container
 			this.totalPanelsSize = this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1);
-			
+
 			var sizeProperty = this.settings.orientation == "horizontal" ? 'width' : 'height';
 			this.$panelsContainer.css(sizeProperty, this.totalPanelsSize);
 
@@ -1575,7 +1575,7 @@
 		},
 
 		swapBackgroundDefaults: {
-			swapBackgroundDuration: 700,
+			swapBackgroundDuration: 700
 		}
 	};
 
@@ -1854,8 +1854,8 @@
 			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown',
 				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
 
-			this.$panelsContainer.on(startEvent + '.' + NS, this.onTouchStart.bind(this));
-			this.$panelsContainer.on(endEvent + '.' + NS, this.onTouchEnd.bind(this));
+			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this.onTouchStart, this));
+			this.$panelsContainer.on(endEvent + '.' + NS, $.proxy(this.onTouchEnd, this));
 		},
 
 		onTouchStart: function(event) {
@@ -1870,7 +1870,7 @@
 			this.touchStartPosition = this.settings.orientation == 'horizontal' ? this.$panelsContainer.position().left : this.$panelsContainer.position().top;
 
 			// listen for move events
-			this.$panelsContainer.on(moveEvent + '.' + NS, this.onTouchMove.bind(this));
+			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this.onTouchMove, this));
 		},
 
 		onTouchMove: function(event) {
@@ -1966,6 +1966,62 @@
 	};
 
 	$.ClassicAccordion.addModule('TouchSwipe', TouchSwipe, 'accordion');
+
+	/*
+		XML Module
+
+		Creates the panels based on XML data
+	*/
+	var XML = {
+
+		initXML: function() {
+			$.extend(this.settings, this.XMLDefaults, this.options);
+
+			this.updateXML();
+		},
+
+		updateXML: function() {
+			this.$accordion.empty();
+
+			this.on('XMLComplete.' + NS, function(event) {
+				console.log(event.xmlData);
+			});
+
+			this.readXML();
+		},
+
+		readXML: function() {
+			var that = this;
+
+			$.ajax({type: 'GET',
+					url: this.settings.XMLSource,
+					dataType:  browserName == 'msie' ? 'text' : 'xml',
+					success: function(result) {
+						var xmlData;
+						
+						if (browserName == 'msie') {
+							xmlData = new ActiveXObject('Microsoft.XMLDOM');
+							xmlData.async = false;
+							xmlData.loadXML(result);
+						} else {
+							xmlData = result;
+						}
+						
+						that.trigger({type: 'XMLComplete.' + NS, xmlData: xmlData});
+					}
+			});
+		},
+
+		destroyXML: function() {
+
+		},
+
+		XMLDefaults: {
+			XMLSource: null
+		}
+	};
+
+	$.ClassicAccordion.addModule('XML', XML, 'accordion');
 
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;
