@@ -103,7 +103,6 @@
 			// create additional mask container, which will maks the panels'container
 			this.$maskContainer = $('<div class="ca-mask"></div>').appendTo(this.$accordion);
 			this.$panelsContainer = this.$accordion.find('.ca-panels').appendTo(this.$maskContainer);
-			this.$accordion.find('.ca-panel').appendTo(this.$panelsContainer);
 
 			// init accordion modules
 			var modules = $.ClassicAccordion.modules.accordion;
@@ -378,7 +377,11 @@
 			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
 			this.closedPanelSize = Math.floor(this.closedPanelSize);
 
+			// get the total size of the panels' container
 			this.totalPanelsSize = this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1);
+			
+			var sizeProperty = this.settings.orientation == "horizontal" ? 'width' : 'height';
+			this.$panelsContainer.css(sizeProperty, this.totalPanelsSize);
 
 			// reset the position and size of each panel
 			$.each(this.panels, function(index, element) {

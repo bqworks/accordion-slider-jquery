@@ -4,7 +4,7 @@
 }
 
 .classic-accordion .ca-mask {
-	position: relative;
+	position: absolute;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
@@ -39,16 +39,19 @@
 	height: auto;
 }
 
+.classic-accordion .ca-background,
+.classic-accordion .ca-background-opened {
+	display: block;
+	border: none;
+}
 
 .classic-accordion.ca-horizontal .ca-background,
 .classic-accordion.ca-horizontal .ca-background-opened {
-	display: block;
 	height: 100%;
 }
 
 .classic-accordion.ca-vertical .ca-background,
 .classic-accordion.ca-vertical .ca-background-opened {
-	display: block;
 	width: 100%;
 }
 
@@ -115,6 +118,9 @@
 }
 
 .classic-accordion .ca-pagination-buttons {
+	position: absolute;
+	top: 100%;
+	width: 100%;
 	text-align: center;
 	margin-top: 10px;
 }
