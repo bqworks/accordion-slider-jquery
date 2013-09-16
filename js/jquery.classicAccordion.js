@@ -238,9 +238,9 @@
 
 			// check if there are removed items in the DOM and remove the from the array of panels
 			for (var i = this.panels.length - 1; i >= 0; i--) {
-				if (that.$accordion.find('.ca-panel[data-index="' + i + '"]').length === 0) {
-					that.panels[i].destroy();
-					that.panels.splice(i, 1);
+				if (this.$accordion.find('.ca-panel[data-index="' + i + '"]').length === 0) {
+					this.panels[i].destroy();
+					this.panels.splice(i, 1);
 				}
 			}
 
@@ -254,7 +254,6 @@
 					that.panels[index].setIndex(index);
 					that.panels[index].update();
 				}
-
 			});
 		},
 
@@ -1187,9 +1186,9 @@
 
 			// check the index pf the panel against the index of the selected/opened panel
 			if (this.index == this.accordion.getCurrentIndex())
-				that.handleLayersInOpenedState();
+				this.handleLayersInOpenedState();
 			else
-				that.handleLayersInClosedState();
+				this.handleLayersInClosedState();
 
 			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
@@ -1208,8 +1207,6 @@
 		},
 
 		handleLayersInOpenedState: function() {
-			var that = this;
-
 			// show 'opened' layers and close 'closed' layers
 			$.each(this.layers, function(index, layer) {
 				if (layer.visibleOn == 'opened')
@@ -1221,8 +1218,6 @@
 		},
 
 		handleLayersInClosedState: function() {
-			var that = this;
-
 			// hide 'opened' layers and show 'closed' layers
 			$.each(this.layers, function(index, layer) {
 				if (layer.visibleOn == 'opened')

@@ -30,4 +30,4 @@ Features
 * + get content size of panel
 * ? replace mousewheel plugin
 * ? addModule
-* remove/replace that
+* test CSS3 transforms
