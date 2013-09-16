@@ -106,12 +106,13 @@
 			this.$accordion.find('.ca-panel').appendTo(this.$panelsContainer);
 
 			// init accordion modules
-			var modules = $.ClassicAccordion.accordionModules;
+			var modules = $.ClassicAccordion.modules.accordion;
 
-			for (var i in modules) {
-				if (typeof this['init' + modules[i]] !== 'undefined')
-					this['init' + modules[i]]();
-			}
+			if (typeof modules !== 'undefined')
+				for (var i in modules) {
+					if (typeof this['init' + modules[i]] !== 'undefined')
+						this['init' + modules[i]]();
+				}
 
 			// keep a reference of the original settings and use it
 			// to restore the settings when the breakpoints are used
@@ -1006,12 +1007,13 @@
 			this.update();
 
 			// init panel modules
-			var modules = $.ClassicAccordion.panelModules;
+			var modules = $.ClassicAccordion.modules.panel;
 
-			for (var i in modules) {
-				if (typeof this['init' + modules[i]] !== 'undefined')
-					this['init' + modules[i]]();
-			}
+			if (typeof modules !== 'undefined')
+				for (var i in modules) {
+					if (typeof this['init' + modules[i]] !== 'undefined')
+						this['init' + modules[i]]();
+				}
 		},
 
 		/*
@@ -1144,20 +1146,18 @@
 	*/
 	$.ClassicAccordion = {
 
-		accordionModules: [],
+		modules: {},
 
-		panelModules: [],
+		addModule: function(name, module, target) {
+			if (typeof this.modules[target] === 'undefined')
+				this.modules[target] = [];
 
-		addAccordionModule: function(name, module) {
-			this.accordionModules.push(name);
+			this.modules[target].push(name);
 
-			$.extend(ClassicAccordion.prototype, module);
-		},
-
-		addPanelModule: function(name, module) {
-			this.panelModules.push(name);
-
-			$.extend(ClassicAccordionPanel.prototype, module);
+			if (target == 'accordion')
+				$.extend(ClassicAccordion.prototype, module);
+			else if (target == 'panel')
+				$.extend(ClassicAccordionPanel.prototype, module);
 		}
 	};
 
@@ -1238,7 +1238,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addPanelModule('Layers', Layers);
+	$.ClassicAccordion.addModule('Layers', Layers, 'panel');
 
 	var Layer = function(layer) {
 
@@ -1576,7 +1576,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addAccordionModule('SwapBackground', SwapBackground);
+	$.ClassicAccordion.addModule('SwapBackground', SwapBackground, 'accordion');
 
 	/*
 		Deep Linking module
@@ -1630,7 +1630,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addAccordionModule('DeepLinking', DeepLinking);
+	$.ClassicAccordion.addModule('DeepLinking', DeepLinking, 'accordion');
 
 	$.fn.classicAccordion = function(options) {
 		var args = Array.prototype.slice.call(arguments, 1);
@@ -1743,7 +1743,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addAccordionModule('Autoplay', Autoplay);
+	$.ClassicAccordion.addModule('Autoplay', Autoplay, 'accordion');
 
 	/*
 		MouseWheel module
@@ -1793,7 +1793,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addAccordionModule('MouseWheel', MouseWheel);
+	$.ClassicAccordion.addModule('MouseWheel', MouseWheel, 'accordion');
 
 	/*
 		TouchSwipe module
@@ -1935,7 +1935,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addAccordionModule('TouchSwipe', TouchSwipe);
+	$.ClassicAccordion.addModule('TouchSwipe', TouchSwipe, 'accordion');
 
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;

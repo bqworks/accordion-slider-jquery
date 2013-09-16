@@ -29,5 +29,6 @@ Features
 * ? resize while maintaining size and position
 * + get content size of panel
 * ? replace mousewheel plugin
-* ? addModule
+* + addModule
+* + remove/replace that
 * test CSS3 transforms
