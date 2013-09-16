@@ -28,7 +28,7 @@ Features
 * + mouse wheel scroll (panels or pages)
 * ? resize while maintaining size and position
 * + get content size of panel
-* ? replace mousewheel plugin
+* + replace mousewheel plugin
 * + addModule
 * + remove/replace that
 * test CSS3 transforms
