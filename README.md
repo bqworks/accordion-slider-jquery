@@ -16,8 +16,8 @@ Features
 * + add/remove items on runtime
 * + set options on runtime
 * + destroy
-* XML
-* JSON
+* + XML
+* + JSON
 * + deep linking
 * + size breakpoints
 * ? shadows
@@ -33,3 +33,4 @@ Features
 * + remove/replace that
 * test CSS3 transforms
 * add underscore to private methods
+* test updating of XML and JSON data
