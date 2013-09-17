@@ -1974,6 +1974,25 @@
 	*/
 	var XML = {
 
+		dataAttributesMap : {
+			'width': 'data-width',
+			'height': 'data-height',
+			'depth': 'data-depth',
+			'position': 'data-position',
+			'horizontal': 'data-horizontal',
+			'vertical': 'data-vertical',
+			'showTransition': 'data-show-transition',
+			'showOffset': 'data-show-offset',
+			'showDelay': 'data-show-delay',
+			'showDuration': 'data-show-duration',
+			'showEasing': 'data-show-easing',
+			'hideTransition': 'data-hide-transition',
+			'hideOffset': 'data-',
+			'hideDelay': 'data-hide-delay',
+			'hideDuration': 'data-hide-duration',
+			'hideEasing': 'data-hide-easing'
+		},
+
 		initXML: function() {
 			$.extend(this.settings, this.XMLDefaults, this.options);
 
@@ -1981,16 +2000,109 @@
 		},
 
 		updateXML: function() {
+			var that = this;
+
+			// empty the accordion's container in case it contains any content
 			this.$accordion.empty();
 
+			// parse the XML data and construct the panels
 			this.on('XMLComplete.' + NS, function(event) {
-				console.log(event.xmlData);
+				var xmlData = $(event.xmlData);
+
+				// create the main containers
+				that.$maskContainer = $('<div class="ca-mask"></div>').appendTo(that.$accordion);
+				that.$panelsContainer = $('<div class="ca-panels"></div>').appendTo(that.$maskContainer);
+
+				// parse the panel node
+				xmlData.find('panel').each(function() {
+					var xmlPanel = $(this),
+						xmlBackground = xmlPanel.find('background'),
+						xmlBackgroundLink = xmlPanel.find('backgroundLink'),
+						xmlBackgroundOpened = xmlPanel.find('backgroundOpened'),
+						xmlBackgroundOpenedLink = xmlPanel.find('backgroundOpenedLink'),
+						xmlLayer = xmlPanel.find('layer'),
+						backgroundLink,
+						backgroundOpenedLink;
+
+					// create the panel element
+					var panel = $('<div class="ca-panel"></div>').appendTo(that.$panelsContainer);
+
+					// create the background image and link
+					if (xmlBackgroundLink.length) {
+						backgroundLink = $('<a href="' + xmlBackgroundLink.text() + '"></a>');
+
+						$.each(xmlBackgroundLink[0].attributes, function(index, attribute) {
+							backgroundLink.attr(attribute.nodeName, attribute.nodeValue);
+						});
+
+						backgroundLink.appendTo(panel);
+					}
+
+					if (xmlBackground.length) {
+						var background = $('<img class="ca-background" src="' + xmlBackground.text() + '"/>');
+
+						$.each(xmlBackground[0].attributes, function(index, attribute) {
+							background.attr(attribute.nodeName, attribute.nodeValue);
+						});
+
+						background.appendTo(xmlBackgroundLink.length ? backgroundLink : panel);
+					}
+
+					// create the background image and link for the opened state of the panel
+					if (xmlBackgroundOpenedLink.length) {
+						backgroundOpenedLink = $('<a href="' + xmlBackgroundOpenedLink.text() + '"></a>');
+
+						$.each(xmlBackgroundOpenedLink[0].attributes, function(index, attribute) {
+							backgroundOpenedLink.attr(attribute.nodeName, attribute.nodeValue);
+						});
+
+						backgroundOpenedLink.appendTo(panel);
+					}
+
+					if (xmlBackgroundOpened.length) {
+						var backgroundOpened = $('<img class="ca-background-opened" src="' + xmlBackgroundOpened.text() + '"/>');
+
+						$.each(xmlBackgroundOpened[0].attributes, function(index, attribute) {
+							backgroundOpened.attr(attribute.nodeName, attribute.nodeValue);
+						});
+
+						backgroundOpened.appendTo(xmlBackgroundOpenedLink.length ? backgroundOpenedLink : panel);
+					}
+
+					// parse the layer(s)
+					if (xmlLayer.length)
+						$.each(xmlLayer, function() {
+							var xmlLayerItem = $(this),
+								classes = '',
+								dataAttributes = '';
+
+							// parse the attributes specified for the layer and extract the classes and data attributes
+							$.each(xmlLayerItem[0].attributes, function(attributeIndex, attribute) {
+								if (attribute.nodeName == 'style') {
+									var classList = attribute.nodeValue.split(' ');
+									
+									$.each(classList, function(classIndex, className) {
+										classes += ' ca-' + className;
+									});
+								} else {
+									dataAttributes += ' ' + that.dataAttributesMap[attribute.nodeName] + '="' + attribute.nodeValue + '"';
+								}
+							});
+
+							// create the layer element
+							$('<div class="ca-layer' + classes + '"' + dataAttributes + '">' + xmlLayerItem.text() + '</div>').appendTo(panel);
+						});
+
+				});
+
+				that.update();
 			});
 
-			this.readXML();
+			// load the XML
+			this.loadXML();
 		},
 
-		readXML: function() {
+		loadXML: function() {
 			var that = this;
 
 			$.ajax({type: 'GET',
@@ -2013,7 +2125,7 @@
 		},
 
 		destroyXML: function() {
-
+			this.off('XMLComplete.' + NS);
 		},
 
 		XMLDefaults: {
