@@ -221,10 +221,10 @@
 			}
 
 			// update panels
-			this.updatePanels();
+			this._updatePanels();
 
 			// create or update the pagination buttons
-			this.updatePaginationButtons();
+			this._updatePaginationButtons();
 
 			// set the size of the accordion
 			this.resize();
@@ -233,7 +233,7 @@
 		/*
 			Create, remove or update panels based on the HTML specified in the accordion
 		*/
-		updatePanels: function() {
+		_updatePanels: function() {
 			var that = this;
 
 			// check if there are removed items in the DOM and remove the from the array of panels
@@ -526,13 +526,6 @@
 		},
 
 		/*
-			Parse the XML file
-		*/
-		_parseXML: function() {
-
-		},
-
-		/*
 			Open the next panel
 		*/
 		nextPanel: function() {
@@ -583,8 +576,8 @@
 				startSize = [],
 				startPosition = [],
 				animatedPanels = [],
-				firstPanel = this.getFirstPanelFromPage(),
-				lastPanel = this.getLastPanelFromPage(),
+				firstPanel = this._getFirstPanelFromPage(),
+				lastPanel = this._getLastPanelFromPage(),
 				counter = 0;
 
 			this.$accordion.find('.ca-opened').removeClass('ca-opened');
@@ -690,8 +683,8 @@
 				targetPosition = [],
 				startSize = [],
 				startPosition = [],
-				firstPanel = this.getFirstPanelFromPage(),
-				lastPanel = this.getLastPanelFromPage(),
+				firstPanel = this._getFirstPanelFromPage(),
+				lastPanel = this._getLastPanelFromPage(),
 				counter = 0;
 
 			// get the starting and target size and position of each panel
@@ -822,7 +815,7 @@
 		/*
 			Calculate and return the first panel from the current page
 		*/
-		getFirstPanelFromPage: function() {
+		_getFirstPanelFromPage: function() {
 			if (this.settings.visiblePanels == -1) {
 				return 0;
 			} else if (this.currentPage == this.getTotalPages() - 1 && this.currentPage !== 0) {
@@ -835,7 +828,7 @@
 		/*
 			Calculate and return the last panel from the current page
 		*/
-		getLastPanelFromPage: function() {
+		_getLastPanelFromPage: function() {
 			if (this.settings.visiblePanels == -1) {
 				return this.getTotalPanels() - 1;
 			} else if (this.currentPage == this.getTotalPages() - 1) {
@@ -848,25 +841,25 @@
 		/*
 			Return the page that the specified panel belongs to
 		*/
-		getPageOfPanel: function(index) {
+		_getPageOfPanel: function(index) {
 			return Math.floor(index / this.settings.visiblePanels);
-
+ 
 		},
-
+ 
 		/*
 			Check if the specified panel belongs to the current page 
 		*/
-		isPanelInPage: function(index) {
+		_isPanelInPage: function(index) {
 			if (this.getPageOfPanel(index) == this.currentPage || this.currentPage == this.getTotalPages() - 1 && index >= this.getTotalPanels() - this.settings.visiblePanels)
 				return true;
-
+ 
 			return false;
 		},
 
 		/*
 			Create or update the pagination buttons
 		*/
-		updatePaginationButtons: function() {
+		_updatePaginationButtons: function() {
 			var paginationButtons = this.$accordion.find('.ca-pagination-buttons'),
 				that = this;
 
@@ -914,10 +907,6 @@
 				paginationButtons.find('.ca-selected').removeClass('ca-selected');
 				paginationButtons.find('.ca-pagination-button').eq(this.currentPage).addClass('ca-selected');
 			}
-		},
-
-		getAccordionState: function() {
-
 		},
 
 		/*
@@ -1164,6 +1153,32 @@
 		}
 	};
 
+	$.fn.classicAccordion = function(options) {
+		var args = Array.prototype.slice.call(arguments, 1);
+
+		return this.each(function() {
+			// instantiate the accordion or alter it
+			if (typeof $(this).data('classicAccordion') === 'undefined') {
+				var newInstance = new ClassicAccordion(this, options);
+
+				// store a reference to the instance created
+				$(this).data('classicAccordion', newInstance);
+			} else if (typeof options !== 'undefined') {
+				var	currentInstance = $(this).data('classicAccordion');
+
+				// check the type of argument passed
+				if (typeof currentInstance[options] === 'function')
+					currentInstance[options].apply(currentInstance, args);
+				else if (typeof currentInstance.settings[options] !== 'undefined')
+					currentInstance.setProperties(options, args[0]);
+				else if (typeof options === 'object')
+					currentInstance.setProperties(options);
+				else
+					$.error(options + ' does not exist in classicAccordion.');
+			}
+		});
+	};
+
 	/*
 		Layers module
 
@@ -1189,27 +1204,27 @@
 
 			// check the index pf the panel against the index of the selected/opened panel
 			if (this.index == this.accordion.getCurrentIndex())
-				this.handleLayersInOpenedState();
+				this._handleLayersInOpenedState();
 			else
-				this.handleLayersInClosedState();
+				this._handleLayersInClosedState();
 
 			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
 			this.accordion.on('panelOpen.' + this.panelNS, function(event) {
 				if (that.index === event.index)
-					that.handleLayersInOpenedState();
+					that._handleLayersInOpenedState();
 
 				if (that.index === event.previousIndex)
-					that.handleLayersInClosedState();
+					that._handleLayersInClosedState();
 			});
 
 			this.accordion.on('panelsClose.' + this.panelNS, function(event) {
 				if (that.index === event.previousIndex)
-					that.handleLayersInClosedState();
+					that._handleLayersInClosedState();
 			});
 		},
 
-		handleLayersInOpenedState: function() {
+		_handleLayersInOpenedState: function() {
 			// show 'opened' layers and close 'closed' layers
 			$.each(this.layers, function(index, layer) {
 				if (layer.visibleOn == 'opened')
@@ -1220,7 +1235,7 @@
 			});
 		},
 
-		handleLayersInClosedState: function() {
+		_handleLayersInClosedState: function() {
 			// hide 'opened' layers and show 'closed' layers
 			$.each(this.layers, function(index, layer) {
 				if (layer.visibleOn == 'opened')
@@ -1280,7 +1295,7 @@
 		/*
 			Set the size and position of the layer
 		*/
-		setStyle: function() {
+		_setStyle: function() {
 			this.styled = true;
 
 			// get the data attributes specified in HTML
@@ -1344,7 +1359,7 @@
 			this.isVisible = true;
 
 			if (this.styled === false)
-				this.setStyle();
+				this._setStyle();
 
 			// get the initial left and top margins
 			var that = this,
@@ -1592,15 +1607,15 @@
 			var that = this;
 
 			// parse the initial hash
-			this.parseHash(window.location.hash);
+			this._parseHash(window.location.hash);
 			
 			// check when the hash changes
 			$(window).on('hashchange.' + this.uniqueId + '.' + NS, function() {
-				that.parseHash(window.location.hash);
+				that._parseHash(window.location.hash);
 			});
 		},
 
-		parseHash: function(hash) {
+		_parseHash: function(hash) {
 			if (hash !== '') {
 				// eliminate the # symbol
 				hash = hash.substring(1);
@@ -1634,32 +1649,6 @@
 	};
 
 	$.ClassicAccordion.addModule('DeepLinking', DeepLinking, 'accordion');
-
-	$.fn.classicAccordion = function(options) {
-		var args = Array.prototype.slice.call(arguments, 1);
-
-		return this.each(function() {
-			// instantiate the accordion or alter it
-			if (typeof $(this).data('classicAccordion') === 'undefined') {
-				var newInstance = new ClassicAccordion(this, options);
-
-				// store a reference to the instance created
-				$(this).data('classicAccordion', newInstance);
-			} else if (typeof options !== 'undefined') {
-				var	currentInstance = $(this).data('classicAccordion');
-
-				// check the type of argument passed
-				if (typeof currentInstance[options] === 'function')
-					currentInstance[options].apply(currentInstance, args);
-				else if (typeof currentInstance.settings[options] !== 'undefined')
-					currentInstance.setProperties(options, args[0]);
-				else if (typeof options === 'object')
-					currentInstance.setProperties(options);
-				else
-					$.error(options + ' does not exist in classicAccordion.');
-			}
-		});
-	};
 
 	/*
 		Autoplay module
@@ -1854,11 +1843,11 @@
 			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown',
 				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
 
-			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this.onTouchStart, this));
-			this.$panelsContainer.on(endEvent + '.' + NS, $.proxy(this.onTouchEnd, this));
+			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this._onTouchStart, this));
+			this.$panelsContainer.on(endEvent + '.' + NS, $.proxy(this._onTouchEnd, this));
 		},
 
-		onTouchStart: function(event) {
+		_onTouchStart: function(event) {
 			event.preventDefault();
 
 			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent,
@@ -1870,10 +1859,10 @@
 			this.touchStartPosition = this.settings.orientation == 'horizontal' ? this.$panelsContainer.position().left : this.$panelsContainer.position().top;
 
 			// listen for move events
-			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this.onTouchMove, this));
+			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
 		},
 
-		onTouchMove: function(event) {
+		_onTouchMove: function(event) {
 			event.preventDefault();
 
 			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent;
@@ -1903,7 +1892,7 @@
 			this.$panelsContainer.css(positionProperty, this.touchStartPosition + distance);
 		},
 
-		onTouchEnd: function(event) {
+		_onTouchEnd: function(event) {
 			event.preventDefault();
 
 			// remove the move listener
@@ -2099,10 +2088,10 @@
 			});
 
 			// load the XML
-			this.loadXML();
+			this._loadXML();
 		},
 
-		loadXML: function() {
+		_loadXML: function() {
 			var that = this;
 
 			$.ajax({type: 'GET',
@@ -2264,10 +2253,10 @@
 				that.update();
 			});
 
-			this.loadJSON();
+			this._loadJSON();
 		},
 
-		loadJSON: function() {
+		_loadJSON: function() {
 			var that = this;
 
 			$.getJSON(this.settings.JSONSource, function(result) {
