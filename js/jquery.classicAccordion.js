@@ -1985,7 +1985,8 @@
 		initXML: function() {
 			$.extend(this.settings, this.XMLDefaults, this.options);
 
-			this.updateXML();
+			if (this.settings.XMLSource !== null)
+				this.updateXML();
 		},
 
 		updateXML: function() {
@@ -1995,7 +1996,7 @@
 			this.$accordion.empty();
 
 			// parse the XML data and construct the panels
-			this.on('XMLComplete.' + NS, function(event) {
+			this.on('XMLReady.' + NS, function(event) {
 				var xmlData = $(event.xmlData);
 
 				// create the main containers
@@ -2094,27 +2095,32 @@
 		_loadXML: function() {
 			var that = this;
 
-			$.ajax({type: 'GET',
-					url: this.settings.XMLSource,
-					dataType:  browserName == 'msie' ? 'text' : 'xml',
-					success: function(result) {
-						var xmlData;
-						
-						if (browserName == 'msie') {
-							xmlData = new ActiveXObject('Microsoft.XMLDOM');
-							xmlData.async = false;
-							xmlData.loadXML(result);
-						} else {
-							xmlData = result;
+			if (this.settings.XMLSource.slice(-4) == '.xml') {
+				$.ajax({type: 'GET',
+						url: this.settings.XMLSource,
+						dataType:  browserName == 'msie' ? 'text' : 'xml',
+						success: function(result) {
+							var xmlData;
+							
+							if (browserName == 'msie') {
+								xmlData = new ActiveXObject('Microsoft.XMLDOM');
+								xmlData.async = false;
+								xmlData.loadXML(result);
+							} else {
+								xmlData = result;
+							}
+							
+							that.trigger({type: 'XMLReady.' + NS, xmlData: xmlData});
 						}
-						
-						that.trigger({type: 'XMLComplete.' + NS, xmlData: xmlData});
-					}
-			});
+				});
+			} else {
+				var xmlData = $.parseXML(this.settings.XMLSource);
+				that.trigger({type: 'XMLReady.' + NS, xmlData: xmlData});
+			}
 		},
 
 		destroyXML: function() {
-			this.off('XMLComplete.' + NS);
+			this.off('XMLReady.' + NS);
 		},
 
 		XMLDefaults: {
@@ -2153,7 +2159,8 @@
 		initJSON: function() {
 			$.extend(this.settings, this.JSONDefaults, this.options);
 
-			this.updateJSON();
+			if (this.settings.JSONSource !== null)
+				this.updateJSON();
 		},
 
 		updateJSON: function() {
@@ -2167,7 +2174,7 @@
 			that.$panelsContainer = $('<div class="ca-panels"></div>').appendTo(that.$maskContainer);
 
 			// parse the JSON data and construct the panels
-			this.on('JSONComplete.' + NS, function(event) {
+			this.on('JSONReady.' + NS, function(event) {
 				var jsonData = event.jsonData,
 					panels = jsonData.accordion.panels;
 
@@ -2259,13 +2266,18 @@
 		_loadJSON: function() {
 			var that = this;
 
-			$.getJSON(this.settings.JSONSource, function(result) {
-				that.trigger({type: 'JSONComplete.' + NS, jsonData: result});
-			});
+			if (this.settings.JSONSource.slice(-5) == '.json') {
+				$.getJSON(this.settings.JSONSource, function(result) {
+					that.trigger({type: 'JSONReady.' + NS, jsonData: result});
+				});
+			} else {
+				var jsonData = $.parseJSON(this.settings.JSONSource);
+				that.trigger({type: 'JSONReady.' + NS, jsonData: jsonData});
+			}
 		},
 
 		destroyJSON: function() {
-
+			this.off('JSONReady.' + NS);
 		},
 
 		JSONDefaults: {

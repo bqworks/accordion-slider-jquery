@@ -34,3 +34,4 @@ Features
 * test CSS3 transforms
 * + add underscore to private methods
 * test updating of XML and JSON data
+* + load JSON and XML strings
