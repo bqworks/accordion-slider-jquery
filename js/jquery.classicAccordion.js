@@ -313,6 +313,17 @@
 		},
 
 		/*
+			Removes all panels
+		*/
+		removePanels: function() {
+			$.each(this.panels, function(index, element) {
+				element.destroy();
+			});
+
+			this.panels.length = 0;
+		},
+
+		/*
 			Called when the accordion needs to resize 
 		*/
 		resize: function() {
@@ -454,7 +465,7 @@
 				if (store !== false)
 					this.originalSettings[prop] = properties[prop];
 			}
-			
+
 			this.update();
 		},
 
@@ -478,30 +489,28 @@
 			$(window).off('resize.' + this.uniqueId + '.' + NS);
 
 			// destroy all panels
-			$.each(this.panels, function(index, element) {
-				element.destroy();
-			});
+			this.removePanels();
 		},
 
 		/*
 			Attach an event handler to the accordion
 		*/
 		on: function(type, callback) {
-			this.$accordion.on(type, callback);
+			return this.$accordion.on(type, callback);
 		},
 
 		/*
-			Deattach an event handler
+			Dettach an event handler
 		*/
 		off: function(type) {
-			this.$accordion.off(type);
+			return this.$accordion.off(type);
 		},
 
 		/*
 			Trigger an event on the accordion
 		*/
 		trigger: function(data) {
-			this.$accordion.triggerHandler(data);
+			return this.$accordion.triggerHandler(data);
 		},
 
 		/*
@@ -1115,21 +1124,21 @@
 			Attach an event handler to the panel
 		*/
 		on: function(type, callback) {
-			this.$panel.on(type, callback);
+			return this.$panel.on(type, callback);
 		},
 
 		/*
-			Deattach an event handler to the panel
+			Dettach an event handler to the panel
 		*/
 		off: function(type) {
-			this.$panel.off(type);
+			return this.$panel.off(type);
 		},
 
 		/*
 			Trigger an event on the panel
 		*/
 		trigger: function(data) {
-			this.$panel.triggerHandler(data);
+			return this.$panel.triggerHandler(data);
 		}
 	};
 
@@ -1167,14 +1176,17 @@
 				var	currentInstance = $(this).data('classicAccordion');
 
 				// check the type of argument passed
-				if (typeof currentInstance[options] === 'function')
+				if (typeof currentInstance[options] === 'function') {
 					currentInstance[options].apply(currentInstance, args);
-				else if (typeof currentInstance.settings[options] !== 'undefined')
-					currentInstance.setProperties(options, args[0]);
-				else if (typeof options === 'object')
+				} else if (typeof currentInstance.settings[options] !== 'undefined') {
+					var obj = {};
+					obj[options] = args[0];
+					currentInstance.setProperties(obj);
+				} else if (typeof options === 'object') {
 					currentInstance.setProperties(options);
-				else
+				} else {
 					$.error(options + ' does not exist in classicAccordion.');
+				}
 			}
 		});
 	};
@@ -1992,8 +2004,10 @@
 		updateXML: function() {
 			var that = this;
 
-			// empty the accordion's container in case it contains any content
+			// clear existing content and data
+			this.removePanels();
 			this.$accordion.empty();
+			this.off('XMLReady.' + NS);
 
 			// parse the XML data and construct the panels
 			this.on('XMLReady.' + NS, function(event) {
@@ -2166,8 +2180,10 @@
 		updateJSON: function() {
 			var that = this;
 
-			// empty the accordion's container in case it contains any content
+			// clear existing content and data
+			this.removePanels();
 			this.$accordion.empty();
+			this.off('JSONReady.' + NS);
 
 			// create the main containers
 			that.$maskContainer = $('<div class="ca-mask"></div>').appendTo(that.$accordion);
