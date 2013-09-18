@@ -88,6 +88,12 @@
 		// indicates whether the accordion is currently scrolling
 		this.isPageScrolling = false;
 
+		// indicates the left or top property based on the orientation of the accordion
+		this.positionProperty = 'left';
+
+		// indicates the width or height property based on the orientation of the accordion
+		this.sizeProperty = 'width';
+
 		// init the accordion
 		this._init();
 	};
@@ -183,10 +189,15 @@
 
 			// add a class to the accordion based on the orientation
 			// to be used in CSS
-			if (this.settings.orientation == 'horizontal')
+			if (this.settings.orientation == 'horizontal') {
 				this.$accordion.removeClass('ca-vertical').addClass('ca-horizontal');
-			else if (this.settings.orientation == 'vertical')
+				this.positionProperty = 'left';
+				this.sizeProperty = 'width';
+			} else if (this.settings.orientation == 'vertical') {
 				this.$accordion.removeClass('ca-horizontal').addClass('ca-vertical');
+				this.positionProperty = 'top';
+				this.sizeProperty = 'height';
+			}
 
 			// reset the panels' container position
 			this.$panelsContainer.attr('style', '');
@@ -400,8 +411,7 @@
 			// get the total size of the panels' container
 			this.totalPanelsSize = this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1);
 
-			var sizeProperty = this.settings.orientation == "horizontal" ? 'width' : 'height';
-			this.$panelsContainer.css(sizeProperty, this.totalPanelsSize);
+			this.$panelsContainer.css(this.sizeProperty, this.totalPanelsSize);
 
 			// reset the position and size of each panel
 			$.each(this.panels, function(index, element) {
@@ -422,14 +432,13 @@
 				// since the actual size of all panels from a page might be smaller than the whole width of the accordion
 				this.totalSize = this.closedPanelSize * this.settings.visiblePanels + this.computedPanelDistance * (this.settings.visiblePanels - 1);
 				
-				var positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
-					cssObj = {},
+				var cssObj = {},
 					targetPosition = - (this.totalSize + this.computedPanelDistance) * this.currentPage;
 				
 				if (this.currentPage == this.getTotalPages() - 1)
 					targetPosition = - (this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1) - this.totalSize);
 
-				cssObj[positionProperty] = targetPosition;
+				cssObj[this.positionProperty] = targetPosition;
 				this.$panelsContainer.css(cssObj);
 			}
 
@@ -792,14 +801,13 @@
 			this.isPageScrolling = true;
 
 			var that = this,
-				positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
 				animObj = {},
 				targetPosition = - (index * this.totalSize + this.currentPage * this.computedPanelDistance);
 			
 			if (this.currentPage == this.getTotalPages() - 1)
 				targetPosition = - (this.totalPanelsSize - this.totalSize);
 
-			animObj[positionProperty] = targetPosition;
+			animObj[this.positionProperty] = targetPosition;
 
 			// fire 'pageScroll' event
 			var eventObject = {type: 'pageScroll', index: this.currentPage};
@@ -1873,15 +1881,18 @@
 		},
 
 		_onTouchStart: function(event) {
-			event.preventDefault();
+			// prevent default behaviour only for mouse events
+			if (!this.isTouchSupport)
+				event.preventDefault();
 
-			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent,
+			var that = this,
+				eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent,
 				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
 
 			// get the initial position of the mouse pointer and the initial position of the panels' container
 			this.touchStartPoint.x = eventObject.pageX;
 			this.touchStartPoint.y = eventObject.pageY;
-			this.touchStartPosition = this.settings.orientation == 'horizontal' ? this.$panelsContainer.position().left : this.$panelsContainer.position().top;
+			this.touchStartPosition = this.$panelsContainer.position()[this.positionProperty];
 
 			// listen for move events
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
@@ -1905,24 +1916,30 @@
 				distance = this.settings.orientation == 'horizontal' ? xDistance : yDistance;
 			
 			// get the current position of panels' container
-			var positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
-				sizeProperty = this.settings.orientation == 'horizontal' ? 'width' : 'height',
-				currentPanelsPosition = this.settings.orientation == 'horizontal' ? this.$panelsContainer.position().left : this.$panelsContainer.position().top;
+			var currentPanelsPosition = this.$panelsContainer.position()[this.positionProperty];
 			
 			// reduce the movement speed if the panels' container is outside its bounds
 			if (currentPanelsPosition > 0 || currentPanelsPosition < - this.totalPanelsSize + this.totalSize)
 				distance = distance * 0.2;
 
 			// move the panels' container
-			this.$panelsContainer.css(positionProperty, this.touchStartPosition + distance);
+			this.$panelsContainer.css(this.positionProperty, this.touchStartPosition + distance);
 		},
 
 		_onTouchEnd: function(event) {
-			event.preventDefault();
-
 			// remove the move listener
 			var moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
 			this.$panelsContainer.off(moveEvent + '.' + NS);
+
+			// check if there is intention for a tap
+			if (this.isTouchSupport && (!this.isTouchMoving || this.isTouchMoving && Math.abs(this.touchEndPoint.x - this.touchStartPoint.x) < 10 && Math.abs(this.touchEndPoint.y - this.touchStartPoint.y) < 10)) {
+				var index = $(event.target).parents('.ca-panel').index();
+
+				if (index !== this.currentIndex) {
+					this.openPanel(index);
+					event.preventDefault();
+				}
+			}
 
 			// return if there was no movement
 			if (!this.isTouchMoving)
@@ -1932,46 +1949,63 @@
 
 			// calculate the distance of the movement
 			var xDistance = this.touchEndPoint.x - this.touchStartPoint.x,
-				yDistance = this.touchEndPoint.y - this.touchStartPoint.y;
-				
+				yDistance = this.touchEndPoint.y - this.touchStartPoint.y,
+				noScrollAnimObj = {};
+
+			noScrollAnimObj[this.positionProperty] = this.touchStartPosition;
+
 			// set the accordion's page based on the distance of the movement and the accordion's settings
 			if (this.settings.orientation == 'horizontal') {
 				if (xDistance > this.settings.touchSwipeThreshold) {
-					if (this.currentPage > 0)
+					if (this.currentPage > 0) {
 						this.previousPage();
-					else
-						this.gotoPage(this.currentPage);
+					} else {
+						this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
+					}
 				} else if (- xDistance > this.settings.touchSwipeThreshold) {
-					if (this.currentPage < this.getTotalPages() - 1)
+					if (this.currentPage < this.getTotalPages() - 1) {
 						this.nextPage();
-					else
+					} else {
 						this.gotoPage(this.currentPage);
+					}
 				} else if (Math.abs(xDistance) < this.settings.touchSwipeThreshold) {
-					this.gotoPage(this.currentPage);
+					this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
 				}
 			} else if (this.settings.orientation == 'vertical') {
 				if (yDistance > this.settings.touchSwipeThreshold) {
-					if (this.currentPage > 0)
+					if (this.currentPage > 0) {
 						this.previousPage();
-					else
-						this.gotoPage(this.currentPage);
+					} else {
+						this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
+					}
 				} else if (- yDistance > this.settings.touchSwipeThreshold) {
-					if (this.currentPage < this.getTotalPages() - 1)
+					if (this.currentPage < this.getTotalPages() - 1) {
 						this.nextPage();
-					else
-						this.gotoPage(this.currentPage);
+					} else {
+						this.$panelsContainer.animate(noScrollAnimObj, 300);
+					}
 				} else if (Math.abs(yDistance) < this.settings.touchSwipeThreshold) {
-					this.gotoPage(this.currentPage);
+					this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
 				}
 			}
+
+			// disable click events on links
+			var target = $(event.target).closest('a');
+
+			if (target.length)
+				target.one('click', function(event) {
+					event.preventDefault();
+				});
 		},
 
 		destroyTouchSwipe: function() {
 			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown',
-				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
+				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup',
+				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
 
 			this.$panelsContainer.off(startEvent + '.' + NS);
 			this.$panelsContainer.off(endEvent + '.' + NS);
+			this.$panelsContainer.off(moveEvent + '.' + NS);
 		},
 
 		touchSwipeDefaults: {
