@@ -85,6 +85,9 @@
 		// keeps a reference to the previous number of visible panels
 		this.previousVisiblePanels = -1;
 
+		// indicates whether the accordion is currently scrolling
+		this.isPageScrolling = false;
+
 		// init the accordion
 		this._init();
 	};
@@ -270,6 +273,9 @@
 
 			// listen for 'panelMouseOver' events
 			panel.on('panelMouseOver.' + NS, function(event) {
+				if (that.isPageScrolling)
+					return;
+
 				if (that.settings.openPanelOn == 'hover') {
 					clearTimeout(that.mouseDelayTimer);
 
@@ -288,6 +294,9 @@
 
 			// listen for 'panelMouseOut' events
 			panel.on('panelMouseOut.' + NS, function(event) {
+				if (that.isPageScrolling)
+					return;
+
 				var eventObject = {type: 'panelMouseOut', index: index, element: $element};
 				that.trigger(eventObject);
 				if ($.isFunction(that.settings.panelMouseOut))
@@ -780,6 +789,8 @@
 
 			this.currentPage = index;
 
+			this.isPageScrolling = true;
+
 			var that = this,
 				positionProperty = this.settings.orientation == 'horizontal' ? 'left' : 'top',
 				animObj = {},
@@ -797,6 +808,8 @@
 				this.settings.pageScroll.call(this, eventObject);
 
 			this.$panelsContainer.animate(animObj, this.settings.pageScrollDuration, this.settings.pageScrollEasing, function() {
+				that.isPageScrolling = false;
+
 				// fire 'pageScrollComplete' event
 				var eventObject = {type: 'pageScrollComplete', index: that.currentPage};
 				that.trigger(eventObject);
@@ -1841,7 +1854,7 @@
 
 		touchStartPosition: 0,
 
-		isMoving: false,
+		isTouchMoving: false,
 
 		initTouchSwipe: function() {
 			var that = this;
@@ -1880,7 +1893,7 @@
 			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent;
 
 			// indicate that the move event is being fired
-			this.isMoving = true;
+			this.isTouchMoving = true;
 
 			// get the current position of the mouse pointer
 			this.touchEndPoint.x = eventObject.pageX;
@@ -1912,15 +1925,15 @@
 			this.$panelsContainer.off(moveEvent + '.' + NS);
 
 			// return if there was no movement
-			if (!this.isMoving)
+			if (!this.isTouchMoving)
 				return;
 
-			this.isMoving = false;
+			this.isTouchMoving = false;
 
 			// calculate the distance of the movement
 			var xDistance = this.touchEndPoint.x - this.touchStartPoint.x,
 				yDistance = this.touchEndPoint.y - this.touchStartPoint.y;
-
+				
 			// set the accordion's page based on the distance of the movement and the accordion's settings
 			if (this.settings.orientation == 'horizontal') {
 				if (xDistance > this.settings.touchSwipeThreshold) {
