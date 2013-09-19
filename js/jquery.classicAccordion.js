@@ -1831,7 +1831,7 @@
 
 				if (typeof eventObject.deltaY !== 'undefined')
 					delta = eventObject.deltaY * -1;
-				
+
 				// scroll the accordion as indicated by the mouse wheel input
 				// but don't allow the scroll if another scroll is in progress
 				if (!that.isPageScrolling) {
@@ -1891,7 +1891,7 @@
 				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
 
 			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this._onTouchStart, this));
-			this.$panelsContainer.on(endEvent + '.' + NS, $.proxy(this._onTouchEnd, this));
+			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
 		},
 
 		_onTouchStart: function(event) {
@@ -2018,7 +2018,7 @@
 				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
 
 			this.$panelsContainer.off(startEvent + '.' + NS);
-			this.$panelsContainer.off(endEvent + '.' + NS);
+			$(document).off(endEvent + '.' + this.uniqueId + '.' + NS);
 			this.$panelsContainer.off(moveEvent + '.' + NS);
 		},
 
