@@ -357,7 +357,21 @@
 			this.computedOpenedPanelSize = this.settings.openedPanelSize;
 
 			// get the total size, in pixels, of the accordion
-			this.totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
+			if (this.settings.responsiveMode == 'custom') {
+				this.totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
+			} else if (this.settings.responsiveMode == 'auto') {
+				var widthRatio = this.$accordion.innerWidth() / this.settings.width,
+					heightRatio = this.$accordion.innerHeight() / this.settings.height;
+
+				this.$maskContainer.css({
+					'width': this.settings.width,
+					'height': this.settings.height,
+					'transform': 'scaleX(' + widthRatio + ') scaleY(' + heightRatio + ')',
+					'transform-origin': 'top left'
+				});
+				
+				this.totalSize = this.settings.orientation == "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
+			}
 
 			// parse computedOpenedPanelSize and set it to a pixel value
 			if (typeof this.computedOpenedPanelSize == 'string') {
@@ -815,7 +829,7 @@
 			if ($.isFunction(this.settings.pageScroll))
 				this.settings.pageScroll.call(this, eventObject);
 
-			this.$panelsContainer.animate(animObj, this.settings.pageScrollDuration, this.settings.pageScrollEasing, function() {
+			this.$panelsContainer.stop().animate(animObj, this.settings.pageScrollDuration, this.settings.pageScrollEasing, function() {
 				that.isPageScrolling = false;
 
 				// fire 'pageScrollComplete' event
@@ -947,6 +961,7 @@
 			width: 500,
 			height: 300,
 			responsive: true,
+			responsiveMode: 'auto',
 			aspectRatio: -1,
 			orientation: 'horizontal',
 			startPanel: -1,
@@ -1892,7 +1907,7 @@
 			// get the initial position of the mouse pointer and the initial position of the panels' container
 			this.touchStartPoint.x = eventObject.pageX;
 			this.touchStartPoint.y = eventObject.pageY;
-			this.touchStartPosition = this.$panelsContainer.position()[this.positionProperty];
+			this.touchStartPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
 
 			// listen for move events
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
@@ -1916,7 +1931,7 @@
 				distance = this.settings.orientation == 'horizontal' ? xDistance : yDistance;
 			
 			// get the current position of panels' container
-			var currentPanelsPosition = this.$panelsContainer.position()[this.positionProperty];
+			var currentPanelsPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
 			
 			// reduce the movement speed if the panels' container is outside its bounds
 			if (currentPanelsPosition > 0 || currentPanelsPosition < - this.totalPanelsSize + this.totalSize)

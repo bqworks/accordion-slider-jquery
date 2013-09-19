@@ -6,7 +6,7 @@ Features
 * + responsive
 * + layers - opened, closed, title, rotated
 * + synced panel animations
-* responsive content (from layers)
+* + responsive content (from layers)
 * + pagination
 * lazy loading
 * + touch-swipe for pages and tap for panels
@@ -35,3 +35,9 @@ Features
 * + add underscore to private methods
 * + test updating of XML and JSON data
 * + load JSON and XML strings
+* selectable elements
+* adjust size to hide panels from other pages
+* mouse wheel sensitivity
+* touch swipe release outside
+* breakpoint callbacks
+* deep linking hash parse bug
