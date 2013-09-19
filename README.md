@@ -40,4 +40,4 @@ Features
 * mouse wheel sensitivity
 * touch swipe release outside
 * breakpoint callbacks
-* deep linking hash parse bug
+* + deep linking hash parse bug

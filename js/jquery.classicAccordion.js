@@ -1671,7 +1671,7 @@
 				// get the specified accordion id and panel id
 				var values = hash.split('-'),
 					panelId = values.pop(),
-					accordionId = hash.replace('-' + panelId, '');
+					accordionId = hash.slice(0, - panelId.toString().length - 1);
 
 				if (this.$accordion.attr('id') == accordionId) {
 					var panelIdNumber = parseInt(panelId, 10);
