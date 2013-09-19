@@ -469,6 +469,12 @@
 					for (var i = 0, n = this.breakpoints.length; i < n; i++) {
 						if ($(window).width() <= this.breakpoints[i].size) {
 							if (this.currentBreakpoint !== this.breakpoints[i].size) {
+
+								var eventObject = {type: 'breakpointReach', size: this.breakpoints[i].size, settings: this.breakpoints[i].properties};
+								that.trigger(eventObject);
+								if ($.isFunction(that.settings.breakpointReach))
+									that.settings.breakpointReach.call(that, eventObject);
+
 								this.currentBreakpoint = this.breakpoints[i].size;
 								var settings = $.extend({}, this.originalSettings, this.breakpoints[i].properties);
 								this.setProperties(settings, false);
@@ -990,7 +996,8 @@
 			pageScroll: function() {},
 			panelOpenComplete: function() {},
 			panelsCloseComplete: function() {},
-			pageScrollComplete: function() {}
+			pageScrollComplete: function() {},
+			breakpointReach: function() {}
 		}
 	};
 
