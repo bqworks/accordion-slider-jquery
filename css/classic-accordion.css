@@ -141,3 +141,15 @@
 .classic-accordion .ca-pagination-buttons .ca-selected {
 	background-color: #000;
 }
+
+.classic-accordion .selectable {
+	cursor: default;
+}
+
+.classic-accordion .ca-grab {
+	cursor: url(images/openhand.cur), default;
+}
+
+.classic-accordion .ca-grabbing {
+	cursor: url(images/closedhand.cur), default;
+}

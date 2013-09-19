@@ -1892,6 +1892,9 @@
 
 			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this._onTouchStart, this));
 			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
+
+			// add grabbing icon
+			this.$panelsContainer.addClass('ca-grab');
 		},
 
 		_onTouchStart: function(event) {
@@ -1916,6 +1919,9 @@
 
 			// listen for move events
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
+
+			// swap grabbing icons
+			this.$panelsContainer.removeClass('ca-grab').addClass('ca-grabbing');
 		},
 
 		_onTouchMove: function(event) {
@@ -2016,6 +2022,9 @@
 				target.one('click', function(event) {
 					event.preventDefault();
 				});
+
+			// swap grabbing icons
+			this.$panelsContainer.removeClass('ca-grabbing').addClass('ca-grab');
 		},
 
 		destroyTouchSwipe: function() {
