@@ -1895,6 +1895,12 @@
 		},
 
 		_onTouchStart: function(event) {
+			// disable dragging if the element is set to allow selections
+			var target = $(event.target).closest('.selectable');
+
+			if (target.length)
+				return;
+
 			// prevent default behaviour only for mouse events
 			if (!this.isTouchSupport)
 				event.preventDefault();
