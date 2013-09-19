@@ -37,7 +37,7 @@ Features
 * + load JSON and XML strings
 * selectable elements
 * adjust size to hide panels from other pages
-* mouse wheel sensitivity
+* + mouse wheel sensitivity
 * touch swipe release outside
 * + breakpoint callbacks
 * + deep linking hash parse bug
