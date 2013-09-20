@@ -8,7 +8,7 @@ Features
 * + synced panel animations
 * + responsive content (from layers)
 * + pagination
-* lazy loading
+* + lazy loading
 * + touch-swipe for pages and tap for panels
 * + CSS3 transitions ?
 * ? link & lightbox
@@ -45,3 +45,4 @@ Features
 * retina
 * + enable/disable modules
 * + handle responsive mode changes
+* destroy modules
