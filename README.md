@@ -43,5 +43,5 @@ Features
 * + breakpoint callbacks
 * + deep linking hash parse bug
 * retina
-* ? enable/disable modules
+* + enable/disable modules
 * + handle responsive mode changes

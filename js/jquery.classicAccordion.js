@@ -171,7 +171,7 @@
 			// listen for 'mouseleave' events
 			this.on('mouseleave.' + NS, function(event) {
 				// close the panels
-				if (that.settings.closePanelsOnMouseOut)
+				if (that.settings.closePanelsOnMouseOut === true)
 					that.closePanels();
 
 				var eventObject = {type: 'accordionMouseOut'};
@@ -203,7 +203,7 @@
 			this.$panelsContainer.attr('style', '');
 
 			// prepare the accordion for responsiveness
-			if (this.settings.responsive) {
+			if (this.settings.responsive === true) {
 				// if the accordion is responsive set the width to 100% and use
 				// the specified width and height as a max-width and max-height
 				this.$accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
@@ -284,7 +284,7 @@
 
 			// listen for 'panelMouseOver' events
 			panel.on('panelMouseOver.' + NS, function(event) {
-				if (that.isPageScrolling)
+				if (that.isPageScrolling === true)
 					return;
 
 				if (that.settings.openPanelOn == 'hover') {
@@ -305,7 +305,7 @@
 
 			// listen for 'panelMouseOut' events
 			panel.on('panelMouseOut.' + NS, function(event) {
-				if (that.isPageScrolling)
+				if (that.isPageScrolling === true)
 					return;
 
 				var eventObject = {type: 'panelMouseOut', index: index, element: $element};
@@ -454,7 +454,7 @@
 				var cssObj = {},
 					targetPosition = - (this.totalSize + this.computedPanelDistance) * this.currentPage;
 				
-				if (this.currentPage == this.getTotalPages() - 1)
+				if (this.currentPage === this.getTotalPages() - 1)
 					targetPosition = - (this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1) - this.totalSize);
 
 				cssObj[this.positionProperty] = targetPosition;
@@ -597,7 +597,7 @@
 			Open the panel at the specified index
 		*/
 		openPanel: function(index) {
-			if (index == this.currentIndex)
+			if (index === this.currentIndex)
 				return;
 
 			var previousIndex = this.currentIndex;
@@ -615,7 +615,7 @@
 			if (this.settings.visiblePanels != -1 && !(this.currentPage == this.getTotalPages() - 1 && index >= this.getTotalPanels() - this.settings.visiblePanels)) {
 				var page = Math.floor(this.currentIndex / this.settings.visiblePanels);
 
-				if (page != this.currentPage)
+				if (page !== this.currentPage)
 					this.gotoPage(page);
 
 				// reset the current index because when the closePanels was called inside gotoPage the current index became -1
@@ -683,7 +683,7 @@
 			var totalPanels = animatedPanels.length;
 
 			// stop the close panels animation if it's on the same page
-			if (this.closePanelsAnimation.page == this.currentPage)
+			if (this.closePanelsAnimation.page === this.currentPage)
 				$(this.closePanelsAnimation).stop();
 
 			// animate the panels
@@ -759,7 +759,7 @@
 			}
 
 			// stop the open panel animation if it's on the same page
-			if (this.openPanelAnimation.page == this.currentPage)
+			if (this.openPanelAnimation.page === this.currentPage)
 				$(this.openPanelAnimation).stop();
 
 			// animate the panels
@@ -829,7 +829,7 @@
 				animObj = {},
 				targetPosition = - (index * this.totalSize + this.currentPage * this.computedPanelDistance);
 			
-			if (this.currentPage == this.getTotalPages() - 1)
+			if (this.currentPage === this.getTotalPages() - 1)
 				targetPosition = - (this.totalPanelsSize - this.totalSize);
 
 			animObj[this.positionProperty] = targetPosition;
@@ -1263,7 +1263,7 @@
 			});
 
 			// check the index pf the panel against the index of the selected/opened panel
-			if (this.index == this.accordion.getCurrentIndex())
+			if (this.index === this.accordion.getCurrentIndex())
 				this._handleLayersInOpenedState();
 			else
 				this._handleLayersInClosedState();
@@ -1728,12 +1728,12 @@
 
 			$.extend(this.settings, this.autoplayDefaults, this.options);
 
-			if (this.settings.autoplay)
+			if (this.settings.autoplay === true)
 				this.startAutoplay();
 
 			// start the autoplay timer each time the panel opens
 			this.on('panelOpen.' + NS, function(event) {
-				if (that.settings.autoplay) {
+				if (that.settings.autoplay === true) {
 					// stop previous timers before starting a new one
 					if (that.isTimerRunning === true)
 						that.stopAutoplay();
@@ -1745,7 +1745,7 @@
 
 			// on accordion hover stop the autoplay if autoplayOnHover is set to pause or stop
 			this.on('mouseenter.' + NS, function(event) {
-				if (that.settings.autoplay && that.isTimerRunning && (that.settings.autoplayOnHover == 'pause' || that.settings.autoplayOnHover == 'stop')) {
+				if (that.settings.autoplay === true && that.isTimerRunning && (that.settings.autoplayOnHover == 'pause' || that.settings.autoplayOnHover == 'stop')) {
 					that.stopAutoplay();
 					that.isTimerPaused = true;
 				}
@@ -1753,7 +1753,7 @@
 
 			// on accordion hover out restart the autoplay
 			this.on('mouseleave.' + NS, function(event) {
-				if (that.settings.autoplay && that.isTimerRunning === false && that.settings.autoplayOnHover != 'stop') {
+				if (that.settings.autoplay === true && that.isTimerRunning === false && that.settings.autoplayOnHover != 'stop') {
 					that.startAutoplay();
 					that.isTimerPaused = false;
 				}
@@ -1811,6 +1811,9 @@
 
 			$.extend(this.settings, this.mouseWheelDefaults, this.options);
 
+			if (this.settings.mouseWheel === false)
+				return;
+			
 			// get the current mouse wheel event used in the browser
 			if ('onwheel' in document)
 				this.mouseWheelEventType = 'wheel';
@@ -1839,7 +1842,7 @@
 
 				// scroll the accordion as indicated by the mouse wheel input
 				// but don't allow the scroll if another scroll is in progress
-				if (!that.isPageScrolling) {
+				if (that.isPageScrolling === false) {
 					if (delta <= -that.settings.mouseWheelSensitivity)
 						if (that.settings.mouseWheelTarget == 'page')
 							that.nextPage();
@@ -1859,6 +1862,7 @@
 		},
 
 		mouseWheelDefaults: {
+			mouseWheel: true,
 			mouseWheelSensitivity: 50,
 			mouseWheelTarget: 'panel'
 		}
@@ -1888,6 +1892,10 @@
 
 			$.extend(this.settings, this.touchSwipeDefaults, this.options);
 
+			// check if touch swipe is enabled
+			if (this.settings.touchSwipe === false)
+				return;
+
 			// check if there is touch support
 			this.isTouchSupport = 'ontouchstart' in window;
 
@@ -1906,11 +1914,11 @@
 			// disable dragging if the element is set to allow selections
 			var target = $(event.target).closest('.selectable');
 
-			if (target.length)
+			if (target.length >= 1)
 				return;
 
 			// prevent default behaviour only for mouse events
-			if (!this.isTouchSupport)
+			if (this.isTouchSupport === false)
 				event.preventDefault();
 
 			var that = this,
@@ -1963,7 +1971,7 @@
 			this.$panelsContainer.off(moveEvent + '.' + NS);
 
 			// check if there is intention for a tap
-			if (this.isTouchSupport && (!this.isTouchMoving || this.isTouchMoving && Math.abs(this.touchEndPoint.x - this.touchStartPoint.x) < 10 && Math.abs(this.touchEndPoint.y - this.touchStartPoint.y) < 10)) {
+			if (this.isTouchSupport === true && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchEndPoint.x - this.touchStartPoint.x) < 10 && Math.abs(this.touchEndPoint.y - this.touchStartPoint.y) < 10)) {
 				var index = $(event.target).parents('.ca-panel').index();
 
 				if (index !== this.currentIndex) {
@@ -1973,7 +1981,7 @@
 			}
 
 			// return if there was no movement
-			if (!this.isTouchMoving)
+			if (this.isTouchMoving === false)
 				return;
 
 			this.isTouchMoving = false;
@@ -2023,7 +2031,7 @@
 			// disable click events on links
 			var target = $(event.target).closest('a');
 
-			if (target.length)
+			if (target.length >= 1)
 				target.one('click', function(event) {
 					event.preventDefault();
 				});
@@ -2043,6 +2051,7 @@
 		},
 
 		touchSwipeDefaults: {
+			touchSwipe: true,
 			touchSwipeThreshold: 50
 		}
 	};
@@ -2113,7 +2122,7 @@
 					var panel = $('<div class="ca-panel"></div>').appendTo(that.$panelsContainer);
 
 					// create the background image and link
-					if (xmlBackgroundLink.length) {
+					if (xmlBackgroundLink.length >= 1) {
 						backgroundLink = $('<a href="' + xmlBackgroundLink.text() + '"></a>');
 
 						$.each(xmlBackgroundLink[0].attributes, function(index, attribute) {
@@ -2123,7 +2132,7 @@
 						backgroundLink.appendTo(panel);
 					}
 
-					if (xmlBackground.length) {
+					if (xmlBackground.length >= 1) {
 						var background = $('<img class="ca-background" src="' + xmlBackground.text() + '"/>');
 
 						$.each(xmlBackground[0].attributes, function(index, attribute) {
@@ -2134,7 +2143,7 @@
 					}
 
 					// create the background image and link for the opened state of the panel
-					if (xmlBackgroundOpenedLink.length) {
+					if (xmlBackgroundOpenedLink.length >= 1) {
 						backgroundOpenedLink = $('<a href="' + xmlBackgroundOpenedLink.text() + '"></a>');
 
 						$.each(xmlBackgroundOpenedLink[0].attributes, function(index, attribute) {
@@ -2144,7 +2153,7 @@
 						backgroundOpenedLink.appendTo(panel);
 					}
 
-					if (xmlBackgroundOpened.length) {
+					if (xmlBackgroundOpened.length >= 1) {
 						var backgroundOpened = $('<img class="ca-background-opened" src="' + xmlBackgroundOpened.text() + '"/>');
 
 						$.each(xmlBackgroundOpened[0].attributes, function(index, attribute) {
@@ -2155,7 +2164,7 @@
 					}
 
 					// parse the layer(s)
-					if (xmlLayer.length)
+					if (xmlLayer.length >= 1)
 						$.each(xmlLayer, function() {
 							var xmlLayerItem = $(this),
 								classes = '',
