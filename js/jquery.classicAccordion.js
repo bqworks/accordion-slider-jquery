@@ -527,18 +527,34 @@
 
 			// remove inline style
 			this.$accordion.attr('style', '');
+			this.$panelsContainer.attr('style', '');
 
-			// detach event handlers
+			// dettach event handlers
 			this.off('mouseenter.' + NS);
 			this.off('mouseleave.' + NS);
 			this.off('panelMouseOver.' + NS);
 			this.off('panelMouseOut.' + NS);
 			this.off('panelClick.' + NS);
-
 			$(window).off('resize.' + this.uniqueId + '.' + NS);
+
+			// destroy modules
+			var modules = $.ClassicAccordion.modules.accordion;
+
+			if (typeof modules !== 'undefined')
+				for (var i in modules) {
+					if (typeof this['destroy' + modules[i]] !== 'undefined')
+						this['destroy' + modules[i]]();
+				}
 
 			// destroy all panels
 			this.removePanels();
+
+			// move the panels from the mask container back in the main accordion container
+			this.$panelsContainer.appendTo(this.$accordion);
+
+			// remove elements that were created by the script
+			this.$maskContainer.remove();
+			this.$accordion.find('.ca-pagination-buttons').remove();
 		},
 
 		/*
@@ -1097,13 +1113,14 @@
 			this.$panel.removeAttr('data-init');
 			this.$panel.removeAttr('data-index');
 
-			// init panel modules
-			var modules = $.ClassicAccordion.panelModules;
+			// destroy panel modules
+			var modules = $.ClassicAccordion.modules.panel;
 
-			for (var i in modules) {
-				if (typeof this['destroy' + modules[i]] !== 'undefined')
-					this['destroy' + modules[i]]();
-			}
+			if (typeof modules !== 'undefined')
+				for (var i in modules) {
+					if (typeof this['destroy' + modules[i]] !== 'undefined')
+						this['destroy' + modules[i]]();
+				}
 		},
 
 		/*

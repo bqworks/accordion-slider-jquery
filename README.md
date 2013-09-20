@@ -45,4 +45,4 @@ Features
 * retina
 * + enable/disable modules
 * + handle responsive mode changes
-* destroy modules
+* + destroy modules
