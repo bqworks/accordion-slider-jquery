@@ -42,7 +42,8 @@ Features
 * + touch swipe cursors
 * + breakpoint callbacks
 * + deep linking hash parse bug
-* retina
+* + retina
 * + enable/disable modules
 * + handle responsive mode changes
 * + destroy modules
+* links of background images bug

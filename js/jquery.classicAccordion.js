@@ -2430,7 +2430,8 @@
 		},
 
 		_checkImages: function() {
-			var firstVisiblePanel = this._getFirstPanelFromPage(),
+			var that = this,
+				firstVisiblePanel = this._getFirstPanelFromPage(),
 				lastVisiblePanel = this._getLastPanelFromPage(),
 
 				// get all panels that are curernt visible
@@ -2444,13 +2445,17 @@
 
 					$panel.find('img').each(function() {
 						var image = $(this);
-						if (typeof image.attr('data-src') !== 'undefined') {
-							image.attr('src', image.attr('data-src'));
-							image.removeAttr('data-src');
-						}
+						that._loadImage(image);
 					});
 				}
 			});
+		},
+
+		_loadImage: function(image) {
+			if (typeof image.attr('data-src') !== 'undefined') {
+				image.attr('src', image.attr('data-src'));
+				image.removeAttr('data-src');
+			}
 		},
 
 		destroyLazyLoading: function() {
@@ -2460,6 +2465,75 @@
 	};
 
 	$.ClassicAccordion.addModule('LazyLoading', LazyLoading, 'accordion');
+
+	/*
+		Retina module
+
+		Checks if a high resolution image was specified and replaces the default image with the high DPI one
+	*/
+	var Retina = {
+
+		initRetina: function() {
+			var that = this;
+
+			$.extend(this.settings, this.retinaDefaults, this.options);
+
+			// check if retina is enabled and the current display supports high DPI
+			if (this.settings.retina === false || this.isRetina() === false)
+				return;
+
+			// check if the Lazy Loading module is enabled and overwrite its loading method
+			// if not, check all images from the accordion
+			if (typeof this._loadImage !== 'undefined') {
+				this._loadImage = this._loadRetinaImage;
+			} else {
+				this.$accordion.find('img').each(function() {
+					var image = $(this);
+					that._loadRetinaImage(image);
+				});
+			}
+		},
+
+		isRetina: function() {
+			if (window.devicePixelRatio > 1)
+				return true;
+
+			if (window.matchMedia & (window.matchMedia("(-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi)").matches))
+				return true;
+
+			return true;
+		},
+
+		_loadRetinaImage: function(image) {
+			var retinaFound = false;
+
+			// check if there is a retina image specified
+			if (typeof image.attr('data-retina') !== 'undefined') {
+				retinaFound = true;
+
+				image.attr('src', image.attr('data-retina'));
+				image.removeAttr('data-retina');
+			}
+
+			// check if there is a lazy loaded, non-retina, image specified
+			if (typeof image.attr('data-src') !== 'undefined') {
+				if (retinaFound === false)
+					image.attr('src', image.attr('data-src'));
+
+				image.removeAttr('data-src');
+			}
+		},
+
+		destroyRetina: function() {
+
+		},
+
+		retinaDefaults : {
+			retina: true
+		}
+	};
+
+	$.ClassicAccordion.addModule('Retina', Retina, 'accordion');
 
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;
