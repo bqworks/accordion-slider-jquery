@@ -16,9 +16,9 @@
 
 	$(document).ready(function() {
 		accordion = $('#my-accordion').classicAccordion({
-						width: 1000, 
+						width: 1200, 
 						height: 400,
-						responsiveMode: 'auto',
+						responsiveMode: 'custom',
 						openedPanelSize: 'max',
 						maxOpenedPanelSize: '80%',
 						//startPanel: 1,
@@ -57,11 +57,11 @@
 	});
 
 	function onButton1Click() {
-		$('#my-accordion').classicAccordion({width: 700, height: 500, responsive: false, orientation: 'vertical'});
+		$('#my-accordion').classicAccordion('responsiveMode', 'custom');
 	}
 
 	function onButton2Click() {
-		$('#my-accordion').classicAccordion({width: '100%', height: 300, responsive: true, orientation: 'horizontal'});
+		$('#my-accordion').classicAccordion('responsiveMode', 'auto');
 	}
 
 	function onButton3Click() {

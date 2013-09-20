@@ -35,10 +35,13 @@ Features
 * + add underscore to private methods
 * + test updating of XML and JSON data
 * + load JSON and XML strings
-* selectable elements
+* + selectable elements
 * adjust size to hide panels from other pages
 * + mouse wheel sensitivity
 * + touch swipe release outside
-* touch swipe cursors
+* + touch swipe cursors
 * + breakpoint callbacks
 * + deep linking hash parse bug
+* retina
+* ? enable/disable modules
+* + handle responsive mode changes

@@ -358,11 +358,16 @@
 
 			// get the total size, in pixels, of the accordion
 			if (this.settings.responsiveMode == 'custom') {
+				// clear previous styling
+				this.$maskContainer.attr('style', '');
+
 				this.totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 			} else if (this.settings.responsiveMode == 'auto') {
+				// get the accordion's size ratio based on the set size and the actual size
 				var widthRatio = this.$accordion.innerWidth() / this.settings.width,
 					heightRatio = this.$accordion.innerHeight() / this.settings.height;
 
+				// scale the mask container based on the current ratio
 				this.$maskContainer.css({
 					'width': this.settings.width,
 					'height': this.settings.height,
