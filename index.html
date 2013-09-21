@@ -11,6 +11,8 @@
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script type="text/javascript" src="js/jquery.classicAccordion.js"></script>
 
+<script type="text/javascript" src="js/jquery.smartVideo.js"></script>
+
 <script type="text/javascript">
 	var accordion;
 
@@ -56,6 +58,8 @@
 					});
 
 		//$('#my-accordion-2').classicAccordion();
+
+		$('.smart-video').smartVideo();
 	});
 
 	function onButton1Click() {
@@ -107,6 +111,9 @@
 </head>
 
 <body>
+	<iframe  width="560" height="315" src="//www.youtube.com/embed/zny7h7F-SzU" frameborder="0" allowfullscreen></iframe>
+	
+	<iframe class="smart-video" src="//player.vimeo.com/video/74066023?api=1" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 	<div id="my-accordion" class="classic-accordion">
 		<div class="ca-panels">

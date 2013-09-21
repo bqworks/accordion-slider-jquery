@@ -2535,6 +2535,24 @@
 
 	$.ClassicAccordion.addModule('Retina', Retina, 'accordion');
 
+	/*
+		Smart Video module
+
+		Adds automatic handling for several video players and providers
+	*/
+	var SmartVideo = {
+
+		initSmartVideo: function() {
+
+		},
+
+		destroySmartVideo: function() {
+
+		}
+	};
+
+	$.ClassicAccordion.addModule('SmartVideo', SmartVideo, 'accordion');
+
 	window.ClassicAccordion = ClassicAccordion;
 	window.ClassicAccordionPanel = ClassicAccordionPanel;
 
