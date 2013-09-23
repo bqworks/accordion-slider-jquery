@@ -2543,7 +2543,32 @@
 	var SmartVideo = {
 
 		initSmartVideo: function() {
+			// check if the device uses iOS
+			var isIOS = (userAgent.match(/ipad/i) !== null) ||
+						(userAgent.match(/ipod/i) !== null) ||
+						(userAgent.match(/iphone/i) !== null);
 
+			// find all HTML5 videos from the accordion
+			this.$accordion.find('video').each(function() {
+				var video = $(this);
+
+				// recreate the video element for iOS devices (workaround for WebKit bug,
+				// which breaks videos if they are moved inside the DOM)
+				if (isIOS) {
+					var videoParent = video.parent(),
+						videoString = video[0].outerHTML;
+
+					video.remove();
+					videoParent.html(videoString);
+					video = videoParent.find('video');
+					video[0].load();
+				}
+
+				// instantiate VideoJS videos
+				if (typeof videojs !== 'undefined' && video.hasClass('video-js')) {
+					videojs(video.attr('id'), video.data('video'));
+				}
+			});
 		},
 
 		destroySmartVideo: function() {
