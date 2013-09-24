@@ -19,18 +19,24 @@
 			this.settings = $.extend({}, this.defaults, this.options);
 
 			// get the list of players
-			var that = this,
-				players = $.SmartVideo.players;
+			var players = $.SmartVideo.players,
+				that = this;
 
 			if (players.length === 0)
 				return;
 
+			// check if the video element is supported by one of the players
 			for (var name in players) {
 				if (typeof players[name] !== 'undefined' && players[name].isType(this.$video)) {
 					this.player = new players[name](this.$video);
+					break;
 				}
 			}
 
+			if (this.player === null)
+				return;
+
+			// add event listeners
 			this.player.on('videoReady', function() {
 				that.trigger({type: 'ready'});
 				if ($.isFunction(that.settings.ready))
@@ -118,7 +124,7 @@
 		var args = Array.prototype.slice.call(arguments, 1);
 
 		return this.each(function() {
-			// instantiate the smart video or alter it
+			// instantiate the smart video or call a function on the current instance
 			if (typeof $(this).data('smartVideo') === 'undefined') {
 				var newInstance = new SmartVideo(this, options);
 
@@ -137,6 +143,9 @@
 		});
 	};
 
+	/*
+		Base object for the video players
+	*/
 	var Video = function(video) {
 		this.$video = video;
 		this.player = null;
@@ -378,11 +387,12 @@
 	};
 
 	VimeoVideo.prototype.stop = function() {
+		this.player.api('seekTo', 0);
 		this.player.api('pause');
-		this.player.api('unload');
 	};
 
 	VimeoVideo.prototype.replay = function() {
+		this.player.api('seekTo', 0);
 		this.player.api('play');
 	};
 
@@ -398,7 +408,7 @@
 	$.SmartVideo.addPlayer('HTML5Video', HTML5Video);
 
 	HTML5Video.isType = function(video) {
-		if (video.is('video') && video.hasClass('video-js') === false && video.hasClass('sublime') === false)
+		if (video.is('video') && video.hasClass('video-js') === false && video.hasClass('sublime-video') === false)
 			return true;
 
 		return false;
@@ -473,7 +483,7 @@
 		videojs(this.$video.attr('id')).ready(function() {
 			that.player = this;
 			that.ready = true;
-			
+
 			that.player.on('play', function() {
 				if (that.started === false) {
 					that.started = true;
@@ -526,7 +536,7 @@
 	$.SmartVideo.addPlayer('SublimeVideo', SublimeVideo);
 
 	SublimeVideo.isType = function(video) {
-		if (video.hasClass('sublime'))
+		if (video.hasClass('sublime-video'))
 			return true;
 
 		return false;
@@ -537,7 +547,6 @@
 
 		sublime.ready(function() {
 			that.ready = true;
-
 			that.player = sublime.player(that.$video.attr('id'));
 
 			that.player.on('play', function() {

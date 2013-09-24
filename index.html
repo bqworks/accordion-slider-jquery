@@ -33,9 +33,9 @@
 						//aspectRatio: 2,
 						orientation: 'horizontal',
 						openPanelOn: 'hover',
-						closePanelsOnMouseOut: false,
+						closePanelsOnMouseOut: true,
 						panelDistance: 0,
-						autoplay: false,
+						autoplay: true,
 						autoplayDirection: 'normal',
 						autoplayOnHover: 'pause',
 						autoplayDelay: 2000,
@@ -62,15 +62,10 @@
 						// panelMouseOut: function(obj) {console.log('panel mouse out', obj.index, obj.element);}
 
 					});
-		
-		$('.smart-video').smartVideo();
 
-		$('.smart-video').on('ready', function() {console.log('ready')});
-		$('.smart-video').on('start', function() {console.log('start')});
-		$('.smart-video').on('loading', function() {console.log('unload')});
-		$('.smart-video').on('play', function() {console.log('play')});
-		$('.smart-video').on('pause', function() {console.log('pause')});
-		$('.smart-video').on('end', function() {console.log('end')});
+		$('#my-accordion').on('videoPlay', function() {console.log('play')});
+		$('#my-accordion').on('videoPause', function() {console.log('pause')});
+		$('#my-accordion').on('videoEnd', function() {console.log('end')});
 
 		//$('#my-accordion-2').classicAccordion();
 
@@ -90,25 +85,29 @@
 	});
 
 	function onButton1Click() {
-		$('#my-accordion').classicAccordion('responsiveMode', 'custom');
+		//$('#my-accordion').classicAccordion('responsiveMode', 'custom');
+		$('.smart-video').smartVideo('play');
 	}
 
 	function onButton2Click() {
-		$('#my-accordion').classicAccordion('responsiveMode', 'auto');
+		//$('#my-accordion').classicAccordion('responsiveMode', 'auto');
+		$('.smart-video').smartVideo('pause');
 	}
 
 	function onButton3Click() {
-		accordion.find('.ca-panel').eq(0).remove();
+		/*accordion.find('.ca-panel').eq(0).remove();
 		accordion.append('<div class="ca-panel"><img class="ca-background" src="http://bqworks.com/products/grid-accordion/images/11.jpg"/><img class="ca-background-opened" src="http://bqworks.com/products/grid-accordion/images/12.jpg"/><p class="ca-layer ca-always ca-black ca-vertical">Layer 1</p><div class="ca-layer ca-opened ca-white">Layer 2</div><h4 class="ca-layer ca-closed ca-black ca-padding">Layer 3</h4></div>');
-		$('#my-accordion').classicAccordion('refresh');
+		$('#my-accordion').classicAccordion('refresh');*/
+		$('.smart-video').smartVideo('stop');
 	}
 
 	function onButton4Click() {
-		$('#my-accordion').classicAccordion('destroy');
+		//$('#my-accordion').classicAccordion('destroy');
+		$('.smart-video').smartVideo('replay');
 	}
 
 	function onButton5Click() {
-		$('#my-accordion').classicAccordion('nextPage');
+		//$('#my-accordion').classicAccordion('nextPage');
 	}
 
 	function onButton6Click() {
@@ -138,21 +137,7 @@
 </head>
 
 <body>
-	<iframe class="smart-video"  width="560" height="315" src="//www.youtube.com/embed/zny7h7F-SzU" frameborder="0" allowfullscreen></iframe>
 	
-	<iframe class="smart-video" src="//player.vimeo.com/video/74066023?api=1" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-	<video id="video1" class="smart-video video-js vjs-default-skin" poster="http://bqworks.com/products/assets/videos/sintel/sintel-poster.jpg" width="700" height="400" controls="controls" preload="none">
-		<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.mp4" type="video/mp4"/>
-		<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.ogv" type="video/ogg"/>
-	</video>
-	
-	<video id="a240e92d" class="smart-video sublime" poster="https://cdn.sublimevideo.net/vpa/ms_800.jpg" width="640" height="360" title="Midnight Sun" data-uid="a240e92d" preload="none">
-	  <source src="https://cdn.sublimevideo.net/vpa/ms_360p.mp4" />
-	  <source src="https://cdn.sublimevideo.net/vpa/ms_720p.mp4" data-quality="hd" />
-	  <source src="https://cdn.sublimevideo.net/vpa/ms_360p.webm" />
-	  <source src="https://cdn.sublimevideo.net/vpa/ms_720p.webm" data-quality="hd" />
-	</video>
 
 	<div data-info="info" id="video2"></div>
 
@@ -166,6 +151,10 @@
 				<a href="http://bqworks.com">
 					<img class="ca-background-opened" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/9.jpg"/>
 				</a>
+				
+				<div class="ca-layer ca-always">
+					<iframe class="ca-video"  width="560" height="315" src="//www.youtube.com/embed/zny7h7F-SzU" frameborder="0" allowfullscreen></iframe>
+				</div>
 
 				<p class="ca-layer ca-always ca-black ca-vertical ca-padding">
 					<a href="http://bqworks.com">Panel 1 Layer 1</a>
@@ -194,6 +183,10 @@
 	        <div class="ca-panel" id="second">
 				<img class="ca-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/2.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				<img class="ca-background-opened" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/10.jpg"/>
+				
+				<div class="ca-layer ca-always">
+					<iframe class="ca-video" src="//player.vimeo.com/video/74066023?api=1" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+				</div>
 
 				<p class="ca-layer ca-always ca-black ca-vertical">Panel 1 Layer 1</p>
 				<div class="ca-layer ca-opened ca-white">Panel 1 Layer 2</div>
@@ -204,12 +197,28 @@
 				<a href="http://bqworks.com">
 					<img class="ca-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/3.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
+
+				<div class="ca-layer ca-always">
+					<video id="video1" class="ca-video video-js vjs-default-skin" poster="http://bqworks.com/products/assets/videos/sintel/sintel-poster.jpg" width="700" height="400" controls="controls" preload="none">
+						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.mp4" type="video/mp4"/>
+						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.ogv" type="video/ogg"/>
+					</video>
+				</div>
 			</div>
 
 	        <div class="ca-panel" id="fourth">
 				<a href="http://bqworks.com">
 					<img class="ca-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/4.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
+
+				<div class="ca-layer ca-always">
+					<video id="a240e92d" class="ca-video sublime-video" poster="https://cdn.sublimevideo.net/vpa/ms_800.jpg" width="640" height="360" title="Midnight Sun" data-uid="a240e92d" preload="none">
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_360p.mp4" />
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_720p.mp4" data-quality="hd" />
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_360p.webm" />
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_720p.webm" data-quality="hd" />
+					</video>
+				</div>
 			</div>
 
 	        <div class="ca-panel">

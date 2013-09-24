@@ -2543,8 +2543,12 @@
 	var SmartVideo = {
 
 		initSmartVideo: function() {
+
+			$.extend(this.settings, this.smartVideoDefaults, this.options);
+
 			// check if the device uses iOS
-			var isIOS = (userAgent.match(/ipad/i) !== null) ||
+			var that = this,
+				isIOS = (userAgent.match(/ipad/i) !== null) ||
 						(userAgent.match(/ipod/i) !== null) ||
 						(userAgent.match(/iphone/i) !== null);
 
@@ -2568,11 +2572,118 @@
 				if (typeof videojs !== 'undefined' && video.hasClass('video-js')) {
 					videojs(video.attr('id'), video.data('video'));
 				}
+					
+				// load sublime API
+				if (typeof sublime === 'object' && video.hasClass('sublime-video')) {
+					video.addClass('sublime');
+					sublime.load();
+				}
+			});
+
+			// find all video elements from the accordion, instantiate the SmartVideo for each of the video,
+			// and trigger the set actions for the videos' events
+			this.$accordion.find('.ca-video').each(function() {
+				var video = $(this);
+
+				video.smartVideo();
+
+				video.on('play', function() {
+					if (that.settings.playVideoAction == 'stopAutoplay' && typeof that.stopAutoplay !== 'undefined') {
+						that.stopAutoplay();
+						that.settings.autoplay = false;
+					}
+
+					var eventObject = {type: 'videoPlay', video: video};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.videoPlay))
+						that.settings.videoPlay.call(that, eventObject);
+				});
+
+				video.on('pause', function() {
+					if (that.settings.pauseVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
+						that.startAutoplay();
+						that.settings.autoplay = true;
+					}
+
+					var eventObject = {type: 'videoPause', video: video};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.videoPause))
+						that.settings.videoPause.call(that, eventObject);
+				});
+
+				video.on('end', function() {
+					if (that.settings.endVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
+						that.startAutoplay();
+						that.settings.autoplay = true;
+					} else if (that.settings.endVideoAction == 'nextPanel') {
+						that.nextPanel();
+					} else if (that.settings.endVideoAction == 'replayVideo') {
+						video.smartVideo('replay');
+					}
+
+					var eventObject = {type: 'videoEnd', video: video};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.videoEnd))
+						that.settings.videoEnd.call(that, eventObject);
+				});
+			});
+			
+			// when a panel opens, check to see if there are video actions associated 
+			// with the opening an closing of individual panels
+			this.on('panelOpen.' + NS, function(event) {
+				// handle the video from the closed panel
+				if (event.previousIndex != -1 && that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video').length !== 0) {
+					var previousVideo = that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video');
+
+					if (that.settings.closePanelVideoAction == 'stopVideo')
+						previousVideo.smartVideo('stop');
+					else if (that.settings.closePanelVideoAction == 'pauseVideo')
+						previousVideo.smartVideo('pause');
+				}
+
+				// handle the video from the opened panel
+				if (that.$panelsContainer.find('.ca-panel').eq(event.index).find('.ca-video').length !== 0) {
+					var currentVideo = that.$panelsContainer.find('.ca-panel').eq(event.index).find('.ca-video');
+
+					if (that.settings.openPanelVideoAction == 'playVideo')
+						currentVideo.smartVideo('play');
+				}
+			});
+
+			// when all panels close, check to see if there is a video in the 
+			// previously opened panel and handle it
+			this.on('panelsClose.' + NS, function(event) {
+				// handle the video from the closed panel
+				if (event.previousIndex != -1 && that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video').length !== 0) {
+					var previousVideo = that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video');
+
+					if (that.settings.closePanelVideoAction == 'stopVideo')
+						previousVideo.smartVideo('stop');
+					else if (that.settings.closePanelVideoAction == 'pauseVideo')
+						previousVideo.smartVideo('pause');
+				}
 			});
 		},
 
 		destroySmartVideo: function() {
+			this.$accordion.find('.ca-video').each(function() {
+				$(this).smartVideo('destroy');
+			});
 
+			this.off('panelOpen.' + NS);
+			this.off('panelsClose.' + NS);
+		},
+
+		smartVideoDefaults: {
+			openPanelVideoAction: 'playVideo',
+			closePanelVideoAction: 'stopVideo',
+			playVideoAction: 'stopAutoplay',
+			pauseVideoAction: 'none',
+			stopVideoAction: 'none',
+			endVideoAction: 'startAutoplay',
+			videoPlay: function() {},
+			videoPause: function() {},
+			videoEnd: function() {}
 		}
 	};
 

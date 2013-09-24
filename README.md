@@ -43,6 +43,7 @@ Features
 * auto video handling
 * links of background images bug
 * adjust size to hide panels from other pages
+* specific module events
 * test CSS3 transforms
 * ? shadows
 * ? link & lightbox
