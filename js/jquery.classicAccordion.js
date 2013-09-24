@@ -990,7 +990,6 @@
 			The default options of the accordion
 		*/
 		defaults: {
-			xmlSource: null,
 			width: 500,
 			height: 300,
 			responsive: true,
@@ -2501,7 +2500,7 @@
 			if (window.matchMedia & (window.matchMedia("(-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi)").matches))
 				return true;
 
-			return true;
+			return false;
 		},
 
 		_loadRetinaImage: function(image) {
