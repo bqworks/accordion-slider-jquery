@@ -1293,7 +1293,7 @@
 
 			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
-			this.accordion.on('panelOpen.' + this.panelNS, function(event) {
+			this.accordion.on('panelOpen.Layers.' + this.panelNS, function(event) {
 				if (that.index === event.index)
 					that._handleLayersInOpenedState();
 
@@ -1301,7 +1301,7 @@
 					that._handleLayersInClosedState();
 			});
 
-			this.accordion.on('panelsClose.' + this.panelNS, function(event) {
+			this.accordion.on('panelsClose.Layers.' + this.panelNS, function(event) {
 				if (that.index === event.previousIndex)
 					that._handleLayersInClosedState();
 			});
@@ -1330,8 +1330,8 @@
 		},
 
 		destroyLayers: function() {
-			this.accordion.off('panelOpen.' + this.panelNS);
-			this.accordion.off('panelsClose.' + this.panelNS);
+			this.accordion.off('panelOpen.Layers.' + this.panelNS);
+			this.accordion.off('panelsClose.Layers.' + this.panelNS);
 
 			$.each(this.layers, function(index, layer) {
 				layer.destroy();
@@ -1610,7 +1610,7 @@
 
 			$.extend(this.settings, this.swapBackgroundDefaults, this.options);
 
-			this.on('panelOpen.' + NS, function(event) {
+			this.on('panelOpen.SwapBackground.' + NS, function(event) {
 				// get the currently opened panel
 				var panel = that.getPanelAt(event.index),
 					background = panel.$panel.find('.ca-background'),
@@ -1645,7 +1645,7 @@
 				}
 			});
 
-			this.on('panelsClose.' + NS, function(event) {
+			this.on('panelsClose.SwapBackground.' + NS, function(event) {
 				if (event.previousIndex == -1)
 					return;
 
@@ -1668,8 +1668,8 @@
 		},
 
 		destroySwapBackground: function() {
-			this.off('panelOpen.' + NS);
-			this.off('panelsClose.' + NS);
+			this.off('panelOpen.SwapBackground.' + NS);
+			this.off('panelsClose.SwapBackground.' + NS);
 		},
 
 		swapBackgroundDefaults: {
@@ -1693,7 +1693,7 @@
 			this._parseHash(window.location.hash);
 			
 			// check when the hash changes
-			$(window).on('hashchange.' + this.uniqueId + '.' + NS, function() {
+			$(window).on('hashchange.DeepLinking.' + this.uniqueId + '.' + NS, function() {
 				that._parseHash(window.location.hash);
 			});
 		},
@@ -1727,7 +1727,7 @@
 		},
 
 		destroyDeepLinking: function() {
-			$(window).off('hashchange.' + this.uniqueId + '.' + NS);
+			$(window).off('hashchange.DeepLinking.' + this.uniqueId + '.' + NS);
 		}
 	};
 
@@ -1755,7 +1755,7 @@
 				this.startAutoplay();
 
 			// start the autoplay timer each time the panel opens
-			this.on('panelOpen.' + NS, function(event) {
+			this.on('panelOpen.Autoplay.' + NS, function(event) {
 				if (that.settings.autoplay === true) {
 					// stop previous timers before starting a new one
 					if (that.isTimerRunning === true)
@@ -1767,7 +1767,7 @@
 			});
 
 			// on accordion hover stop the autoplay if autoplayOnHover is set to pause or stop
-			this.on('mouseenter.' + NS, function(event) {
+			this.on('mouseenter.Autoplay.' + NS, function(event) {
 				if (that.settings.autoplay === true && that.isTimerRunning && (that.settings.autoplayOnHover == 'pause' || that.settings.autoplayOnHover == 'stop')) {
 					that.stopAutoplay();
 					that.isTimerPaused = true;
@@ -1775,7 +1775,7 @@
 			});
 
 			// on accordion hover out restart the autoplay
-			this.on('mouseleave.' + NS, function(event) {
+			this.on('mouseleave.Autoplay.' + NS, function(event) {
 				if (that.settings.autoplay === true && that.isTimerRunning === false && that.settings.autoplayOnHover != 'stop') {
 					that.startAutoplay();
 					that.isTimerPaused = false;
@@ -1805,9 +1805,9 @@
 		destroyAutoplay: function() {
 			clearTimeout(this.autoplayTimer);
 
-			this.off('panelOpen.' + NS);
-			this.off('mouseenter.' + NS);
-			this.off('mouseleave.' + NS);
+			this.off('panelOpen.Autoplay.' + NS);
+			this.off('mouseenter.Autoplay.' + NS);
+			this.off('mouseleave.Autoplay.' + NS);
 		},
 
 		autoplayDefaults: {
@@ -2425,8 +2425,8 @@
 
 		initLazyLoading: function() {
 			// listen when the page changes or when the accordion is updated (because the number of visible panels might change)
-			this.on('update.' + NS, $.proxy(this._checkImages, this));
-			this.on('pageScroll.' + NS, $.proxy(this._checkImages, this));
+			this.on('update.LazyLoading.' + NS, $.proxy(this._checkImages, this));
+			this.on('pageScroll.LazyLoading.' + NS, $.proxy(this._checkImages, this));
 		},
 
 		_checkImages: function() {
@@ -2459,8 +2459,8 @@
 		},
 
 		destroyLazyLoading: function() {
-			this.off('update.' + NS);
-			this.off('pageScroll.' + NS);
+			this.off('update.LazyLoading.' + NS);
+			this.off('pageScroll.LazyLoading.' + NS);
 		}
 	};
 
@@ -2587,7 +2587,7 @@
 
 				video.smartVideo();
 
-				video.on('play', function() {
+				video.on('play.SmartVideo', function() {
 					if (that.settings.playVideoAction == 'stopAutoplay' && typeof that.stopAutoplay !== 'undefined') {
 						that.stopAutoplay();
 						that.settings.autoplay = false;
@@ -2599,7 +2599,7 @@
 						that.settings.videoPlay.call(that, eventObject);
 				});
 
-				video.on('pause', function() {
+				video.on('pause.SmartVideo', function() {
 					if (that.settings.pauseVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
 						that.startAutoplay();
 						that.settings.autoplay = true;
@@ -2611,7 +2611,7 @@
 						that.settings.videoPause.call(that, eventObject);
 				});
 
-				video.on('end', function() {
+				video.on('end.SmartVideo', function() {
 					if (that.settings.endVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
 						that.startAutoplay();
 						that.settings.autoplay = true;
@@ -2630,7 +2630,7 @@
 			
 			// when a panel opens, check to see if there are video actions associated 
 			// with the opening an closing of individual panels
-			this.on('panelOpen.' + NS, function(event) {
+			this.on('panelOpen.SmartVideo.' + NS, function(event) {
 				// handle the video from the closed panel
 				if (event.previousIndex != -1 && that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video').length !== 0) {
 					var previousVideo = that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video');
@@ -2652,7 +2652,7 @@
 
 			// when all panels close, check to see if there is a video in the 
 			// previously opened panel and handle it
-			this.on('panelsClose.' + NS, function(event) {
+			this.on('panelsClose.SmartVideo.' + NS, function(event) {
 				// handle the video from the closed panel
 				if (event.previousIndex != -1 && that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video').length !== 0) {
 					var previousVideo = that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video');
@@ -2667,11 +2667,14 @@
 
 		destroySmartVideo: function() {
 			this.$accordion.find('.ca-video').each(function() {
+				var video = $(this);
+				
+				video.off('SmartVideo');
 				$(this).smartVideo('destroy');
 			});
 
-			this.off('panelOpen.' + NS);
-			this.off('panelsClose.' + NS);
+			this.off('panelOpen.SmartVideo.' + NS);
+			this.off('panelsClose.SmartVideo.' + NS);
 		},
 
 		smartVideoDefaults: {

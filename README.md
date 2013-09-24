@@ -40,10 +40,10 @@ Features
 * + enable/disable modules
 * + handle responsive mode changes
 * + destroy modules
-* auto video handling
+* + auto video handling
 * links of background images bug
 * adjust size to hide panels from other pages
-* specific module events
+* + specific module events
 * test CSS3 transforms
 * ? shadows
 * ? link & lightbox
