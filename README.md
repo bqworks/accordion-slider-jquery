@@ -48,3 +48,4 @@ Features
 * ? shadows
 * ? link & lightbox
 * ? resize while maintaining size and position
+* + add classes that describe the state of the accordion

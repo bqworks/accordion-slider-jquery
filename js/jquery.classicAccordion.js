@@ -129,6 +129,9 @@
 			// set a panel to be opened from the start
 			this.currentIndex = this.settings.startPanel;
 
+			if (this.currentIndex != -1)
+				this.$accordion.addClass('ca-opened');
+
 			// if a panels was not set to be opened but a page was specified,
 			// set that page index to be opened
 			if (this.currentIndex == -1 && this.settings.startPage !== 0)
@@ -622,6 +625,13 @@
 			if (index === this.currentIndex)
 				return;
 
+			// remove the "closed" class and add the "opened" class, which indicates
+			// that the accordion has an opened panel
+			if (this.$accordion.hasClass('ca-opened') === false) {
+				this.$accordion.removeClass('ca-closed');
+				this.$accordion.addClass('ca-opened');
+			}
+
 			var previousIndex = this.currentIndex;
 
 			this.currentIndex = index;
@@ -746,6 +756,14 @@
 			var previousIndex = this.currentIndex;
 
 			this.currentIndex = -1;
+
+
+			// remove the "opened" class and add the "closed" class, which indicates
+			// that the accordion is closed
+			if (this.$accordion.hasClass('ca-closed') === false) {
+				this.$accordion.removeClass('ca-opened');
+				this.$accordion.addClass('ca-closed');
+			}
 
 			//reset the animation object
 			this.closePanelsAnimation = {progress: 0, page: this.currentPage};

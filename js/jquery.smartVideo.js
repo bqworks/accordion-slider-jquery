@@ -477,6 +477,9 @@
 	VideoJSVideo.prototype._init = function() {
 		var that = this;
 
+		if (typeof videojs === 'undefined')
+			return;
+
 		videojs(this.$video.attr('id')).ready(function() {
 			that.player = this;
 			that.ready = true;
@@ -541,6 +544,9 @@
 
 	SublimeVideo.prototype._init = function() {
 		var that = this;
+
+		if (typeof sublime === 'undefined')
+			return;
 
 		sublime.ready(function() {
 			that.ready = true;
