@@ -2,11 +2,8 @@
 	
 	var SmartVideo = function(instance, options) {
 		this.$video = $(instance);
-			
 		this.options = options;
-
 		this.settings = {};
-			
 		this.player = null;
 
 		this._init();

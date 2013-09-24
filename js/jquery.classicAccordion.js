@@ -2479,7 +2479,7 @@
 			$.extend(this.settings, this.retinaDefaults, this.options);
 
 			// check if retina is enabled and the current display supports high DPI
-			if (this.settings.retina === false || this.isRetina() === false)
+			if (this.settings.retina === false || this._isRetina() === false)
 				return;
 
 			// check if the Lazy Loading module is enabled and overwrite its loading method
@@ -2494,7 +2494,7 @@
 			}
 		},
 
-		isRetina: function() {
+		_isRetina: function() {
 			if (window.devicePixelRatio > 1)
 				return true;
 
@@ -2547,8 +2547,7 @@
 			$.extend(this.settings, this.smartVideoDefaults, this.options);
 
 			// check if the device uses iOS
-			var that = this,
-				isIOS = (userAgent.match(/ipad/i) !== null) ||
+			var isIOS = (userAgent.match(/ipad/i) !== null) ||
 						(userAgent.match(/ipod/i) !== null) ||
 						(userAgent.match(/iphone/i) !== null);
 
@@ -2579,6 +2578,12 @@
 					sublime.load();
 				}
 			});
+
+			this._setupVideos();
+		},
+
+		_setupVideos: function() {
+			var that = this;
 
 			// find all video elements from the accordion, instantiate the SmartVideo for each of the video,
 			// and trigger the set actions for the videos' events
@@ -2668,7 +2673,7 @@
 		destroySmartVideo: function() {
 			this.$accordion.find('.ca-video').each(function() {
 				var video = $(this);
-				
+
 				video.off('SmartVideo');
 				$(this).smartVideo('destroy');
 			});
