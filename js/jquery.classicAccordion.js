@@ -70,11 +70,11 @@
 		this.mouseDelayTimer = 0;
 
 		// simple objects to be used for animation
-		this.openPanelAnimation = {progress: 0};
-		this.closePanelsAnimation = {progress: 0};
+		this.openPanelAnimation = {};
+		this.closePanelsAnimation = {};
 
 		// generate a unique ID to be used for event listening
-		this.uniqueId = new Date().valueOf();
+		this.uniqueId = Date.now();
 
 		// stores size breakpoints in an array for sorting purposes
 		this.breakpoints = [];
@@ -151,6 +151,9 @@
 
 			// update the accordion
 			this.update();
+
+			// prepare request animation frame
+			this._prepareRAF();
 
 			// if there is a panel opened at start handle that panel as if it was manually opened
 			if (this.currentIndex != -1) {
@@ -619,6 +622,86 @@
 		},
 
 		/*
+			Animate the panels using request animation frame
+		*/
+		_animatePanels: function(target, args) {
+			var startTime = Date.now(),
+				progress = 0;
+
+			target.isRunning = true;
+			target.timer = window.requestAnimationFrame(_animate);
+
+			function _animate() {
+				if (progress < 1) {
+					// get the progress by calculating the elapsed time
+					progress = (Date.now() - startTime) / args.duration;
+
+					if (progress > 1)
+						progress = 1;
+
+					// apply swing easing
+					progress = 0.5 - Math.cos(progress * Math.PI) / 2;
+
+					args.step(progress);
+
+					target.timer = window.requestAnimationFrame(_animate);
+				} else {
+					args.complete();
+
+					target.isRunning = false;
+					window.cancelAnimationFrame(target.timer);
+				}
+			}
+		},
+
+		/*
+			Stop running panel animations
+		*/
+		_stopPanelsAnimation: function(target) {
+			if (typeof target.isRunning !== 'undefined' && target.isRunning === true) {
+				target.isRunning = false;
+				window.cancelAnimationFrame(target.timer);
+			}
+		},
+
+		/*
+			Check if window.requestAnimationFrame exists in the browser and if it doesn't, 
+			try alternative function names or implement window.requestAnimationFrame using window.setTimeout
+		*/
+		_prepareRAF: function() {
+			if (typeof window.requestAnimationFrame === 'undefined') {
+				var vendorPrefixes = ['webkit', 'moz'];
+
+				for(var i = 0; i < vendorPrefixes.length; i++) {
+					window.requestAnimationFrame = window[vendorPrefixes[i] + 'RequestAnimationFrame'];
+					window.cancelAnimationFrame = window.cancelAnimationFrame || window[vendorPrefixes[i] + 'CancelAnimationFrame'] || window[vendorPrefixes[i] + 'CancelRequestAnimationFrame'];
+				}
+			}
+
+			// polyfill inspired from Erik Moller
+			if (typeof window.requestAnimationFrame === 'undefined') {
+				var lastTime = 0;
+
+				window.requestAnimationFrame = function(callback, element) {
+					var currentTime = Date.now(),
+						timeToCall = Math.max(0, 16 - (currentTime - lastTime));
+
+					var id = window.setTimeout(function() {
+						callback(currentTime + timeToCall);
+					}, timeToCall);
+
+					lastTime = currentTime + timeToCall;
+
+					return id;
+				};
+
+				window.cancelAnimationFrame = function(id) {
+					clearTimeout(id);
+				};
+			}
+		},
+
+		/*
 			Open the panel at the specified index
 		*/
 		openPanel: function(index) {
@@ -635,9 +718,6 @@
 			var previousIndex = this.currentIndex;
 
 			this.currentIndex = index;
-
-			//reset the animation object
-			this.openPanelAnimation = {progress: 0, page: this.currentPage};
 			
 			// synchronize the page with the selected panel by navigating to the page that
 			// contains the panel if necessary.
@@ -716,21 +796,26 @@
 
 			// stop the close panels animation if it's on the same page
 			if (this.closePanelsAnimation.page === this.currentPage)
-				$(this.closePanelsAnimation).stop();
+				this._stopPanelsAnimation(this.closePanelsAnimation);
+
+			// stop any running animations
+			this._stopPanelsAnimation(this.openPanelAnimation);
+
+			// assign the current page
+			this.openPanelAnimation.page = this.currentPage;
 
 			// animate the panels
-			$(this.openPanelAnimation).stop().animate({progress: 1}, {
+			this._animatePanels(this.openPanelAnimation, {
 				duration: this.settings.openPanelDuration,
-				easing: this.settings.openPanelEasing,
-				step: function(now) {
+				step: function(progress) {
 					for (var i = 0; i < totalPanels; i++) {
 						var value = animatedPanels[i],
 							panel = that.getPanelAt(value);
 
-						panel.setPosition(now * (targetPosition[value] - startPosition[value]) + startPosition[value]);
+						panel.setPosition(progress * (targetPosition[value] - startPosition[value]) + startPosition[value]);
 
 						if (that.computedPanelDistance !== 0)
-							panel.setSize(now * (targetSize[value] - startSize[value]) + startSize[value]);
+							panel.setSize(progress * (targetSize[value] - startSize[value]) + startSize[value]);
 					}
 				},
 				complete: function() {
@@ -765,9 +850,6 @@
 				this.$accordion.addClass('ca-closed');
 			}
 
-			//reset the animation object
-			this.closePanelsAnimation = {progress: 0, page: this.currentPage};
-
 			clearTimeout(this.mouseDelayTimer);
 
 			var that = this,
@@ -800,20 +882,25 @@
 
 			// stop the open panel animation if it's on the same page
 			if (this.openPanelAnimation.page === this.currentPage)
-				$(this.openPanelAnimation).stop();
+				this._stopPanelsAnimation(this.openPanelAnimation);
+
+			// stop any running animations
+			this._stopPanelsAnimation(this.closePanelsAnimation);
+
+			// assign the current page
+			this.closePanelsAnimation.page = this.currentPage;
 
 			// animate the panels
-			$(this.closePanelsAnimation).stop().animate({progress: 1}, {
+			this._animatePanels(this.closePanelsAnimation, {
 				duration: this.settings.closePanelDuration,
-				easing: this.settings.closePanelEasing,
-				step: function(now) {
+				step: function(progress) {
 					for (var i = firstPanel; i <= lastPanel; i++) {
 						var panel = that.getPanelAt(i);
 
-						panel.setPosition(now * (targetPosition[i] - startPosition[i]) + startPosition[i]);
+						panel.setPosition(progress * (targetPosition[i] - startPosition[i]) + startPosition[i]);
 
 						if (that.computedPanelDistance !== 0)
-							panel.setSize(now * (targetSize[i] - startSize[i]) + startSize[i]);
+							panel.setSize(progress * (targetSize[i] - startSize[i]) + startSize[i]);
 					}
 				},
 				complete: function() {
@@ -1021,8 +1108,8 @@
 			closePanelsOnMouseOut: true,
 			mouseDelay: 200,
 			panelDistance: 0,
-			openPanelDuration: 500,
-			closePanelDuration: 500,
+			openPanelDuration: 700,
+			closePanelDuration: 700,
 			openPanelEasing: 'swing',
 			closePanelEasing: 'swing',
 			pageScrollDuration: 500,
