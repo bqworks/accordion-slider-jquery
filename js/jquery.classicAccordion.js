@@ -373,6 +373,10 @@
 		resize: function() {
 			var that = this;
 
+			// reset the accordion to 100% before calculating the size of the other elements
+			if (this.settings.responsive === true)
+				this.$accordion.css({width: '100%'});
+
 			// set the height of the accordion based on the aspect ratio
 			if (this.settings.aspectRatio != -1)
 				this.$accordion.css('height', this.$accordion.innerWidth() / this.settings.aspectRatio);
@@ -455,6 +459,9 @@
 			this.totalPanelsSize = this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1);
 
 			this.$panelsContainer.css(this.sizeProperty, this.totalPanelsSize);
+
+			// reset the accordion's size so that the visible panels fit exactly inside if their size and position are rounded
+			this.$accordion.css(this.sizeProperty, this.closedPanelSize * this.getVisiblePanels() + this.computedPanelDistance * (this.getVisiblePanels() - 1));
 
 			// reset the position and size of each panel
 			$.each(this.panels, function(index, element) {
@@ -805,7 +812,7 @@
 			}
 
 			var totalPanels = animatedPanels.length;
-			
+
 			// stop the close panels animation if it's on the same page
 			if (this.closePanelsAnimation.page === this.currentPage)
 				this._stopPanelsAnimation(this.closePanelsAnimation);

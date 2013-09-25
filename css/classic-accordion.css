@@ -40,6 +40,18 @@
 	height: auto;
 }
 
+.classic-accordion .ca-panel > a {
+	display: block;
+}
+
+.classic-accordion.ca-horizontal .ca-panel > a {
+	height: 100%;
+}
+
+.classic-accordion.ca-vertical .ca-panel > a {
+	width: 100%;
+}
+
 .classic-accordion .ca-background,
 .classic-accordion .ca-background-opened {
 	display: block;
