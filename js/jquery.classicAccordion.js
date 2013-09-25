@@ -464,7 +464,7 @@
 				var position = index * (that.closedPanelSize + that.computedPanelDistance);
 				element.setPosition(position);
 
-				if (that.computedPanelDistance !== 0) {
+				if (that.settings.panelsOverlap === false) {
 					element.setSize(that.closedPanelSize);
 				}
 			});
@@ -792,7 +792,7 @@
 				if (targetPosition[i] !== startPosition[i])
 					animatedPanels.push(i);
 
-				if (this.computedPanelDistance !== 0) {
+				if (this.settings.panelsOverlap === false) {
 					startSize[i] = panel.getSize();
 					targetSize[i] = i === this.currentIndex ? this.computedOpenedPanelSize : this.collapsedPanelSize;
 
@@ -805,7 +805,7 @@
 			}
 
 			var totalPanels = animatedPanels.length;
-
+			
 			// stop the close panels animation if it's on the same page
 			if (this.closePanelsAnimation.page === this.currentPage)
 				this._stopPanelsAnimation(this.closePanelsAnimation);
@@ -826,7 +826,7 @@
 
 						panel.setPosition(progress * (targetPosition[value] - startPosition[value]) + startPosition[value]);
 
-						if (that.computedPanelDistance !== 0)
+						if (that.settings.panelsOverlap === false)
 							panel.setSize(progress * (targetSize[value] - startSize[value]) + startSize[value]);
 					}
 				},
@@ -884,7 +884,7 @@
 				if (this.settings.visiblePanels != -1 && this.currentPage == this.getTotalPages() - 1)
 					targetPosition[i] -= (this.getTotalPages() - this.getTotalPanels() / this.settings.visiblePanels) * (this.totalSize + this.computedPanelDistance);
 
-				if (this.computedPanelDistance !== 0) {
+				if (this.settings.panelsOverlap === false) {
 					startSize[i] = panel.getSize();
 					targetSize[i] = this.closedPanelSize;
 				}
@@ -911,7 +911,7 @@
 
 						panel.setPosition(progress * (targetPosition[i] - startPosition[i]) + startPosition[i]);
 
-						if (that.computedPanelDistance !== 0)
+						if (that.settings.panelsOverlap === false)
 							panel.setSize(progress * (targetSize[i] - startSize[i]) + startSize[i]);
 					}
 				},
@@ -1130,6 +1130,7 @@
 			visiblePanels: -1,
 			startPage: 0,
 			shadow: true,
+			panelsOverlap: false,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -1289,7 +1290,7 @@
 		getContentSize: function() {
 			var size;
 
-			if (this.settings.panelDistance !== 0) {
+			if (this.settings.panelsOverlap === false) {
 				size = this.sizeProperty == 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
 			} else {
 				// workaround for when scrollWidth and scrollHeight return incorrect values

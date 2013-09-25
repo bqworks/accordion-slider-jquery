@@ -12,6 +12,7 @@
 
 .classic-accordion .ca-panels {
 	position: absolute;
+	background-color: #000;
 }
 
 .classic-accordion.ca-horizontal .ca-panels {

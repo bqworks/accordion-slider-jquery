@@ -46,7 +46,7 @@ Features
 * + specific module events
 * + test CSS3 transforms
 * + shadows
-* overlay panels option
+* + overlay panels option
 * ? link & lightbox
 * ? resize while maintaining size and position
 * + add classes that describe the state of the accordion
