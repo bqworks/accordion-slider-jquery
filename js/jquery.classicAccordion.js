@@ -249,6 +249,18 @@
 			// set the size of the accordion
 			this.resize();
 
+			// create or remove the shadow
+			if (this.settings.shadow === true) {
+				this.$accordion.find('.ca-panel').each(function(index, element) {
+					var panel = $(element);
+
+					if (panel.find('.ca-shadow'))
+						$('<div class="ca-shadow"></div>').appendTo(panel);
+				});
+			} else if (this.settings.shadow === false) {
+				this.$accordion.find('.ca-shadow').remove();
+			}
+
 			// fire the update event
 			var eventObject = {type: 'update'};
 			that.trigger(eventObject);
@@ -1117,6 +1129,7 @@
 			breakpoints: null,
 			visiblePanels: -1,
 			startPage: 0,
+			shadow: true,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},

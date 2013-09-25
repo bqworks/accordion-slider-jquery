@@ -44,8 +44,9 @@ Features
 * links of background images bug
 * adjust size to hide panels from other pages
 * + specific module events
-* test CSS3 transforms
-* ? shadows
+* + test CSS3 transforms
+* + shadows
+* overlay panels option
 * ? link & lightbox
 * ? resize while maintaining size and position
 * + add classes that describe the state of the accordion

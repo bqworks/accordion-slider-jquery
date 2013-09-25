@@ -101,18 +101,20 @@
 	transform-origin: right top;
 }
 
-.classic-accordion .ca-shadow-horizontal {
-	background: url(accordion-assets/images/shadow.png) repeat-Y;
+.classic-accordion.ca-horizontal .ca-shadow {
+	background: url(images/shadow.png) repeat-y;
 	position: absolute;
+	top: 0;
 	right: 0;
 	width: 25px;
 	height: 100%;
 }
 
-.classic-accordion .ca-shadow-vertical {
-	background: url(accordion-assets/images/shadow_v.png) repeat-x;
+.classic-accordion.ca-vertical .ca-shadow {
+	background: url(images/shadow_v.png) repeat-x;
 	position: absolute;
 	bottom: 0;
+	left: 0;
 	width: 100%;
 	height: 25px;
 }
