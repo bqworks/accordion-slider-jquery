@@ -1,4 +1,4 @@
-classic-accordion
+accordion-slider
 =================
 
 Features

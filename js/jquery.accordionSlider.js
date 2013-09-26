@@ -1,10 +1,10 @@
 /*
-	Classic Accordion - jQuery plugin
+	Accordion Slider - Responsive jQuery Accordion
 */
 (function(window, $) {
 
 	// namespace
-	var NS = 'ClassicAccordion',
+	var NS = 'AccordionSlider',
 
 		// detect the current browser name and version
 		userAgent = window.navigator.userAgent.toLowerCase(),
@@ -16,7 +16,7 @@
 		browserName = browserDetect[1],
 		browserVersion = browserDetect[2];
 
-	var ClassicAccordion = function(instance, options) {
+	var AccordionSlider = function(instance, options) {
 
 		// reference to the accordion jQuery object
 		this.$accordion = $(instance);
@@ -63,7 +63,7 @@
 		// the distance, in pixels, between the accordion's panels
 		this.computedPanelDistance = 0;
 
-		// array that contains the ClassicAccordionPanel objects
+		// array that contains the AccordionSliderPanel objects
 		this.panels = [];
 
 		// timer used for delaying the opening of the panel on mouse hover
@@ -101,7 +101,7 @@
 		this._init();
 	};
 
-	ClassicAccordion.prototype = {
+	AccordionSlider.prototype = {
 
 		/*
 			The starting place for the accordion
@@ -113,11 +113,11 @@
 
 			// get reference to the panels' container and 
 			// create additional mask container, which will maks the panels'container
-			this.$maskContainer = $('<div class="ca-mask"></div>').appendTo(this.$accordion);
-			this.$panelsContainer = this.$accordion.find('.ca-panels').appendTo(this.$maskContainer);
+			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
+			this.$panelsContainer = this.$accordion.find('.as-panels').appendTo(this.$maskContainer);
 
 			// init accordion modules
-			var modules = $.ClassicAccordion.modules.accordion;
+			var modules = $.AccordionSlider.modules.accordion;
 
 			if (typeof modules !== 'undefined')
 				for (var i in modules) {
@@ -133,7 +133,7 @@
 			this.currentIndex = this.settings.startPanel;
 
 			if (this.currentIndex != -1)
-				this.$accordion.addClass('ca-opened');
+				this.$accordion.addClass('as-opened');
 
 			// if a panels was not set to be opened but a page was specified,
 			// set that page index to be opened
@@ -160,7 +160,7 @@
 
 			// if there is a panel opened at start handle that panel as if it was manually opened
 			if (this.currentIndex != -1) {
-				this.$accordion.find('.ca-panel').eq(this.currentIndex).addClass('ca-opened');
+				this.$accordion.find('.as-panel').eq(this.currentIndex).addClass('as-opened');
 
 				// fire 'panelOpen' event
 				var eventObject = {type: 'panelOpen', index: this.currentIndex, previousIndex: -1, element: this.getPanelAt(this.currentIndex)};
@@ -199,11 +199,11 @@
 			// add a class to the accordion based on the orientation
 			// to be used in CSS
 			if (this.settings.orientation == 'horizontal') {
-				this.$accordion.removeClass('ca-vertical').addClass('ca-horizontal');
+				this.$accordion.removeClass('as-vertical').addClass('as-horizontal');
 				this.positionProperty = 'left';
 				this.sizeProperty = 'width';
 			} else if (this.settings.orientation == 'vertical') {
-				this.$accordion.removeClass('ca-horizontal').addClass('ca-vertical');
+				this.$accordion.removeClass('as-horizontal').addClass('as-vertical');
 				this.positionProperty = 'top';
 				this.sizeProperty = 'height';
 			}
@@ -254,9 +254,9 @@
 
 			// create or remove the shadow
 			if (this.settings.shadow === true) {
-				this.$accordion.find('.ca-panel').addClass('ca-shadow');
+				this.$accordion.find('.as-panel').addClass('as-shadow');
 			} else if (this.settings.shadow === false) {
-				this.$accordion.find('.ca-shadow').removeClass('ca-shadow');
+				this.$accordion.find('.as-shadow').removeClass('as-shadow');
 			}
 
 			// fire the update event
@@ -274,14 +274,14 @@
 
 			// check if there are removed items in the DOM and remove the from the array of panels
 			for (var i = this.panels.length - 1; i >= 0; i--) {
-				if (this.$accordion.find('.ca-panel[data-index="' + i + '"]').length === 0) {
+				if (this.$accordion.find('.as-panel[data-index="' + i + '"]').length === 0) {
 					this.panels[i].destroy();
 					this.panels.splice(i, 1);
 				}
 			}
 
 			// parse the DOM and create uninstantiated panels and reset the indexes
-			this.$accordion.find('.ca-panel').each(function(index, element) {
+			this.$accordion.find('.as-panel').each(function(index, element) {
 				var panel = $(element);
 
 				if (typeof panel.attr('data-init') === 'undefined') {
@@ -301,7 +301,7 @@
 				$element = $(element);
 
 			// create a panel instance and add it to the array of panels
-			var panel = new ClassicAccordionPanel($element, this, index);
+			var panel = new AccordionSliderPanel($element, this, index);
 			this.panels.splice(index, 0, panel);
 
 			// listen for 'panelMouseOver' events
@@ -548,11 +548,11 @@
 		},
 
 		/*
-			Destroy the Classic Accordion instance
+			Destroy the Accordion Slider instance
 		*/
 		destroy: function() {
 			// remove the stored reference to this instance
-			this.$accordion.removeData('classicAccordion');
+			this.$accordion.removeData('accordionSlider');
 
 			// remove inline style
 			this.$accordion.attr('style', '');
@@ -567,7 +567,7 @@
 			$(window).off('resize.' + this.uniqueId + '.' + NS);
 
 			// destroy modules
-			var modules = $.ClassicAccordion.modules.accordion;
+			var modules = $.AccordionSlider.modules.accordion;
 
 			if (typeof modules !== 'undefined')
 				for (var i in modules) {
@@ -583,7 +583,7 @@
 
 			// remove elements that were created by the script
 			this.$maskContainer.remove();
-			this.$accordion.find('.ca-pagination-buttons').remove();
+			this.$accordion.find('.as-pagination-buttons').remove();
 		},
 
 		/*
@@ -733,9 +733,9 @@
 
 			// remove the "closed" class and add the "opened" class, which indicates
 			// that the accordion has an opened panel
-			if (this.$accordion.hasClass('ca-opened') === false) {
-				this.$accordion.removeClass('ca-closed');
-				this.$accordion.addClass('ca-opened');
+			if (this.$accordion.hasClass('as-opened') === false) {
+				this.$accordion.removeClass('as-closed');
+				this.$accordion.addClass('as-opened');
 			}
 
 			var previousIndex = this.currentIndex;
@@ -767,8 +767,8 @@
 				lastPanel = this._getLastPanelFromPage(),
 				counter = 0;
 
-			this.$accordion.find('.ca-opened').removeClass('ca-opened');
-			this.$accordion.find('.ca-panel').eq(this.currentIndex).addClass('ca-opened');
+			this.$accordion.find('.as-opened').removeClass('as-opened');
+			this.$accordion.find('.as-panel').eq(this.currentIndex).addClass('as-opened');
 
 			// check if the panel needs to open to its maximum size and recalculate
 			// the size of the opened panel and the size of the collapsed panel
@@ -868,9 +868,9 @@
 
 			// remove the "opened" class and add the "closed" class, which indicates
 			// that the accordion is closed
-			if (this.$accordion.hasClass('ca-closed') === false) {
-				this.$accordion.removeClass('ca-opened');
-				this.$accordion.addClass('ca-closed');
+			if (this.$accordion.hasClass('as-closed') === false) {
+				this.$accordion.removeClass('as-opened');
+				this.$accordion.addClass('as-closed');
 			}
 
 			clearTimeout(this.mouseDelayTimer);
@@ -1065,37 +1065,37 @@
 			Create or update the pagination buttons
 		*/
 		_updatePaginationButtons: function() {
-			var paginationButtons = this.$accordion.find('.ca-pagination-buttons'),
+			var paginationButtons = this.$accordion.find('.as-pagination-buttons'),
 				that = this;
 
 			// remove the buttons if there are no more pages
 			if (this.settings.visiblePanels == -1 && paginationButtons.length !== 0) {
 				paginationButtons.remove();
-				paginationButtons.off('click.' + NS, '.ca-pagination-button');
+				paginationButtons.off('click.' + NS, '.as-pagination-button');
 				this.off('pageScroll.' + NS);
 			
 			// if there are pages and the buttons were not created yet, create them now
 			} else if (this.settings.visiblePanels != -1 && paginationButtons.length === 0) {
 				// create the buttons' container
-				paginationButtons = $('<div class="ca-pagination-buttons"></div>').appendTo(this.$accordion);
+				paginationButtons = $('<div class="as-pagination-buttons"></div>').appendTo(this.$accordion);
 
 				// create the buttons
 				for (var i = 0; i < this.getTotalPages(); i++) {
-					$('<div class="ca-pagination-button"></div>').appendTo(paginationButtons);
+					$('<div class="as-pagination-button"></div>').appendTo(paginationButtons);
 				}
 
 				// listen for button clicks 
-				paginationButtons.on('click.' + NS, '.ca-pagination-button', function() {
+				paginationButtons.on('click.' + NS, '.as-pagination-button', function() {
 					that.gotoPage($(this).index());
 				});
 
 				// set the initially selected button
-				paginationButtons.find('.ca-pagination-button').eq(this.currentPage).addClass('ca-selected');
+				paginationButtons.find('.as-pagination-button').eq(this.currentPage).addClass('as-selected');
 
 				// select the corresponding panel when the page changes and change the selected button
 				this.on('pageScroll.' + NS, function(event) {
-					paginationButtons.find('.ca-selected').removeClass('ca-selected');
-					paginationButtons.find('.ca-pagination-button').eq(event.index).addClass('ca-selected');
+					paginationButtons.find('.as-selected').removeClass('as-selected');
+					paginationButtons.find('.as-pagination-button').eq(event.index).addClass('as-selected');
 				});
 
 			// update the panels if they already exist but their number differs from
@@ -1105,12 +1105,12 @@
 
 				// create the buttons
 				for (var j = 0; j < this.getTotalPages(); j++) {
-					$('<div class="ca-pagination-button"></div>').appendTo(paginationButtons);
+					$('<div class="as-pagination-button"></div>').appendTo(paginationButtons);
 				}
 
 				// change the selected the buttons
-				paginationButtons.find('.ca-selected').removeClass('ca-selected');
-				paginationButtons.find('.ca-pagination-button').eq(this.currentPage).addClass('ca-selected');
+				paginationButtons.find('.as-selected').removeClass('as-selected');
+				paginationButtons.find('.as-pagination-button').eq(this.currentPage).addClass('as-selected');
 			}
 		},
 
@@ -1157,7 +1157,7 @@
 		}
 	};
 
-	var ClassicAccordionPanel = function(panel, accordion, index) {
+	var AccordionSliderPanel = function(panel, accordion, index) {
 
 		// reference to the panel jQuery object
 		this.$panel = panel;
@@ -1169,7 +1169,7 @@
 		this.settings = this.accordion.settings;
 
 		// set a namespace for the panel
-		this.panelNS =  'ClassicAccordionPanel' + '.' + NS;
+		this.panelNS =  'AccordionSliderPanel' + '.' + NS;
 
 		// set the index of the panel
 		this.setIndex(index);
@@ -1178,7 +1178,7 @@
 		this._init();
 	};
 
-	ClassicAccordionPanel.prototype = {
+	AccordionSliderPanel.prototype = {
 
 		/*
 			The starting point for the panel
@@ -1207,7 +1207,7 @@
 			this.update();
 
 			// init panel modules
-			var modules = $.ClassicAccordion.modules.panel;
+			var modules = $.AccordionSlider.modules.panel;
 
 			if (typeof modules !== 'undefined')
 				for (var i in modules) {
@@ -1243,7 +1243,7 @@
 			this.$panel.removeAttr('data-index');
 
 			// destroy panel modules
-			var modules = $.ClassicAccordion.modules.panel;
+			var modules = $.AccordionSlider.modules.panel;
 
 			if (typeof modules !== 'undefined')
 				for (var i in modules) {
@@ -1343,9 +1343,9 @@
 	};
 
 	/*
-		Static methods for Classic Accordion
+		Static methods for Accordion Slider
 	*/
-	$.ClassicAccordion = {
+	$.AccordionSlider = {
 
 		modules: {},
 
@@ -1356,24 +1356,24 @@
 			this.modules[target].push(name);
 
 			if (target == 'accordion')
-				$.extend(ClassicAccordion.prototype, module);
+				$.extend(AccordionSlider.prototype, module);
 			else if (target == 'panel')
-				$.extend(ClassicAccordionPanel.prototype, module);
+				$.extend(AccordionSliderPanel.prototype, module);
 		}
 	};
 
-	$.fn.classicAccordion = function(options) {
+	$.fn.accordionSlider = function(options) {
 		var args = Array.prototype.slice.call(arguments, 1);
 
 		return this.each(function() {
 			// instantiate the accordion or alter it
-			if (typeof $(this).data('classicAccordion') === 'undefined') {
-				var newInstance = new ClassicAccordion(this, options);
+			if (typeof $(this).data('accordionSlider') === 'undefined') {
+				var newInstance = new AccordionSlider(this, options);
 
 				// store a reference to the instance created
-				$(this).data('classicAccordion', newInstance);
+				$(this).data('accordionSlider', newInstance);
 			} else if (typeof options !== 'undefined') {
-				var	currentInstance = $(this).data('classicAccordion');
+				var	currentInstance = $(this).data('accordionSlider');
 
 				// check the type of argument passed
 				if (typeof currentInstance[options] === 'function') {
@@ -1385,7 +1385,7 @@
 				} else if (typeof options === 'object') {
 					currentInstance.setProperties(options);
 				} else {
-					$.error(options + ' does not exist in classicAccordion.');
+					$.error(options + ' does not exist in accordionSlider.');
 				}
 			}
 		});
@@ -1408,7 +1408,7 @@
 
 			// iterate through the panel's layer jQuery objects
 			// and create Layer instances for each object
-			this.$panel.find('.ca-layer').each(function() {
+			this.$panel.find('.as-layer').each(function() {
 				var layer = new Layer($(this));
 
 				that.layers.push(layer);
@@ -1468,7 +1468,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('Layers', Layers, 'panel');
+	$.AccordionSlider.addModule('Layers', Layers, 'panel');
 
 	var Layer = function(layer) {
 
@@ -1494,12 +1494,12 @@
 			// hide the layer by default
 			this.$layer.css('visibility', 'hidden');
 
-			if (this.$layer.hasClass('ca-always')) {
+			if (this.$layer.hasClass('as-always')) {
 				this.visibleOn = 'always';
 				this.show();
-			} else if (this.$layer.hasClass('ca-opened')) {
+			} else if (this.$layer.hasClass('as-opened')) {
 				this.visibleOn = 'opened';
-			} else if (this.$layer.hasClass('ca-closed')) {
+			} else if (this.$layer.hasClass('as-closed')) {
 				this.visibleOn = 'closed';
 			}
 		},
@@ -1742,8 +1742,8 @@
 			this.on('panelOpen.SwapBackground.' + NS, function(event) {
 				// get the currently opened panel
 				var panel = that.getPanelAt(event.index),
-					background = panel.$panel.find('.ca-background'),
-					opened = panel.$panel.find('.ca-background-opened');
+					background = panel.$panel.find('.as-background'),
+					opened = panel.$panel.find('.as-background-opened');
 
 				// fade in the opened content
 				if (opened.length !== 0) {
@@ -1758,8 +1758,8 @@
 				if (event.previousIndex != -1) {
 					// get the previously opened panel
 					var previousPanel = that.getPanelAt(event.previousIndex),
-						previousBackground = previousPanel.$panel.find('.ca-background'),
-						previousOpened = previousPanel.$panel.find('.ca-background-opened');
+						previousBackground = previousPanel.$panel.find('.as-background'),
+						previousOpened = previousPanel.$panel.find('.as-background-opened');
 
 					// fade out the opened content
 					if (previousOpened.length !== 0) {
@@ -1780,8 +1780,8 @@
 
 				// get the previously opened panel
 				var panel = that.getPanelAt(event.previousIndex),
-					background = panel.$panel.find('.ca-background'),
-					opened = panel.$panel.find('.ca-background-opened');
+					background = panel.$panel.find('.as-background'),
+					opened = panel.$panel.find('.as-background-opened');
 
 				// fade out the opened content
 				if (opened.length !== 0) {
@@ -1806,7 +1806,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('SwapBackground', SwapBackground, 'accordion');
+	$.AccordionSlider.addModule('SwapBackground', SwapBackground, 'accordion');
 
 	/*
 		Deep Linking module
@@ -1843,7 +1843,7 @@
 					// check if the specified panel id is a number or string
 					if (isNaN(panelIdNumber)) {
 						// get the index of the panel based on the specified id
-						var panelIndex = this.$accordion.find('.ca-panel#' + panelId).index();
+						var panelIndex = this.$accordion.find('.as-panel#' + panelId).index();
 
 						if (panelIndex != -1)
 							this.openPanel(panelIndex);
@@ -1860,7 +1860,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('DeepLinking', DeepLinking, 'accordion');
+	$.AccordionSlider.addModule('DeepLinking', DeepLinking, 'accordion');
 
 	/*
 		Autoplay module
@@ -1947,7 +1947,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('Autoplay', Autoplay, 'accordion');
+	$.AccordionSlider.addModule('Autoplay', Autoplay, 'accordion');
 
 	/*
 		MouseWheel module
@@ -2020,7 +2020,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('MouseWheel', MouseWheel, 'accordion');
+	$.AccordionSlider.addModule('MouseWheel', MouseWheel, 'accordion');
 
 	/*
 		TouchSwipe module
@@ -2059,7 +2059,7 @@
 			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
 
 			// add grabbing icon
-			this.$panelsContainer.addClass('ca-grab');
+			this.$panelsContainer.addClass('as-grab');
 		},
 
 		_onTouchStart: function(event) {
@@ -2086,7 +2086,7 @@
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
 
 			// swap grabbing icons
-			this.$panelsContainer.removeClass('ca-grab').addClass('ca-grabbing');
+			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
 		},
 
 		_onTouchMove: function(event) {
@@ -2124,7 +2124,7 @@
 
 			// check if there is intention for a tap
 			if (this.isTouchSupport === true && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchEndPoint.x - this.touchStartPoint.x) < 10 && Math.abs(this.touchEndPoint.y - this.touchStartPoint.y) < 10)) {
-				var index = $(event.target).parents('.ca-panel').index();
+				var index = $(event.target).parents('.as-panel').index();
 
 				if (index !== this.currentIndex) {
 					this.openPanel(index);
@@ -2189,7 +2189,7 @@
 				});
 
 			// swap grabbing icons
-			this.$panelsContainer.removeClass('ca-grabbing').addClass('ca-grab');
+			this.$panelsContainer.removeClass('as-grabbing').addClass('as-grab');
 		},
 
 		destroyTouchSwipe: function() {
@@ -2208,7 +2208,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('TouchSwipe', TouchSwipe, 'accordion');
+	$.AccordionSlider.addModule('TouchSwipe', TouchSwipe, 'accordion');
 
 	/*
 		XML Module
@@ -2256,8 +2256,8 @@
 				var xmlData = $(event.xmlData);
 
 				// create the main containers
-				that.$maskContainer = $('<div class="ca-mask"></div>').appendTo(that.$accordion);
-				that.$panelsContainer = $('<div class="ca-panels"></div>').appendTo(that.$maskContainer);
+				that.$maskContainer = $('<div class="as-mask"></div>').appendTo(that.$accordion);
+				that.$panelsContainer = $('<div class="as-panels"></div>').appendTo(that.$maskContainer);
 
 				// parse the panel node
 				xmlData.find('panel').each(function() {
@@ -2271,7 +2271,7 @@
 						backgroundOpenedLink;
 
 					// create the panel element
-					var panel = $('<div class="ca-panel"></div>').appendTo(that.$panelsContainer);
+					var panel = $('<div class="as-panel"></div>').appendTo(that.$panelsContainer);
 
 					// create the background image and link
 					if (xmlBackgroundLink.length >= 1) {
@@ -2285,7 +2285,7 @@
 					}
 
 					if (xmlBackground.length >= 1) {
-						var background = $('<img class="ca-background" src="' + xmlBackground.text() + '"/>');
+						var background = $('<img class="as-background" src="' + xmlBackground.text() + '"/>');
 
 						$.each(xmlBackground[0].attributes, function(index, attribute) {
 							background.attr(attribute.nodeName, attribute.nodeValue);
@@ -2306,7 +2306,7 @@
 					}
 
 					if (xmlBackgroundOpened.length >= 1) {
-						var backgroundOpened = $('<img class="ca-background-opened" src="' + xmlBackgroundOpened.text() + '"/>');
+						var backgroundOpened = $('<img class="as-background-opened" src="' + xmlBackgroundOpened.text() + '"/>');
 
 						$.each(xmlBackgroundOpened[0].attributes, function(index, attribute) {
 							backgroundOpened.attr(attribute.nodeName, attribute.nodeValue);
@@ -2328,7 +2328,7 @@
 									var classList = attribute.nodeValue.split(' ');
 									
 									$.each(classList, function(classIndex, className) {
-										classes += ' ca-' + className;
+										classes += ' as-' + className;
 									});
 								} else {
 									dataAttributes += ' ' + that.XMLDataAttributesMap[attribute.nodeName] + '="' + attribute.nodeValue + '"';
@@ -2336,7 +2336,7 @@
 							});
 
 							// create the layer element
-							$('<div class="ca-layer' + classes + '"' + dataAttributes + '">' + xmlLayerItem.text() + '</div>').appendTo(panel);
+							$('<div class="as-layer' + classes + '"' + dataAttributes + '">' + xmlLayerItem.text() + '</div>').appendTo(panel);
 						});
 
 				});
@@ -2384,7 +2384,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('XML', XML, 'accordion');
+	$.AccordionSlider.addModule('XML', XML, 'accordion');
 
 	/*
 		JSON Module
@@ -2428,8 +2428,8 @@
 			this.off('JSONReady.' + NS);
 
 			// create the main containers
-			that.$maskContainer = $('<div class="ca-mask"></div>').appendTo(that.$accordion);
-			that.$panelsContainer = $('<div class="ca-panels"></div>').appendTo(that.$maskContainer);
+			that.$maskContainer = $('<div class="as-mask"></div>').appendTo(that.$accordion);
+			that.$panelsContainer = $('<div class="as-panels"></div>').appendTo(that.$maskContainer);
 
 			// parse the JSON data and construct the panels
 			this.on('JSONReady.' + NS, function(event) {
@@ -2442,7 +2442,7 @@
 						backgroundOpenedLink;
 
 					// create the panel element
-					var panelElement = $('<div class="ca-panel"></div>').appendTo(that.$panelsContainer);
+					var panelElement = $('<div class="as-panel"></div>').appendTo(that.$panelsContainer);
 
 					// create the background image and link
 					if (typeof panel.backgroundLink !== 'undefined') {
@@ -2457,7 +2457,7 @@
 					}
 
 					if (typeof panel.background !== 'undefined') {
-						var background = $('<img class="ca-background" src="' + panel.background.source + '"/>');
+						var background = $('<img class="as-background" src="' + panel.background.source + '"/>');
 
 						$.each(panel.background, function(name, value) {
 							if (name != 'source')
@@ -2480,7 +2480,7 @@
 					}
 
 					if (typeof panel.backgroundOpened !== 'undefined') {
-						var backgroundOpened = $('<img class="ca-background-opened" src="' + panel.backgroundOpened.source + '"/>');
+						var backgroundOpened = $('<img class="as-background-opened" src="' + panel.backgroundOpened.source + '"/>');
 
 						$.each(panel.backgroundOpened, function(name, value) {
 							if (name != 'source')
@@ -2503,7 +2503,7 @@
 									var classList = value.split(' ');
 									
 									$.each(classList, function(classIndex, className) {
-										classes += ' ca-' + className;
+										classes += ' as-' + className;
 									});
 								} else if (name !== 'content'){
 									dataAttributes += ' ' + that.JSONDataAttributesMap[name] + '="' + value + '"';
@@ -2511,7 +2511,7 @@
 							});
 
 							// create the layer element
-							$('<div class="ca-layer' + classes + '"' + dataAttributes + '">' + layer.content + '</div>').appendTo(panelElement);
+							$('<div class="as-layer' + classes + '"' + dataAttributes + '">' + layer.content + '</div>').appendTo(panelElement);
 						});
 				});
 
@@ -2543,7 +2543,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('JSON', JSON, 'accordion');
+	$.AccordionSlider.addModule('JSON', JSON, 'accordion');
 
 	/*
 		Lazy Loading module
@@ -2593,7 +2593,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('LazyLoading', LazyLoading, 'accordion');
+	$.AccordionSlider.addModule('LazyLoading', LazyLoading, 'accordion');
 
 	/*
 		Retina module
@@ -2662,7 +2662,7 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('Retina', Retina, 'accordion');
+	$.AccordionSlider.addModule('Retina', Retina, 'accordion');
 
 	/*
 		Smart Video module
@@ -2716,7 +2716,7 @@
 
 			// find all video elements from the accordion, instantiate the SmartVideo for each of the video,
 			// and trigger the set actions for the videos' events
-			this.$accordion.find('.ca-video').each(function() {
+			this.$accordion.find('.as-video').each(function() {
 				var video = $(this);
 
 				video.smartVideo();
@@ -2766,8 +2766,8 @@
 			// with the opening an closing of individual panels
 			this.on('panelOpen.SmartVideo.' + NS, function(event) {
 				// handle the video from the closed panel
-				if (event.previousIndex != -1 && that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video').length !== 0) {
-					var previousVideo = that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video');
+				if (event.previousIndex != -1 && that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video').length !== 0) {
+					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
 
 					if (that.settings.closePanelVideoAction == 'stopVideo')
 						previousVideo.smartVideo('stop');
@@ -2776,8 +2776,8 @@
 				}
 
 				// handle the video from the opened panel
-				if (that.$panelsContainer.find('.ca-panel').eq(event.index).find('.ca-video').length !== 0) {
-					var currentVideo = that.$panelsContainer.find('.ca-panel').eq(event.index).find('.ca-video');
+				if (that.$panelsContainer.find('.as-panel').eq(event.index).find('.as-video').length !== 0) {
+					var currentVideo = that.$panelsContainer.find('.as-panel').eq(event.index).find('.as-video');
 
 					if (that.settings.openPanelVideoAction == 'playVideo')
 						currentVideo.smartVideo('play');
@@ -2788,8 +2788,8 @@
 			// previously opened panel and handle it
 			this.on('panelsClose.SmartVideo.' + NS, function(event) {
 				// handle the video from the closed panel
-				if (event.previousIndex != -1 && that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video').length !== 0) {
-					var previousVideo = that.$panelsContainer.find('.ca-panel').eq(event.previousIndex).find('.ca-video');
+				if (event.previousIndex != -1 && that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video').length !== 0) {
+					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
 
 					if (that.settings.closePanelVideoAction == 'stopVideo')
 						previousVideo.smartVideo('stop');
@@ -2800,7 +2800,7 @@
 		},
 
 		destroySmartVideo: function() {
-			this.$accordion.find('.ca-video').each(function() {
+			this.$accordion.find('.as-video').each(function() {
 				var video = $(this);
 
 				video.off('SmartVideo');
@@ -2824,9 +2824,9 @@
 		}
 	};
 
-	$.ClassicAccordion.addModule('SmartVideo', SmartVideo, 'accordion');
+	$.AccordionSlider.addModule('SmartVideo', SmartVideo, 'accordion');
 
-	window.ClassicAccordion = ClassicAccordion;
-	window.ClassicAccordionPanel = ClassicAccordionPanel;
+	window.AccordionSlider = AccordionSlider;
+	window.AccordionSliderPanel = AccordionSliderPanel;
 
 })(window, jQuery);

@@ -1,74 +1,74 @@
-.classic-accordion {
+.accordion-slider {
 	position: relative;
 	border: 4px solid #000;
 }
 
-.classic-accordion .ca-mask {
+.accordion-slider .as-mask {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 }
 
-.classic-accordion .ca-panels {
+.accordion-slider .as-panels {
 	position: absolute;
 	background-color: #000;
 }
 
-.classic-accordion.ca-horizontal .ca-panels {
+.accordion-slider.as-horizontal .as-panels {
 	height: 100%;
 }
 
-.classic-accordion.ca-vertical .ca-panels {
+.accordion-slider.as-vertical .as-panels {
 	width: 100%;
 }
 
-.classic-accordion .ca-panel {
+.accordion-slider .as-panel {
 	position: absolute;
 	display: block;
 	background-color: #FFF;
 }
 
-.classic-accordion.ca-horizontal .ca-panel {
+.accordion-slider.as-horizontal .as-panel {
 	height: 100%;
 	width: auto;
 }
 
-.classic-accordion.ca-vertical .ca-panel {
+.accordion-slider.as-vertical .as-panel {
 	width: 100%;
 	height: auto;
 }
 
-.classic-accordion .ca-panel.ca-shadow {
+.accordion-slider .as-panel.as-shadow {
 	-webkit-box-shadow: -5px 0px 40px 1px;
 	-mox-box-shadow: -5px 0px 40px 1px;
 	box-shadow: -5px 0px 40px 1px;
 }
 
-.classic-accordion .ca-background,
-.classic-accordion .ca-background-opened {
+.accordion-slider .as-background,
+.accordion-slider .as-background-opened {
 	display: block;
 	border: none;
 }
 
-.classic-accordion.ca-horizontal .ca-background,
-.classic-accordion.ca-horizontal .ca-background-opened {
+.accordion-slider.as-horizontal .as-background,
+.accordion-slider.as-horizontal .as-background-opened {
 	height: 100%;
 }
 
-.classic-accordion.ca-vertical .ca-background,
-.classic-accordion.ca-vertical .ca-background-opened {
+.accordion-slider.as-vertical .as-background,
+.accordion-slider.as-vertical .as-background-opened {
 	width: 100%;
 }
 
-.classic-accordion .ca-background-opened {
+.accordion-slider .as-background-opened {
 	position: absolute;
 	left: 0;
 	top: 0;
 	visibility: hidden;
 }
 
-.classic-accordion .ca-layer {
+.accordion-slider .as-layer {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -78,27 +78,27 @@
 	-webkit-box-sizing: border-box;
 }
 
-.classic-accordion .ca-layer.ca-black {
+.accordion-slider .as-layer.as-black {
 	color: #FFF;
 	background: rgb(0, 0, 0);
 	background: rgba(0, 0, 0, 0.7);
 }
 
-.classic-accordion .ca-layer.ca-white {
+.accordion-slider .as-layer.as-white {
 	color: #000;
 	background: rgb(255, 255, 255);
 	background: rgba(255, 255, 255, 0.7);
 }
 
-.classic-accordion .ca-layer.ca-rounded {
+.accordion-slider .as-layer.as-rounded {
 	border-radius: 10px;
 }
 
-.classic-accordion .ca-layer.ca-padding {
+.accordion-slider .as-layer.as-padding {
 	padding: 4px;
 }
 
-.classic-accordion .ca-layer.ca-vertical {
+.accordion-slider .as-layer.as-vertical {
 	-moz-transform: translate(-100%) rotate(-90deg);
 	-webkit-transform: translate(-100%) rotate(-90deg);
 	transform: translate(-100%) rotate(-90deg);
@@ -107,7 +107,7 @@
 	transform-origin: right top;
 }
 
-.classic-accordion .ca-pagination-buttons {
+.accordion-slider .as-pagination-buttons {
 	position: absolute;
 	top: 100%;
 	width: 100%;
@@ -115,7 +115,7 @@
 	margin-top: 10px;
 }
 
-.classic-accordion .ca-pagination-button {
+.accordion-slider .as-pagination-button {
 	width: 10px;
 	height: 10px;
 	border: 2px solid #000;
@@ -128,18 +128,18 @@
 	cursor: pointer;
 }
 
-.classic-accordion .ca-pagination-buttons .ca-selected {
+.accordion-slider .as-pagination-buttons .as-selected {
 	background-color: #000;
 }
 
-.classic-accordion .selectable {
+.accordion-slider .selectable {
 	cursor: default;
 }
 
-.classic-accordion .ca-grab {
+.accordion-slider .as-grab {
 	cursor: url(images/openhand.cur), default;
 }
 
-.classic-accordion .ca-grabbing {
+.accordion-slider .as-grabbing {
 	cursor: url(images/closedhand.cur), default;
 }
