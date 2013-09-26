@@ -1369,6 +1369,9 @@
 		}
 	};
 
+	window.AccordionSlider = AccordionSlider;
+	window.AccordionSliderPanel = AccordionSliderPanel;
+
 	$.fn.accordionSlider = function(options) {
 		var args = Array.prototype.slice.call(arguments, 1);
 
@@ -2834,8 +2837,5 @@
 	};
 
 	$.AccordionSlider.addModule('SmartVideo', SmartVideo, 'accordion');
-
-	window.AccordionSlider = AccordionSlider;
-	window.AccordionSliderPanel = AccordionSliderPanel;
 
 })(window, jQuery);
