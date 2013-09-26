@@ -94,6 +94,9 @@
 		// indicates the width or height property based on the orientation of the accordion
 		this.sizeProperty = 'width';
 
+		// keeps a reference to the ratio between the size actual size of the accordion and the set size
+		this.autoResponsiveRatio = 1;
+
 		// init the accordion
 		this._init();
 	};
@@ -387,15 +390,14 @@
 				this.totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 			} else if (this.settings.responsiveMode == 'auto') {
 				// get the accordion's size ratio based on the set size and the actual size
-				var widthRatio = this.$accordion.innerWidth() / this.settings.width,
-					heightRatio = this.$accordion.innerHeight() / this.settings.height;
+				this.autoResponsiveRatio = this.$accordion.innerWidth() / this.settings.width;
 
 				// scale the mask container based on the current ratio
 				this.$maskContainer.css({
-					'width': this.settings.width,
-					'height': this.settings.height,
-					'transform': 'scaleX(' + widthRatio + ') scaleY(' + heightRatio + ')',
-					'transform-origin': 'top left'
+					width: this.settings.width,
+					height: this.settings.height,
+					transform: 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
+					transformOrigin: 'top left'
 				});
 				
 				this.totalSize = this.settings.orientation == "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
@@ -456,7 +458,14 @@
 			this.$panelsContainer.css(this.sizeProperty, this.totalPanelsSize);
 
 			// reset the accordion's size so that the visible panels fit exactly inside if their size and position are rounded
-			this.$accordion.css(this.sizeProperty, this.closedPanelSize * this.getVisiblePanels() + this.computedPanelDistance * (this.getVisiblePanels() - 1));
+			var roundedSize = this.closedPanelSize * this.getVisiblePanels() + this.computedPanelDistance * (this.getVisiblePanels() - 1);
+
+			if (this.settings.responsiveMode == 'custom') {
+				this.$accordion.css(this.sizeProperty, roundedSize);
+			} else {
+				this.$accordion.css(this.sizeProperty, roundedSize * this.autoResponsiveRatio);
+				this.$maskContainer.css(this.sizeProperty, roundedSize);
+			}
 
 			// reset the position and size of each panel
 			$.each(this.panels, function(index, element) {
@@ -1304,7 +1313,7 @@
 				} else {
 					this.$panel.css({'height': '100px', 'overflow': 'hidden'});
 					size = this.$panel[0].scrollHeight;
-					this.$panel.css({'height': '100px', 'overflow': 'hidden'});
+					this.$panel.css({'height': '', 'overflow': ''});
 				}
 			}
 

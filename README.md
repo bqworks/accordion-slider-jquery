@@ -51,4 +51,4 @@ Features
 * ? resize while maintaining size and position
 * + add classes that describe the state of the accordion
 * + CSS shadows
-* cross browser transform
+* + cross browser transform
