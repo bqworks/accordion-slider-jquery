@@ -188,6 +188,11 @@
 				if ($.isFunction(that.settings.accordionMouseOut))
 					that.settings.accordionMouseOut.call(that, eventObject);
 			});
+
+			// fire the 'init' event
+			this.trigger({type: 'init'});
+			if ($.isFunction(this.settings.init))
+				this.settings.init.call(this, {type: 'init'});
 		},
 
 		/*
@@ -1142,6 +1147,8 @@
 			startPage: 0,
 			shadow: true,
 			panelsOverlap: true,
+			init: function() {},
+			update: function() {},
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -1819,7 +1826,9 @@
 			var that = this;
 
 			// parse the initial hash
-			this._parseHash(window.location.hash);
+			this.on('init.DeepLinking.' + NS, function() {
+				that._parseHash(window.location.hash);
+			});
 			
 			// check when the hash changes
 			$(window).on('hashchange.DeepLinking.' + this.uniqueId + '.' + NS, function() {
@@ -1847,7 +1856,7 @@
 
 						if (panelIndex != -1)
 							this.openPanel(panelIndex);
-					} else if (panelIdNumber >= 0 && panelIdNumber < this.getTotalPanels()){
+					} else {
 						this.openPanel(panelIdNumber);
 					}
 				}
