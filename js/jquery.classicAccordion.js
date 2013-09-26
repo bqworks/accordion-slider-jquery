@@ -251,14 +251,9 @@
 
 			// create or remove the shadow
 			if (this.settings.shadow === true) {
-				this.$accordion.find('.ca-panel').each(function(index, element) {
-					var panel = $(element);
-
-					if (panel.find('.ca-shadow'))
-						$('<div class="ca-shadow"></div>').appendTo(panel);
-				});
+				this.$accordion.find('.ca-panel').addClass('ca-shadow');
 			} else if (this.settings.shadow === false) {
-				this.$accordion.find('.ca-shadow').remove();
+				this.$accordion.find('.ca-shadow').removeClass('ca-shadow');
 			}
 
 			// fire the update event
@@ -1137,7 +1132,7 @@
 			visiblePanels: -1,
 			startPage: 0,
 			shadow: true,
-			panelsOverlap: false,
+			panelsOverlap: true,
 			accordionMouseOver: function() {},
 			accordionMouseOut: function() {},
 			panelClick: function() {},
@@ -1301,15 +1296,15 @@
 				size = this.sizeProperty == 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
 			} else {
 				// workaround for when scrollWidth and scrollHeight return incorrect values
-				// this happens in some browsers (Firefox a.t.m.) unless there is a set width and height for the element
+				// this happens in some browsers (Firefox and Opera a.t.m.) unless there is a set width and height for the element
 				if (this.sizeProperty == 'width') {
-					this.$panel.css('width', 100);
+					this.$panel.css({'width': '100px', 'overflow': 'hidden'});
 					size = this.$panel[0].scrollWidth;
-					this.$panel.css('width', '');
+					this.$panel.css({'width': '', 'overflow': ''});
 				} else {
-					this.$panel.css('height', 100);
+					this.$panel.css({'height': '100px', 'overflow': 'hidden'});
 					size = this.$panel[0].scrollHeight;
-					this.$panel.css('height', '');
+					this.$panel.css({'height': '100px', 'overflow': 'hidden'});
 				}
 			}
 

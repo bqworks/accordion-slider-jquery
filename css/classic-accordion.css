@@ -26,7 +26,6 @@
 .classic-accordion .ca-panel {
 	position: absolute;
 	display: block;
-	overflow: hidden;
 	background-color: #FFF;
 }
 
@@ -40,16 +39,10 @@
 	height: auto;
 }
 
-.classic-accordion .ca-panel > a {
-	display: block;
-}
-
-.classic-accordion.ca-horizontal .ca-panel > a {
-	height: 100%;
-}
-
-.classic-accordion.ca-vertical .ca-panel > a {
-	width: 100%;
+.classic-accordion .ca-panel.ca-shadow {
+	-webkit-box-shadow: -5px 0px 40px 1px;
+	-mox-box-shadow: -5px 0px 40px 1px;
+	box-shadow: -5px 0px 40px 1px;
 }
 
 .classic-accordion .ca-background,
@@ -112,24 +105,6 @@
 	-moz-transform-origin: right top;
 	-webkit-transform-origin: right top;
 	transform-origin: right top;
-}
-
-.classic-accordion.ca-horizontal .ca-shadow {
-	background: url(images/shadow.png) repeat-y;
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 25px;
-	height: 100%;
-}
-
-.classic-accordion.ca-vertical .ca-shadow {
-	background: url(images/shadow_v.png) repeat-x;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	height: 25px;
 }
 
 .classic-accordion .ca-pagination-buttons {
