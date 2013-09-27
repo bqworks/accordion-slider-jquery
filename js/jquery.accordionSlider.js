@@ -1,7 +1,9 @@
 /*
 	Accordion Slider - Responsive jQuery Accordion
 */
-(function(window, $) {
+;(function(window, $) {
+
+	"use strict";
 
 	// namespace
 	var NS = 'AccordionSlider',
