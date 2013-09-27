@@ -1,22 +1,29 @@
-/*
-	Accordion Slider - Responsive jQuery Accordion
-*/
 ;(function(window, $) {
 
 	"use strict";
 
-	// namespace
-	var NS = 'AccordionSlider',
+	/*
+		Static methods for Accordion Slider
+	*/
+	$.AccordionSlider = {
 
-		// detect the current browser name and version
-		userAgent = window.navigator.userAgent.toLowerCase(),
-		rwebkit = /(webkit)[ \/]([\w.]+)/,
-		rmsie = /(msie) ([\w.]+)/,
-		browserDetect = rwebkit.exec(userAgent) ||
-						rmsie.exec(userAgent) ||
-						[],
-		browserName = browserDetect[1],
-		browserVersion = browserDetect[2];
+		modules: {},
+
+		addModule: function(name, module, target) {
+			if (typeof this.modules[target] === 'undefined')
+				this.modules[target] = [];
+
+			this.modules[target].push(name);
+
+			if (target == 'accordion')
+				$.extend(AccordionSlider.prototype, module);
+			else if (target == 'panel')
+				$.extend(AccordionSliderPanel.prototype, module);
+		}
+	};
+
+	// namespace
+	var NS = $.AccordionSlider.namespace = 'AccordionSlider';
 
 	var AccordionSlider = function(instance, options) {
 
@@ -1351,26 +1358,6 @@
 		}
 	};
 
-	/*
-		Static methods for Accordion Slider
-	*/
-	$.AccordionSlider = {
-
-		modules: {},
-
-		addModule: function(name, module, target) {
-			if (typeof this.modules[target] === 'undefined')
-				this.modules[target] = [];
-
-			this.modules[target].push(name);
-
-			if (target == 'accordion')
-				$.extend(AccordionSlider.prototype, module);
-			else if (target == 'panel')
-				$.extend(AccordionSliderPanel.prototype, module);
-		}
-	};
-
 	window.AccordionSlider = AccordionSlider;
 	window.AccordionSliderPanel = AccordionSliderPanel;
 
@@ -1402,16 +1389,357 @@
 			}
 		});
 	};
+	
+})(window, jQuery);
 
-	/*
-		Layers module
+/*
+	Autoplay module for Accordion Slider
 
-		Adds support for animated and static layers.
-	*/
+	Adds autoplay functionality to the accordion
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
+
+	var Autoplay = {
+
+		autoplayTimer: null,
+
+		isTimerRunning: false,
+
+		isTimerPaused: false,
+
+		initAutoplay: function() {
+			var that = this;
+
+			$.extend(this.settings, this.autoplayDefaults, this.options);
+
+			if (this.settings.autoplay === true)
+				this.startAutoplay();
+
+			// start the autoplay timer each time the panel opens
+			this.on('panelOpen.Autoplay.' + NS, function(event) {
+				if (that.settings.autoplay === true) {
+					// stop previous timers before starting a new one
+					if (that.isTimerRunning === true)
+						that.stopAutoplay();
+					
+					if (that.isTimerPaused === false)
+						that.startAutoplay();
+				}
+			});
+
+			// on accordion hover stop the autoplay if autoplayOnHover is set to pause or stop
+			this.on('mouseenter.Autoplay.' + NS, function(event) {
+				if (that.settings.autoplay === true && that.isTimerRunning && (that.settings.autoplayOnHover == 'pause' || that.settings.autoplayOnHover == 'stop')) {
+					that.stopAutoplay();
+					that.isTimerPaused = true;
+				}
+			});
+
+			// on accordion hover out restart the autoplay
+			this.on('mouseleave.Autoplay.' + NS, function(event) {
+				if (that.settings.autoplay === true && that.isTimerRunning === false && that.settings.autoplayOnHover != 'stop') {
+					that.startAutoplay();
+					that.isTimerPaused = false;
+				}
+			});
+		},
+
+		startAutoplay: function() {
+			var that = this;
+			this.isTimerRunning = true;
+
+			this.autoplayTimer = setTimeout(function() {
+				if (that.settings.autoplayDirection == 'normal') {
+					that.nextPanel();
+				} else if (that.settings.autoplayDirection == 'backwards') {
+					that.previousPanel();
+				}
+			}, this.settings.autoplayDelay);
+		},
+
+		stopAutoplay: function() {
+			this.isTimerRunning = false;
+
+			clearTimeout(this.autoplayTimer);
+		},
+
+		destroyAutoplay: function() {
+			clearTimeout(this.autoplayTimer);
+
+			this.off('panelOpen.Autoplay.' + NS);
+			this.off('mouseenter.Autoplay.' + NS);
+			this.off('mouseleave.Autoplay.' + NS);
+		},
+
+		autoplayDefaults: {
+			autoplay: true,
+			autoplayDelay: 5000,
+			autoplayDirection: 'normal',
+			autoplayOnHover: 'pause'
+		}
+	};
+
+	$.AccordionSlider.addModule('Autoplay', Autoplay, 'accordion');
+	
+})(window, jQuery);
+
+/*
+	Deep Linking module for Accordion Slider
+
+	Adds the possibility to access the accordion using hyperlinks
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
+
+	var DeepLinking = {
+
+		initDeepLinking: function() {
+			var that = this;
+
+			// parse the initial hash
+			this.on('init.DeepLinking.' + NS, function() {
+				that._parseHash(window.location.hash);
+			});
+			
+			// check when the hash changes
+			$(window).on('hashchange.DeepLinking.' + this.uniqueId + '.' + NS, function() {
+				that._parseHash(window.location.hash);
+			});
+		},
+
+		_parseHash: function(hash) {
+			if (hash !== '') {
+				// eliminate the # symbol
+				hash = hash.substring(1);
+				
+				// get the specified accordion id and panel id
+				var values = hash.split('-'),
+					panelId = values.pop(),
+					accordionId = hash.slice(0, - panelId.toString().length - 1);
+
+				if (this.$accordion.attr('id') == accordionId) {
+					var panelIdNumber = parseInt(panelId, 10);
+
+					// check if the specified panel id is a number or string
+					if (isNaN(panelIdNumber)) {
+						// get the index of the panel based on the specified id
+						var panelIndex = this.$accordion.find('.as-panel#' + panelId).index();
+
+						if (panelIndex != -1)
+							this.openPanel(panelIndex);
+					} else {
+						this.openPanel(panelIdNumber);
+					}
+				}
+					
+			}
+		},
+
+		destroyDeepLinking: function() {
+			$(window).off('hashchange.DeepLinking.' + this.uniqueId + '.' + NS);
+		}
+	};
+
+	$.AccordionSlider.addModule('DeepLinking', DeepLinking, 'accordion');
+	
+})(window, jQuery);
+
+/*
+	JSON module for Accordion Slider
+
+	Creates the panels based on JSON data
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
+
+	var JSON = {
+
+		JSONDataAttributesMap : {
+			'width': 'data-width',
+			'height': 'data-height',
+			'depth': 'data-depth',
+			'position': 'data-position',
+			'horizontal': 'data-horizontal',
+			'vertical': 'data-vertical',
+			'showTransition': 'data-show-transition',
+			'showOffset': 'data-show-offset',
+			'showDelay': 'data-show-delay',
+			'showDuration': 'data-show-duration',
+			'showEasing': 'data-show-easing',
+			'hideTransition': 'data-hide-transition',
+			'hideOffset': 'data-',
+			'hideDelay': 'data-hide-delay',
+			'hideDuration': 'data-hide-duration',
+			'hideEasing': 'data-hide-easing'
+		},
+
+		initJSON: function() {
+			$.extend(this.settings, this.JSONDefaults, this.options);
+
+			if (this.settings.JSONSource !== null)
+				this.updateJSON();
+		},
+
+		updateJSON: function() {
+			var that = this;
+
+			// clear existing content and data
+			this.removePanels();
+			this.$accordion.empty();
+			this.off('JSONReady.' + NS);
+
+			// create the main containers
+			that.$maskContainer = $('<div class="as-mask"></div>').appendTo(that.$accordion);
+			that.$panelsContainer = $('<div class="as-panels"></div>').appendTo(that.$maskContainer);
+
+			// parse the JSON data and construct the panels
+			this.on('JSONReady.' + NS, function(event) {
+				var jsonData = event.jsonData,
+					panels = jsonData.accordion.panels;
+
+				$.each(panels, function(index, value) {
+					var panel = value,
+						backgroundLink,
+						backgroundOpenedLink;
+
+					// create the panel element
+					var panelElement = $('<div class="as-panel"></div>').appendTo(that.$panelsContainer);
+
+					// create the background image and link
+					if (typeof panel.backgroundLink !== 'undefined') {
+						backgroundLink = $('<a href="' + panel.backgroundLink.address + '"></a>');
+
+						$.each(panel.backgroundLink, function(name, value) {
+							if (name != 'address')
+								backgroundLink.attr(name, value);
+						});
+
+						backgroundLink.appendTo(panelElement);
+					}
+
+					if (typeof panel.background !== 'undefined') {
+						var background = $('<img class="as-background" src="' + panel.background.source + '"/>');
+
+						$.each(panel.background, function(name, value) {
+							if (name != 'source')
+								background.attr(name, value);
+						});
+
+						background.appendTo(typeof backgroundLink !== 'undefined' ? backgroundLink : panelElement);
+					}
+
+					// create the background image and link for the opened state of the panel
+					if (typeof panel.backgroundOpenedLink !== 'undefined') {
+						backgroundOpenedLink = $('<a href="' + panel.backgroundOpenedLink.address + '"></a>');
+
+						$.each(panel.backgroundOpenedLink, function(name, value) {
+							if (name != 'address')
+								backgroundOpenedLink.attr(name, value);
+						});
+
+						backgroundOpenedLink.appendTo(panelElement);
+					}
+
+					if (typeof panel.backgroundOpened !== 'undefined') {
+						var backgroundOpened = $('<img class="as-background-opened" src="' + panel.backgroundOpened.source + '"/>');
+
+						$.each(panel.backgroundOpened, function(name, value) {
+							if (name != 'source')
+								backgroundOpened.attr(name, value);
+						});
+
+						backgroundOpened.appendTo(typeof backgroundOpenedLink !== 'undefined' ? backgroundOpenedLink : panelElement);
+					}
+
+					// parse the layer(s)
+					if (typeof panel.layers !== 'undefined')
+						$.each(panel.layers, function(index, value) {
+							var layer = value,
+								classes = '',
+								dataAttributes = '';
+
+							// parse the data specified for the layer and extract the classes and data attributes
+							$.each(layer, function(name, value) {
+								if (name == 'style') {
+									var classList = value.split(' ');
+									
+									$.each(classList, function(classIndex, className) {
+										classes += ' as-' + className;
+									});
+								} else if (name !== 'content'){
+									dataAttributes += ' ' + that.JSONDataAttributesMap[name] + '="' + value + '"';
+								}
+							});
+
+							// create the layer element
+							$('<div class="as-layer' + classes + '"' + dataAttributes + '">' + layer.content + '</div>').appendTo(panelElement);
+						});
+				});
+
+				that.update();
+			});
+
+			this._loadJSON();
+		},
+
+		_loadJSON: function() {
+			var that = this;
+
+			if (this.settings.JSONSource.slice(-5) == '.json') {
+				$.getJSON(this.settings.JSONSource, function(result) {
+					that.trigger({type: 'JSONReady.' + NS, jsonData: result});
+				});
+			} else {
+				var jsonData = $.parseJSON(this.settings.JSONSource);
+				that.trigger({type: 'JSONReady.' + NS, jsonData: jsonData});
+			}
+		},
+
+		destroyJSON: function() {
+			this.off('JSONReady.' + NS);
+		},
+
+		JSONDefaults: {
+			JSONSource: null
+		}
+	};
+
+	$.AccordionSlider.addModule('JSON', JSON, 'accordion');
+	
+})(window, jQuery);
+
+/*
+	Layers module for Accordion Slider
+
+	Adds support for animated and static layers.
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace,
+
+		// detect the current browser name and version
+		userAgent = window.navigator.userAgent.toLowerCase(),
+		rmsie = /(msie) ([\w.]+)/,
+		browserDetect = rmsie.exec(userAgent) || [],
+		browserName = browserDetect[1],
+		browserVersion = browserDetect[2];
+
 	var Layers = {
 
 		initLayers: function() {
-
+			
 			// holds references to the layers
 			this.layers = [];
 
@@ -1590,24 +1918,24 @@
 				start = {},
 				target = {};
 			
-			target['opacity'] = 1;
-			start['opacity'] = 0;
+			target.opacity = 1;
+			start.opacity = 0;
 
-			if (typeof this.data['showTransition'] !== 'undefined') {
-				var offset = typeof this.data['showOffset'] !== 'undefined' ? this.data['showOffset'] : 50,
+			if (typeof this.data.showTransition !== 'undefined') {
+				var offset = typeof this.data.showOffset !== 'undefined' ? this.data.showOffset : 50,
 					targetVertical = parseInt(this.$layer.css(this.horizontalPosition), 10),
 					targetHorizontal = parseInt(this.$layer.css(this.verticalPosition), 10);
 
 				target[this.horizontalPosition] = targetVertical;
 				target[this.verticalPosition] = targetHorizontal;
 
-				if (this.data['showTransition'] == 'left') {
+				if (this.data.showTransition == 'left') {
 					start[this.horizontalPosition] = targetVertical + (this.horizontalPosition == 'left' ? offset : -offset);
-				} else if (this.data['showTransition'] == 'right') {
+				} else if (this.data.showTransition == 'right') {
 					start[this.horizontalPosition] = targetVertical + (this.horizontalPosition == 'left' ? -offset : offset);
-				} else if (this.data['showTransition'] == 'up') {
+				} else if (this.data.showTransition == 'up') {
 					start[this.verticalPosition] = targetHorizontal + (this.verticalPosition == 'top' ? offset : -offset);
-				} else if (this.data['showTransition'] == 'down') {
+				} else if (this.data.showTransition == 'down') {
 					start[this.verticalPosition] = targetHorizontal + (this.verticalPosition == 'top' ? -offset : offset);
 				}
 			}
@@ -1619,10 +1947,10 @@
 					.css(target);
 			} else {
 				this.$layer.stop()
-					.delay(this.data['showDelay'])
+					.delay(this.data.showDelay)
 					.css(start)
 					.css('visibility', 'visible')
-					.animate(target, this.data['showDuration'], this.data['showEasing'], function() {
+					.animate(target, this.data.showDuration, this.data.showEasing, function() {
 						// reset the horizontal position of the layer based on the data set
 						if (typeof that.data.horizontal !== 'undefined') {
 							if ((that.data.horizontal == 'left' && that.horizontalPosition == 'left') || (that.data.horizontal == 'right' && that.horizontalPosition == 'right')) {
@@ -1669,21 +1997,21 @@
 				start = {},
 				target = {};
 			
-			start['opacity'] = 1;
-			target['opacity'] = 0;
+			start.opacity = 1;
+			target.opacity = 0;
 
-			if (typeof this.data['hideTransition'] !== 'undefined') {
-				var offset = typeof this.data['hideOffset'] !== 'undefined' ? this.data['hideOffset'] : 50,
+			if (typeof this.data.hideTransition !== 'undefined') {
+				var offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
 					startVertical = parseInt(this.$layer.css(this.horizontalPosition), 10),
 					startHorizontal = parseInt(this.$layer.css(this.verticalPosition), 10);
 
-				if (this.data['hideTransition'] == 'left') {
+				if (this.data.hideTransition == 'left') {
 					target[this.horizontalPosition] = startVertical - (this.horizontalPosition == 'left' ? offset : -offset);
-				} else if (this.data['hideTransition'] == 'right') {
+				} else if (this.data.hideTransition == 'right') {
 					target[this.horizontalPosition] = startVertical - (this.horizontalPosition == 'left' ? -offset : offset);
-				} else if (this.data['hideTransition'] == 'up') {
+				} else if (this.data.hideTransition == 'up') {
 					target[this.verticalPosition] = startHorizontal - (this.verticalPosition == 'top' ? offset : -offset);
-				} else if (this.data['hideTransition'] == 'down') {
+				} else if (this.data.hideTransition == 'down') {
 					target[this.verticalPosition] = startHorizontal - (this.verticalPosition == 'top' ? -offset : offset);
 				}
 			}
@@ -1695,9 +2023,9 @@
 					.css(target);
 			} else {
 				this.$layer.stop()
-					.delay(this.data['hideDelay'])
+					.delay(this.data.hideDelay)
 					.css(start)
-					.animate(target, this.data['hideDuration'], this.data['hideEasing'], function() {
+					.animate(target, this.data.hideDuration, this.data.hideEasing, function() {
 						that.$layer.css('visibility', 'visible');
 
 						// reset the horizontal position of the layer based on the data set
@@ -1737,13 +2065,410 @@
 			this.$layer.attr('style', '');
 		}
 	};
+	
+})(window, jQuery);
 
-	/*
-		Swap Background module
+/*
+	Lazy Loading module for Accordion Slider
 
-		Allows a different image to be displayed as the panel's background
-		when the panel is selected
-	*/
+	Loads marked images only when they are in the view
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
+
+	var LazyLoading = {
+
+		initLazyLoading: function() {
+			// listen when the page changes or when the accordion is updated (because the number of visible panels might change)
+			this.on('update.LazyLoading.' + NS, $.proxy(this._checkImages, this));
+			this.on('pageScroll.LazyLoading.' + NS, $.proxy(this._checkImages, this));
+		},
+
+		_checkImages: function() {
+			var that = this,
+				firstVisiblePanel = this._getFirstPanelFromPage(),
+				lastVisiblePanel = this._getLastPanelFromPage(),
+
+				// get all panels that are curernt visible
+				panelsToCheck = lastVisiblePanel !== this.getTotalPanels() - 1 ? this.panels.slice(firstVisiblePanel, lastVisiblePanel + 1) : this.panels.slice(firstVisiblePanel);
+
+			// loop through all the visible panels, verify if there are unloaded images, and load them
+			$.each(panelsToCheck, function(index, element) {
+				var $panel = element.$panel;
+				if (typeof $panel.attr('data-loaded') === 'undefined') {
+					$panel.attr('data-loaded', true);
+
+					$panel.find('img').each(function() {
+						var image = $(this);
+						that._loadImage(image);
+					});
+				}
+			});
+		},
+
+		_loadImage: function(image) {
+			if (typeof image.attr('data-src') !== 'undefined') {
+				image.attr('src', image.attr('data-src'));
+				image.removeAttr('data-src');
+			}
+		},
+
+		destroyLazyLoading: function() {
+			this.off('update.LazyLoading.' + NS);
+			this.off('pageScroll.LazyLoading.' + NS);
+		}
+	};
+
+	$.AccordionSlider.addModule('LazyLoading', LazyLoading, 'accordion');
+	
+})(window, jQuery);
+
+/*
+	MouseWheel module for Accordion Slider
+
+	Adds mousewheel support for scrolling through pages or individual panels
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
+
+	var MouseWheel = {
+
+		mouseWheelEventType: '',
+
+		initMouseWheel: function() {
+			var that = this;
+
+			$.extend(this.settings, this.mouseWheelDefaults, this.options);
+
+			if (this.settings.mouseWheel === false)
+				return;
+
+			// get the current mouse wheel event used in the browser
+			if ('onwheel' in document)
+				this.mouseWheelEventType = 'wheel';
+			else if ('onmousewheel' in document)
+				this.mouseWheelEventType = 'mousewheel';
+			else if ('onDomMouseScroll' in document)
+				this.mouseWheelEventType = 'DomMouseScroll';
+			else if ('onMozMousePixelScroll' in document)
+				this.mouseWheelEventType = 'MozMousePixelScroll';
+			
+			this.on(this.mouseWheelEventType + '.' + NS, function(event) {
+				event.preventDefault();
+
+				var eventObject = event.originalEvent,
+					delta;
+
+				// get the movement direction and speed indicated in the delta property
+				if (typeof eventObject.detail !== 'undefined')
+					delta = eventObject.detail;
+
+				if (typeof eventObject.wheelDelta !== 'undefined')
+					delta = eventObject.wheelDelta;
+
+				if (typeof eventObject.deltaY !== 'undefined')
+					delta = eventObject.deltaY * -1;
+
+				// scroll the accordion as indicated by the mouse wheel input
+				// but don't allow the scroll if another scroll is in progress
+				if (that.isPageScrolling === false) {
+					if (delta <= -that.settings.mouseWheelSensitivity)
+						if (that.settings.mouseWheelTarget == 'page')
+							that.nextPage();
+						else
+							that.nextPanel();
+					else if (delta >= that.settings.mouseWheelSensitivity)
+						if (that.settings.mouseWheelTarget == 'page')
+							that.previousPage();
+						else
+							that.previousPanel();
+				}
+			});
+		},
+
+		destroyMouseWheel: function() {
+			this.off(this.mouseWheelEventType + '.' + NS);
+		},
+
+		mouseWheelDefaults: {
+			mouseWheel: true,
+			mouseWheelSensitivity: 50,
+			mouseWheelTarget: 'panel'
+		}
+	};
+
+	$.AccordionSlider.addModule('MouseWheel', MouseWheel, 'accordion');
+	
+})(window, jQuery);
+
+/*
+	Retina module for Accordion Slider
+
+	Checks if a high resolution image was specified and replaces the default image with the high DPI one
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
+
+	var Retina = {
+
+		initRetina: function() {
+			var that = this;
+
+			$.extend(this.settings, this.retinaDefaults, this.options);
+
+			// check if retina is enabled and the current display supports high DPI
+			if (this.settings.retina === false || this._isRetina() === false)
+				return;
+
+			// check if the Lazy Loading module is enabled and overwrite its loading method
+			// if not, check all images from the accordion
+			if (typeof this._loadImage !== 'undefined') {
+				this._loadImage = this._loadRetinaImage;
+			} else {
+				this.$accordion.find('img').each(function() {
+					var image = $(this);
+					that._loadRetinaImage(image);
+				});
+			}
+		},
+
+		_isRetina: function() {
+			if (window.devicePixelRatio > 1.5)
+				return true;
+
+			if (window.matchMedia && (window.matchMedia("(-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi)").matches))
+				return true;
+
+			return false;
+		},
+
+		_loadRetinaImage: function(image) {
+			var retinaFound = false;
+
+			// check if there is a retina image specified
+			if (typeof image.attr('data-retina') !== 'undefined') {
+				retinaFound = true;
+
+				image.attr('src', image.attr('data-retina'));
+				image.removeAttr('data-retina');
+			}
+
+			// check if there is a lazy loaded, non-retina, image specified
+			if (typeof image.attr('data-src') !== 'undefined') {
+				if (retinaFound === false)
+					image.attr('src', image.attr('data-src'));
+
+				image.removeAttr('data-src');
+			}
+		},
+
+		destroyRetina: function() {
+
+		},
+
+		retinaDefaults : {
+			retina: true
+		}
+	};
+
+	$.AccordionSlider.addModule('Retina', Retina, 'accordion');
+	
+})(window, jQuery);
+
+/*
+	Smart Video module for Accordion Slider
+
+	Adds automatic handling for several video players and providers
+*/
+;(function(window, $) {
+
+	"use strict";
+
+	var NS = $.AccordionSlider.namespace,
+
+		// detect the current browser name and version
+		userAgent = window.navigator.userAgent.toLowerCase();
+	
+	var SmartVideo = {
+
+		initSmartVideo: function() {
+
+			$.extend(this.settings, this.smartVideoDefaults, this.options);
+
+			// check if the device uses iOS
+			var isIOS = (userAgent.match(/ipad/i) !== null) ||
+						(userAgent.match(/ipod/i) !== null) ||
+						(userAgent.match(/iphone/i) !== null);
+
+			// find all HTML5 videos from the accordion
+			this.$accordion.find('video').each(function() {
+				var video = $(this);
+
+				// recreate the video element for iOS devices (workaround for WebKit bug,
+				// which breaks videos if they are moved inside the DOM)
+				if (isIOS) {
+					var videoParent = video.parent(),
+						videoString = video[0].outerHTML;
+
+					video.remove();
+					videoParent.html(videoString);
+					video = videoParent.find('video');
+					video[0].load();
+				}
+
+				// instantiate VideoJS videos
+				if (typeof videojs !== 'undefined' && video.hasClass('video-js')) {
+					videojs(video.attr('id'), video.data('video'));
+				}
+					
+				// load sublime API
+				if (typeof sublime === 'object' && video.hasClass('sublime-video')) {
+					video.addClass('sublime');
+					sublime.load();
+				}
+			});
+
+			this._setupVideos();
+		},
+
+		_setupVideos: function() {
+			var that = this;
+
+			// find all video elements from the accordion, instantiate the SmartVideo for each of the video,
+			// and trigger the set actions for the videos' events
+			this.$accordion.find('.as-video').each(function() {
+				var video = $(this);
+
+				video.smartVideo();
+
+				video.on('play.SmartVideo', function() {
+					if (that.settings.playVideoAction == 'stopAutoplay' && typeof that.stopAutoplay !== 'undefined') {
+						that.stopAutoplay();
+						that.settings.autoplay = false;
+					}
+
+					var eventObject = {type: 'videoPlay', video: video};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.videoPlay))
+						that.settings.videoPlay.call(that, eventObject);
+				});
+
+				video.on('pause.SmartVideo', function() {
+					if (that.settings.pauseVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
+						that.startAutoplay();
+						that.settings.autoplay = true;
+					}
+
+					var eventObject = {type: 'videoPause', video: video};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.videoPause))
+						that.settings.videoPause.call(that, eventObject);
+				});
+
+				video.on('end.SmartVideo', function() {
+					if (that.settings.endVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
+						that.startAutoplay();
+						that.settings.autoplay = true;
+					} else if (that.settings.endVideoAction == 'nextPanel') {
+						that.nextPanel();
+					} else if (that.settings.endVideoAction == 'replayVideo') {
+						video.smartVideo('replay');
+					}
+
+					var eventObject = {type: 'videoEnd', video: video};
+					that.trigger(eventObject);
+					if ($.isFunction(that.settings.videoEnd))
+						that.settings.videoEnd.call(that, eventObject);
+				});
+			});
+			
+			// when a panel opens, check to see if there are video actions associated 
+			// with the opening an closing of individual panels
+			this.on('panelOpen.SmartVideo.' + NS, function(event) {
+				// handle the video from the closed panel
+				if (event.previousIndex != -1 && that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video').length !== 0) {
+					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
+
+					if (that.settings.closePanelVideoAction == 'stopVideo')
+						previousVideo.smartVideo('stop');
+					else if (that.settings.closePanelVideoAction == 'pauseVideo')
+						previousVideo.smartVideo('pause');
+				}
+
+				// handle the video from the opened panel
+				if (that.$panelsContainer.find('.as-panel').eq(event.index).find('.as-video').length !== 0) {
+					var currentVideo = that.$panelsContainer.find('.as-panel').eq(event.index).find('.as-video');
+
+					if (that.settings.openPanelVideoAction == 'playVideo')
+						currentVideo.smartVideo('play');
+				}
+			});
+
+			// when all panels close, check to see if there is a video in the 
+			// previously opened panel and handle it
+			this.on('panelsClose.SmartVideo.' + NS, function(event) {
+				// handle the video from the closed panel
+				if (event.previousIndex != -1 && that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video').length !== 0) {
+					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
+
+					if (that.settings.closePanelVideoAction == 'stopVideo')
+						previousVideo.smartVideo('stop');
+					else if (that.settings.closePanelVideoAction == 'pauseVideo')
+						previousVideo.smartVideo('pause');
+				}
+			});
+		},
+
+		destroySmartVideo: function() {
+			this.$accordion.find('.as-video').each(function() {
+				var video = $(this);
+
+				video.off('SmartVideo');
+				$(this).smartVideo('destroy');
+			});
+
+			this.off('panelOpen.SmartVideo.' + NS);
+			this.off('panelsClose.SmartVideo.' + NS);
+		},
+
+		smartVideoDefaults: {
+			openPanelVideoAction: 'playVideo',
+			closePanelVideoAction: 'stopVideo',
+			playVideoAction: 'stopAutoplay',
+			pauseVideoAction: 'none',
+			stopVideoAction: 'none',
+			endVideoAction: 'startAutoplay',
+			videoPlay: function() {},
+			videoPause: function() {},
+			videoEnd: function() {}
+		}
+	};
+
+	$.AccordionSlider.addModule('SmartVideo', SmartVideo, 'accordion');
+	
+})(window, jQuery);
+
+/*
+	Swap Background module for Accordion Slider
+
+	Allows a different image to be displayed as the panel's background
+	when the panel is selected
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
+
 	var SwapBackground = {
 
 		initSwapBackground: function() {
@@ -1819,228 +2544,20 @@
 	};
 
 	$.AccordionSlider.addModule('SwapBackground', SwapBackground, 'accordion');
+	
+})(window, jQuery);
 
-	/*
-		Deep Linking module
+/*
+	TouchSwipe module for Accordion Slider
 
-		Adds the possibility to access the accordion using hyperlinks
-	*/
-	var DeepLinking = {
+	Adds touch swipe support for scrolling through pages
+*/
+;(function(window, $) {
 
-		initDeepLinking: function() {
-			var that = this;
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace;
 
-			// parse the initial hash
-			this.on('init.DeepLinking.' + NS, function() {
-				that._parseHash(window.location.hash);
-			});
-			
-			// check when the hash changes
-			$(window).on('hashchange.DeepLinking.' + this.uniqueId + '.' + NS, function() {
-				that._parseHash(window.location.hash);
-			});
-		},
-
-		_parseHash: function(hash) {
-			if (hash !== '') {
-				// eliminate the # symbol
-				hash = hash.substring(1);
-				
-				// get the specified accordion id and panel id
-				var values = hash.split('-'),
-					panelId = values.pop(),
-					accordionId = hash.slice(0, - panelId.toString().length - 1);
-
-				if (this.$accordion.attr('id') == accordionId) {
-					var panelIdNumber = parseInt(panelId, 10);
-
-					// check if the specified panel id is a number or string
-					if (isNaN(panelIdNumber)) {
-						// get the index of the panel based on the specified id
-						var panelIndex = this.$accordion.find('.as-panel#' + panelId).index();
-
-						if (panelIndex != -1)
-							this.openPanel(panelIndex);
-					} else {
-						this.openPanel(panelIdNumber);
-					}
-				}
-					
-			}
-		},
-
-		destroyDeepLinking: function() {
-			$(window).off('hashchange.DeepLinking.' + this.uniqueId + '.' + NS);
-		}
-	};
-
-	$.AccordionSlider.addModule('DeepLinking', DeepLinking, 'accordion');
-
-	/*
-		Autoplay module
-
-		Adds autoplay functionality to the accordion
-	*/
-	var Autoplay = {
-
-		autoplayTimer: null,
-
-		isTimerRunning: false,
-
-		isTimerPaused: false,
-
-		initAutoplay: function() {
-			var that = this;
-
-			$.extend(this.settings, this.autoplayDefaults, this.options);
-
-			if (this.settings.autoplay === true)
-				this.startAutoplay();
-
-			// start the autoplay timer each time the panel opens
-			this.on('panelOpen.Autoplay.' + NS, function(event) {
-				if (that.settings.autoplay === true) {
-					// stop previous timers before starting a new one
-					if (that.isTimerRunning === true)
-						that.stopAutoplay();
-					
-					if (that.isTimerPaused === false)
-						that.startAutoplay();
-				}
-			});
-
-			// on accordion hover stop the autoplay if autoplayOnHover is set to pause or stop
-			this.on('mouseenter.Autoplay.' + NS, function(event) {
-				if (that.settings.autoplay === true && that.isTimerRunning && (that.settings.autoplayOnHover == 'pause' || that.settings.autoplayOnHover == 'stop')) {
-					that.stopAutoplay();
-					that.isTimerPaused = true;
-				}
-			});
-
-			// on accordion hover out restart the autoplay
-			this.on('mouseleave.Autoplay.' + NS, function(event) {
-				if (that.settings.autoplay === true && that.isTimerRunning === false && that.settings.autoplayOnHover != 'stop') {
-					that.startAutoplay();
-					that.isTimerPaused = false;
-				}
-			});
-		},
-
-		startAutoplay: function() {
-			var that = this;
-			this.isTimerRunning = true;
-
-			this.autoplayTimer = setTimeout(function() {
-				if (that.settings.autoplayDirection == 'normal') {
-					that.nextPanel();
-				} else if (that.settings.autoplayDirection == 'backwards') {
-					that.previousPanel();
-				}
-			}, this.settings.autoplayDelay);
-		},
-
-		stopAutoplay: function() {
-			this.isTimerRunning = false;
-
-			clearTimeout(this.autoplayTimer);
-		},
-
-		destroyAutoplay: function() {
-			clearTimeout(this.autoplayTimer);
-
-			this.off('panelOpen.Autoplay.' + NS);
-			this.off('mouseenter.Autoplay.' + NS);
-			this.off('mouseleave.Autoplay.' + NS);
-		},
-
-		autoplayDefaults: {
-			autoplay: true,
-			autoplayDelay: 5000,
-			autoplayDirection: 'normal',
-			autoplayOnHover: 'pause'
-		}
-	};
-
-	$.AccordionSlider.addModule('Autoplay', Autoplay, 'accordion');
-
-	/*
-		MouseWheel module
-
-		Adds mousewheel support for scrolling through pages or individual panels
-	*/
-	var MouseWheel = {
-
-		mouseWheelEventType: '',
-
-		initMouseWheel: function() {
-			var that = this;
-
-			$.extend(this.settings, this.mouseWheelDefaults, this.options);
-
-			if (this.settings.mouseWheel === false)
-				return;
-
-			// get the current mouse wheel event used in the browser
-			if ('onwheel' in document)
-				this.mouseWheelEventType = 'wheel';
-			else if ('onmousewheel' in document)
-				this.mouseWheelEventType = 'mousewheel';
-			else if ('onDomMouseScroll' in document)
-				this.mouseWheelEventType = 'DomMouseScroll';
-			else if ('onMozMousePixelScroll' in document)
-				this.mouseWheelEventType = 'MozMousePixelScroll';
-			
-			this.on(this.mouseWheelEventType + '.' + NS, function(event) {
-				event.preventDefault();
-
-				var eventObject = event.originalEvent,
-					delta;
-
-				// get the movement direction and speed indicated in the delta property
-				if (typeof eventObject.detail !== 'undefined')
-					delta = eventObject.detail;
-
-				if (typeof eventObject.wheelDelta !== 'undefined')
-					delta = eventObject.wheelDelta;
-
-				if (typeof eventObject.deltaY !== 'undefined')
-					delta = eventObject.deltaY * -1;
-
-				// scroll the accordion as indicated by the mouse wheel input
-				// but don't allow the scroll if another scroll is in progress
-				if (that.isPageScrolling === false) {
-					if (delta <= -that.settings.mouseWheelSensitivity)
-						if (that.settings.mouseWheelTarget == 'page')
-							that.nextPage();
-						else
-							that.nextPanel();
-					else if (delta >= that.settings.mouseWheelSensitivity)
-						if (that.settings.mouseWheelTarget == 'page')
-							that.previousPage();
-						else
-							that.previousPanel();
-				}
-			});
-		},
-
-		destroyMouseWheel: function() {
-			this.off(this.mouseWheelEventType + '.' + NS);
-		},
-
-		mouseWheelDefaults: {
-			mouseWheel: true,
-			mouseWheelSensitivity: 50,
-			mouseWheelTarget: 'panel'
-		}
-	};
-
-	$.AccordionSlider.addModule('MouseWheel', MouseWheel, 'accordion');
-
-	/*
-		TouchSwipe module
-
-		Adds touch swipe support for scrolling through pages
-	*/
 	var TouchSwipe = {
 
 		isTouchSupport: false,
@@ -2223,12 +2740,26 @@
 	};
 
 	$.AccordionSlider.addModule('TouchSwipe', TouchSwipe, 'accordion');
+	
+})(window, jQuery);
 
-	/*
-		XML Module
+/*
+	XML module for Accordion Slider
 
-		Creates the panels based on XML data
-	*/
+	Creates the panels based on XML data
+*/
+;(function(window, $) {
+
+	"use strict";
+	
+	var NS = $.AccordionSlider.namespace,
+
+		// detect the current browser name and version
+		userAgent = window.navigator.userAgent.toLowerCase(),
+		rmsie = /(msie) ([\w.]+)/,
+		browserDetect = rmsie.exec(userAgent) || [],
+		browserName = browserDetect[1];
+
 	var XML = {
 
 		XMLDataAttributesMap : {
@@ -2399,445 +2930,5 @@
 	};
 
 	$.AccordionSlider.addModule('XML', XML, 'accordion');
-
-	/*
-		JSON Module
-
-		Creates the panels based on JSON data
-	*/
-	var JSON = {
-
-		JSONDataAttributesMap : {
-			'width': 'data-width',
-			'height': 'data-height',
-			'depth': 'data-depth',
-			'position': 'data-position',
-			'horizontal': 'data-horizontal',
-			'vertical': 'data-vertical',
-			'showTransition': 'data-show-transition',
-			'showOffset': 'data-show-offset',
-			'showDelay': 'data-show-delay',
-			'showDuration': 'data-show-duration',
-			'showEasing': 'data-show-easing',
-			'hideTransition': 'data-hide-transition',
-			'hideOffset': 'data-',
-			'hideDelay': 'data-hide-delay',
-			'hideDuration': 'data-hide-duration',
-			'hideEasing': 'data-hide-easing'
-		},
-
-		initJSON: function() {
-			$.extend(this.settings, this.JSONDefaults, this.options);
-
-			if (this.settings.JSONSource !== null)
-				this.updateJSON();
-		},
-
-		updateJSON: function() {
-			var that = this;
-
-			// clear existing content and data
-			this.removePanels();
-			this.$accordion.empty();
-			this.off('JSONReady.' + NS);
-
-			// create the main containers
-			that.$maskContainer = $('<div class="as-mask"></div>').appendTo(that.$accordion);
-			that.$panelsContainer = $('<div class="as-panels"></div>').appendTo(that.$maskContainer);
-
-			// parse the JSON data and construct the panels
-			this.on('JSONReady.' + NS, function(event) {
-				var jsonData = event.jsonData,
-					panels = jsonData.accordion.panels;
-
-				$.each(panels, function(index, value) {
-					var panel = value,
-						backgroundLink,
-						backgroundOpenedLink;
-
-					// create the panel element
-					var panelElement = $('<div class="as-panel"></div>').appendTo(that.$panelsContainer);
-
-					// create the background image and link
-					if (typeof panel.backgroundLink !== 'undefined') {
-						backgroundLink = $('<a href="' + panel.backgroundLink.address + '"></a>');
-
-						$.each(panel.backgroundLink, function(name, value) {
-							if (name != 'address')
-								backgroundLink.attr(name, value);
-						});
-
-						backgroundLink.appendTo(panelElement);
-					}
-
-					if (typeof panel.background !== 'undefined') {
-						var background = $('<img class="as-background" src="' + panel.background.source + '"/>');
-
-						$.each(panel.background, function(name, value) {
-							if (name != 'source')
-								background.attr(name, value);
-						});
-
-						background.appendTo(typeof backgroundLink !== 'undefined' ? backgroundLink : panelElement);
-					}
-
-					// create the background image and link for the opened state of the panel
-					if (typeof panel.backgroundOpenedLink !== 'undefined') {
-						backgroundOpenedLink = $('<a href="' + panel.backgroundOpenedLink.address + '"></a>');
-
-						$.each(panel.backgroundOpenedLink, function(name, value) {
-							if (name != 'address')
-								backgroundOpenedLink.attr(name, value);
-						});
-
-						backgroundOpenedLink.appendTo(panelElement);
-					}
-
-					if (typeof panel.backgroundOpened !== 'undefined') {
-						var backgroundOpened = $('<img class="as-background-opened" src="' + panel.backgroundOpened.source + '"/>');
-
-						$.each(panel.backgroundOpened, function(name, value) {
-							if (name != 'source')
-								backgroundOpened.attr(name, value);
-						});
-
-						backgroundOpened.appendTo(typeof backgroundOpenedLink !== 'undefined' ? backgroundOpenedLink : panelElement);
-					}
-
-					// parse the layer(s)
-					if (typeof panel.layers !== 'undefined')
-						$.each(panel.layers, function(index, value) {
-							var layer = value,
-								classes = '',
-								dataAttributes = '';
-
-							// parse the data specified for the layer and extract the classes and data attributes
-							$.each(layer, function(name, value) {
-								if (name == 'style') {
-									var classList = value.split(' ');
-									
-									$.each(classList, function(classIndex, className) {
-										classes += ' as-' + className;
-									});
-								} else if (name !== 'content'){
-									dataAttributes += ' ' + that.JSONDataAttributesMap[name] + '="' + value + '"';
-								}
-							});
-
-							// create the layer element
-							$('<div class="as-layer' + classes + '"' + dataAttributes + '">' + layer.content + '</div>').appendTo(panelElement);
-						});
-				});
-
-				that.update();
-			});
-
-			this._loadJSON();
-		},
-
-		_loadJSON: function() {
-			var that = this;
-
-			if (this.settings.JSONSource.slice(-5) == '.json') {
-				$.getJSON(this.settings.JSONSource, function(result) {
-					that.trigger({type: 'JSONReady.' + NS, jsonData: result});
-				});
-			} else {
-				var jsonData = $.parseJSON(this.settings.JSONSource);
-				that.trigger({type: 'JSONReady.' + NS, jsonData: jsonData});
-			}
-		},
-
-		destroyJSON: function() {
-			this.off('JSONReady.' + NS);
-		},
-
-		JSONDefaults: {
-			JSONSource: null
-		}
-	};
-
-	$.AccordionSlider.addModule('JSON', JSON, 'accordion');
-
-	/*
-		Lazy Loading module
-
-		Loads marked images only when they are in the view
-	*/
-	var LazyLoading = {
-
-		initLazyLoading: function() {
-			// listen when the page changes or when the accordion is updated (because the number of visible panels might change)
-			this.on('update.LazyLoading.' + NS, $.proxy(this._checkImages, this));
-			this.on('pageScroll.LazyLoading.' + NS, $.proxy(this._checkImages, this));
-		},
-
-		_checkImages: function() {
-			var that = this,
-				firstVisiblePanel = this._getFirstPanelFromPage(),
-				lastVisiblePanel = this._getLastPanelFromPage(),
-
-				// get all panels that are curernt visible
-				panelsToCheck = lastVisiblePanel !== this.getTotalPanels() - 1 ? this.panels.slice(firstVisiblePanel, lastVisiblePanel + 1) : this.panels.slice(firstVisiblePanel);
-
-			// loop through all the visible panels, verify if there are unloaded images, and load them
-			$.each(panelsToCheck, function(index, element) {
-				var $panel = element.$panel;
-				if (typeof $panel.attr('data-loaded') === 'undefined') {
-					$panel.attr('data-loaded', true);
-
-					$panel.find('img').each(function() {
-						var image = $(this);
-						that._loadImage(image);
-					});
-				}
-			});
-		},
-
-		_loadImage: function(image) {
-			if (typeof image.attr('data-src') !== 'undefined') {
-				image.attr('src', image.attr('data-src'));
-				image.removeAttr('data-src');
-			}
-		},
-
-		destroyLazyLoading: function() {
-			this.off('update.LazyLoading.' + NS);
-			this.off('pageScroll.LazyLoading.' + NS);
-		}
-	};
-
-	$.AccordionSlider.addModule('LazyLoading', LazyLoading, 'accordion');
-
-	/*
-		Retina module
-
-		Checks if a high resolution image was specified and replaces the default image with the high DPI one
-	*/
-	var Retina = {
-
-		initRetina: function() {
-			var that = this;
-
-			$.extend(this.settings, this.retinaDefaults, this.options);
-
-			// check if retina is enabled and the current display supports high DPI
-			if (this.settings.retina === false || this._isRetina() === false)
-				return;
-
-			// check if the Lazy Loading module is enabled and overwrite its loading method
-			// if not, check all images from the accordion
-			if (typeof this._loadImage !== 'undefined') {
-				this._loadImage = this._loadRetinaImage;
-			} else {
-				this.$accordion.find('img').each(function() {
-					var image = $(this);
-					that._loadRetinaImage(image);
-				});
-			}
-		},
-
-		_isRetina: function() {
-			if (window.devicePixelRatio > 1)
-				return true;
-
-			if (window.matchMedia && (window.matchMedia("(-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi)").matches))
-				return true;
-
-			return false;
-		},
-
-		_loadRetinaImage: function(image) {
-			var retinaFound = false;
-
-			// check if there is a retina image specified
-			if (typeof image.attr('data-retina') !== 'undefined') {
-				retinaFound = true;
-
-				image.attr('src', image.attr('data-retina'));
-				image.removeAttr('data-retina');
-			}
-
-			// check if there is a lazy loaded, non-retina, image specified
-			if (typeof image.attr('data-src') !== 'undefined') {
-				if (retinaFound === false)
-					image.attr('src', image.attr('data-src'));
-
-				image.removeAttr('data-src');
-			}
-		},
-
-		destroyRetina: function() {
-
-		},
-
-		retinaDefaults : {
-			retina: true
-		}
-	};
-
-	$.AccordionSlider.addModule('Retina', Retina, 'accordion');
-
-	/*
-		Smart Video module
-
-		Adds automatic handling for several video players and providers
-	*/
-	var SmartVideo = {
-
-		initSmartVideo: function() {
-
-			$.extend(this.settings, this.smartVideoDefaults, this.options);
-
-			// check if the device uses iOS
-			var isIOS = (userAgent.match(/ipad/i) !== null) ||
-						(userAgent.match(/ipod/i) !== null) ||
-						(userAgent.match(/iphone/i) !== null);
-
-			// find all HTML5 videos from the accordion
-			this.$accordion.find('video').each(function() {
-				var video = $(this);
-
-				// recreate the video element for iOS devices (workaround for WebKit bug,
-				// which breaks videos if they are moved inside the DOM)
-				if (isIOS) {
-					var videoParent = video.parent(),
-						videoString = video[0].outerHTML;
-
-					video.remove();
-					videoParent.html(videoString);
-					video = videoParent.find('video');
-					video[0].load();
-				}
-
-				// instantiate VideoJS videos
-				if (typeof videojs !== 'undefined' && video.hasClass('video-js')) {
-					videojs(video.attr('id'), video.data('video'));
-				}
-					
-				// load sublime API
-				if (typeof sublime === 'object' && video.hasClass('sublime-video')) {
-					video.addClass('sublime');
-					sublime.load();
-				}
-			});
-
-			this._setupVideos();
-		},
-
-		_setupVideos: function() {
-			var that = this;
-
-			// find all video elements from the accordion, instantiate the SmartVideo for each of the video,
-			// and trigger the set actions for the videos' events
-			this.$accordion.find('.as-video').each(function() {
-				var video = $(this);
-
-				video.smartVideo();
-
-				video.on('play.SmartVideo', function() {
-					if (that.settings.playVideoAction == 'stopAutoplay' && typeof that.stopAutoplay !== 'undefined') {
-						that.stopAutoplay();
-						that.settings.autoplay = false;
-					}
-
-					var eventObject = {type: 'videoPlay', video: video};
-					that.trigger(eventObject);
-					if ($.isFunction(that.settings.videoPlay))
-						that.settings.videoPlay.call(that, eventObject);
-				});
-
-				video.on('pause.SmartVideo', function() {
-					if (that.settings.pauseVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
-						that.startAutoplay();
-						that.settings.autoplay = true;
-					}
-
-					var eventObject = {type: 'videoPause', video: video};
-					that.trigger(eventObject);
-					if ($.isFunction(that.settings.videoPause))
-						that.settings.videoPause.call(that, eventObject);
-				});
-
-				video.on('end.SmartVideo', function() {
-					if (that.settings.endVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
-						that.startAutoplay();
-						that.settings.autoplay = true;
-					} else if (that.settings.endVideoAction == 'nextPanel') {
-						that.nextPanel();
-					} else if (that.settings.endVideoAction == 'replayVideo') {
-						video.smartVideo('replay');
-					}
-
-					var eventObject = {type: 'videoEnd', video: video};
-					that.trigger(eventObject);
-					if ($.isFunction(that.settings.videoEnd))
-						that.settings.videoEnd.call(that, eventObject);
-				});
-			});
-			
-			// when a panel opens, check to see if there are video actions associated 
-			// with the opening an closing of individual panels
-			this.on('panelOpen.SmartVideo.' + NS, function(event) {
-				// handle the video from the closed panel
-				if (event.previousIndex != -1 && that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video').length !== 0) {
-					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
-
-					if (that.settings.closePanelVideoAction == 'stopVideo')
-						previousVideo.smartVideo('stop');
-					else if (that.settings.closePanelVideoAction == 'pauseVideo')
-						previousVideo.smartVideo('pause');
-				}
-
-				// handle the video from the opened panel
-				if (that.$panelsContainer.find('.as-panel').eq(event.index).find('.as-video').length !== 0) {
-					var currentVideo = that.$panelsContainer.find('.as-panel').eq(event.index).find('.as-video');
-
-					if (that.settings.openPanelVideoAction == 'playVideo')
-						currentVideo.smartVideo('play');
-				}
-			});
-
-			// when all panels close, check to see if there is a video in the 
-			// previously opened panel and handle it
-			this.on('panelsClose.SmartVideo.' + NS, function(event) {
-				// handle the video from the closed panel
-				if (event.previousIndex != -1 && that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video').length !== 0) {
-					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
-
-					if (that.settings.closePanelVideoAction == 'stopVideo')
-						previousVideo.smartVideo('stop');
-					else if (that.settings.closePanelVideoAction == 'pauseVideo')
-						previousVideo.smartVideo('pause');
-				}
-			});
-		},
-
-		destroySmartVideo: function() {
-			this.$accordion.find('.as-video').each(function() {
-				var video = $(this);
-
-				video.off('SmartVideo');
-				$(this).smartVideo('destroy');
-			});
-
-			this.off('panelOpen.SmartVideo.' + NS);
-			this.off('panelsClose.SmartVideo.' + NS);
-		},
-
-		smartVideoDefaults: {
-			openPanelVideoAction: 'playVideo',
-			closePanelVideoAction: 'stopVideo',
-			playVideoAction: 'stopAutoplay',
-			pauseVideoAction: 'none',
-			stopVideoAction: 'none',
-			endVideoAction: 'startAutoplay',
-			videoPlay: function() {},
-			videoPause: function() {},
-			videoEnd: function() {}
-		}
-	};
-
-	$.AccordionSlider.addModule('SmartVideo', SmartVideo, 'accordion');
-
+	
 })(window, jQuery);

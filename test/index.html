@@ -1,0 +1,348 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+<title>Classic Accordion</title>
+
+<link rel="stylesheet" type="text/css" href="../src/css/accordion-slider.css" media="screen"/>
+
+<link rel="stylesheet" type="text/css" href="../libs/video-js/video-js.min.css" media="screen"/>
+
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../dist/js/jquery.accordionSlider.js"></script>
+
+<script type="text/javascript" src="../libs/video-js/video.js"></script>
+<script type="text/javascript" src="//cdn.sublimevideo.net/js/j8t9nwdi.js"></script>
+<script type="text/javascript" src="../libs/jw-player/jwplayer.js"></script>
+
+<script type="text/javascript" src="../libs/jquery.smartVideo.js"></script>
+
+<script type="text/javascript">
+	var accordion;
+
+	$(document).ready(function() {
+		accordion = $('#my-accordion').accordionSlider({
+						width: 1000, 
+						height: 400,
+						responsiveMode: 'auto',
+						openedPanelSize: 'max',
+						maxOpenedPanelSize: '80%',
+						//startPanel: 1,
+						//aspectRatio: 2,
+						orientation: 'horizontal',
+						openPanelOn: 'hover',
+						closePanelsOnMouseOut: false,
+						panelDistance: 0,
+						autoplay: false,
+						autoplayDirection: 'normal',
+						autoplayOnHover: 'pause',
+						autoplayDelay: 2000,
+						visiblePanels: 7,
+						startPage: 0,
+						touchSwipe: true,
+						mouseWheelTarget: 'page',
+						mouseWheelSensitivity: 50,
+						mouseWheel: true,
+						//panelsOverlap: false,
+						//shadow: true,
+						breakpoints: {
+							700: {height: 400, aspectRatio: -1, visiblePanels: 3, shadow: false},
+							1000: {width: 800, responsive: false, visiblePanels: 4},
+							500: {orientation: 'vertical', visiblePanels: 3},
+							1200: {visiblePanels: -1, shadow: false}
+						},
+						// breakpointReach: function(obj) {console.log(obj)},
+						// XMLSource: 'accordion.xml'
+						// panelOpenComplete: function(obj) {console.log(obj)},
+						// panelsCloseComplete: function(obj) {console.log(obj)}
+						// accordionMouseOver: function(obj) {console.log('accordion mouse over');},
+						// accordionMouseOut: function(obj) {console.log('accordion mouse out');},
+						// panelClick: function(obj) {console.log('panel click', obj.index, obj.element);},
+						// panelMouseOver: function(obj) {console.log('panel mouse over', obj.index, obj.element);},
+						// panelMouseOut: function(obj) {console.log('panel mouse out', obj.index, obj.element);}
+
+					});
+
+		$('#my-accordion').on('videoPlay', function() {console.log('play')});
+		$('#my-accordion').on('videoPause', function() {console.log('pause')});
+		$('#my-accordion').on('videoEnd', function() {console.log('end')});
+
+		//$('#my-accordion-2').accordionSlider();
+
+		/*jwplayer("video2").setup({
+		    file: "https://cdn.sublimevideo.net/vpa/ms_720p.mp4",
+		    height: 360,
+		    image: "https://cdn.sublimevideo.net/vpa/ms_800.jpg",
+		    width: 640,
+		    events: {
+		    	onReady: function() {
+		    		
+		    	}
+		    }
+		});*/
+
+		
+	});
+
+	function onButton1Click() {
+		//$('#my-accordion').accordionSlider('responsiveMode', 'custom');
+		$('.smart-video').smartVideo('play');
+	}
+
+	function onButton2Click() {
+		//$('#my-accordion').accordionSlider('responsiveMode', 'auto');
+		$('.smart-video').smartVideo('pause');
+	}
+
+	function onButton3Click() {
+		/*accordion.find('.as-panel').eq(0).remove();
+		accordion.append('<div class="as-panel"><img class="as-background" src="http://bqworks.com/products/grid-accordion/images/11.jpg"/><img class="as-background-opened" src="http://bqworks.com/products/grid-accordion/images/12.jpg"/><p class="as-layer as-always as-black as-vertical">Layer 1</p><div class="as-layer as-opened as-white">Layer 2</div><h4 class="as-layer as-closed as-black as-padding">Layer 3</h4></div>');
+		$('#my-accordion').accordionSlider('refresh');*/
+		$('.smart-video').smartVideo('stop');
+	}
+
+	function onButton4Click() {
+		//$('#my-accordion').accordionSlider('destroy');
+		$('.smart-video').smartVideo('replay');
+	}
+
+	function onButton5Click() {
+		//$('#my-accordion').accordionSlider('nextPage');
+	}
+
+	function onButton6Click() {
+		$('#my-accordion').accordionSlider('XMLSource', 'accordion.xml');
+		$('#my-accordion').accordionSlider('updateXML');
+	}
+	
+</script>
+
+<style>
+	#my-accordion {
+		margin: 0 auto;
+	}
+
+	.controls {
+		position: absolute;
+		bottom: 0;
+		margin: 10px;
+	}
+</style>
+</head>
+
+<body>
+	
+
+	<div data-info="info" id="video2"></div>
+
+	<div id="my-accordion" class="accordion-slider">
+		<div class="as-panels">
+			<div class="as-panel" id="first">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/1.jpg"/>
+				</a>
+
+				<a href="http://bqworks.com">
+					<img class="as-background-opened" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/9.jpg"/>
+				</a>
+				
+				<!-- <div class="as-layer as-always">
+					<iframe class="as-video"  width="560" height="315" src="//www.youtube.com/embed/zny7h7F-SzU" frameborder="0" allowfullscreen></iframe>
+				</div> -->
+
+				<p class="as-layer as-always as-black as-vertical as-padding">
+					<a href="http://bqworks.com">Panel 1 Layer 1</a>
+				</p>
+				<div class="as-layer as-opened as-white selectable" 
+					 data-horizontal="50" 
+					 data-vertical="300" 
+					 data-width="150" 
+					 data-height="40"
+					 data-show-offset="100"
+					 data-show-transition="down"
+					 data-hide-transition="up">
+					Panel 1 Layer 2
+				</div>
+
+				<h4 class="as-layer as-closed as-black as-padding" 
+					data-horizontal="130" 
+					data-vertical="bottom" 
+					data-width="120" 
+					data-height="50"
+					data-show-transition="left"
+					data-hide-transition="right">
+					Panel 1 Layer 3
+				</h4>
+			</div>
+
+	        <div class="as-panel" id="second">
+				<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/2.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				<img class="as-background-opened" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/10.jpg"/>
+				
+				<!-- <div class="as-layer as-always">
+					<iframe class="as-video" src="//player.vimeo.com/video/74066023?api=1" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+				</div> -->
+
+				<p class="as-layer as-always as-black as-vertical">Panel 1 Layer 1</p>
+				<div class="as-layer as-opened as-white">Panel 1 Layer 2</div>
+				<h4 class="as-layer as-closed as-black as-padding">Panel 1 Layer 3</h4>
+			</div>
+
+	        <div class="as-panel" id="third">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/3.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
+				</a>
+
+				<!-- <div class="as-layer as-always">
+					<video id="video1" class="as-video video-js vjs-default-skin" poster="http://bqworks.com/products/assets/videos/sintel/sintel-poster.jpg" width="700" height="400" controls="controls" preload="none">
+						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.mp4" type="video/mp4"/>
+						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.ogv" type="video/ogg"/>
+					</video>
+				</div> -->
+			</div>
+
+	        <div class="as-panel" id="fourth">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/4.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+
+				<!-- <div class="as-layer as-always">
+					<video id="a240e92d" class="as-video sublime-video" poster="https://cdn.sublimevideo.net/vpa/ms_800.jpg" width="640" height="360" title="Midnight Sun" data-uid="a240e92d" preload="none">
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_360p.mp4" />
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_720p.mp4" data-quality="hd" />
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_360p.webm" />
+					  <source src="https://cdn.sublimevideo.net/vpa/ms_720p.webm" data-quality="hd" />
+					</video>
+				</div> -->
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+			<div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="#">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+			<div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
+				</a>
+			</div>
+
+	        <div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+			<div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+			<div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+
+			<div class="as-panel">
+				<a href="http://bqworks.com">
+					<img class="as-background" src="css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				</a>
+			</div>
+		</div>
+    </div>
+
+    <!-- <div id="my-accordion-2" class="classic-accordion">
+        <div class="as-panel">
+			<a href="#">
+				<img class="as-background" src="http://bqworks.com/products/grid-accordion/images/5.jpg"/>
+			</a>
+		</div>
+
+        <div class="as-panel">
+			<a href="#">
+				<img class="as-background" src="http://bqworks.com/products/grid-accordion/images/6.jpg"/>
+			</a>
+		</div>
+
+        <div class="as-panel">
+			<a href="#">
+				<img class="as-background" src="http://bqworks.com/products/grid-accordion/images/7.jpg"/> 
+			</a>
+		</div>
+
+        <div class="as-panel">
+			<a href="#">
+				<img class="as-background" src="http://bqworks.com/products/grid-accordion/images/8.jpg"/>
+			</a>
+		</div>
+    </div> -->
+	
+	<div class="controls">
+	    <a href="#" onclick="onButton1Click();return false;">Button 1</a>
+	    <a href="#" onclick="onButton2Click();return false;">Button 2</a>
+	    <a href="#" onclick="onButton3Click();return false;">Button 3</a>
+	    <a href="#" onclick="onButton4Click();return false;">Button 4</a>
+	    <a href="#" onclick="onButton5Click();return false;">Button 5</a>
+	    <a href="#" onclick="onButton6Click();return false;">Button 6</a>
+	<div>
+</body>
+</html>
