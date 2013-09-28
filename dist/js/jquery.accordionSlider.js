@@ -2583,21 +2583,28 @@
 			this.isTouchSupport = 'ontouchstart' in window;
 
 			// listen to touch events or, if touch support doesn't exist, listen to mouse events
-			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown',
-				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
-
+			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown';
 			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this._onTouchStart, this));
-			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
 
 			// add grabbing icon
 			this.$panelsContainer.addClass('as-grab');
+
+			// remove mouse events on panels
+			if (this.isTouchSupport) {
+				this.on('update.TouchSwipe.' + NS, function() {
+					$.each(that.panels, function(index, element) {
+						var panel = element;
+						panel.off('panelMouseOver.' + NS);
+						panel.off('panelMouseOut.' + NS);
+						panel.off('panelClick.' + NS);
+					});
+				});
+			}
 		},
 
 		_onTouchStart: function(event) {
 			// disable dragging if the element is set to allow selections
-			var target = $(event.target).closest('.selectable');
-
-			if (target.length >= 1)
+			if ($(event.target).closest('.selectable').length >= 1)
 				return;
 
 			// prevent default behaviour only for mouse events
@@ -2606,18 +2613,25 @@
 
 			var that = this,
 				eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent,
-				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
+				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove',
+				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
 
 			// get the initial position of the mouse pointer and the initial position of the panels' container
 			this.touchStartPoint.x = eventObject.pageX;
 			this.touchStartPoint.y = eventObject.pageY;
 			this.touchStartPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
 
-			// listen for move events
+			// listen for move adn end events
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
+			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
 
 			// swap grabbing icons
 			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
+
+			// disable click events on links
+			$(event.target).closest('a').one('click.TouchSwipe', function(event) {
+				event.preventDefault();
+			});
 		},
 
 		_onTouchMove: function(event) {
@@ -2649,9 +2663,12 @@
 		},
 
 		_onTouchEnd: function(event) {
-			// remove the move listener
-			var moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
+			// remove the move and end listeners
+			var moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove',
+				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
+
 			this.$panelsContainer.off(moveEvent + '.' + NS);
+			$(document).off(endEvent + '.' + this.uniqueId + '.' + NS);
 
 			// check if there is intention for a tap
 			if (this.isTouchSupport === true && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchEndPoint.x - this.touchStartPoint.x) < 10 && Math.abs(this.touchEndPoint.y - this.touchStartPoint.y) < 10)) {
@@ -2659,13 +2676,19 @@
 
 				if (index !== this.currentIndex) {
 					this.openPanel(index);
-					event.preventDefault();
+				} else {
+					// re-enable click events on links
+					$(event.target).closest('a').off('click.TouchSwipe');
 				}
+
+				return;
 			}
 
-			// return if there was no movement
-			if (this.isTouchMoving === false)
+			// return if there was no movement and re-enable click events on links
+			if (this.isTouchMoving === false) {
+				$(event.target).closest('a').off('click.TouchSwipe');
 				return;
+			}
 
 			this.isTouchMoving = false;
 
@@ -2711,14 +2734,6 @@
 				}
 			}
 
-			// disable click events on links
-			var target = $(event.target).closest('a');
-
-			if (target.length >= 1)
-				target.one('click', function(event) {
-					event.preventDefault();
-				});
-
 			// swap grabbing icons
 			this.$panelsContainer.removeClass('as-grabbing').addClass('as-grab');
 		},
@@ -2731,6 +2746,7 @@
 			this.$panelsContainer.off(startEvent + '.' + NS);
 			$(document).off(endEvent + '.' + this.uniqueId + '.' + NS);
 			this.$panelsContainer.off(moveEvent + '.' + NS);
+			this.off('update.TouchSwipe.' + NS);
 		},
 
 		touchSwipeDefaults: {

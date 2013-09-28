@@ -59,4 +59,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['jshint', 'concat']);
 
+  grunt.registerTask('doall', ['jshint', 'concat', 'uglify', 'cssmin']);
+
 };

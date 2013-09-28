@@ -3,6 +3,10 @@
 	border: 4px solid #000;
 }
 
+.accordion-slider * {
+	-webkit-tap-highlight-color: transparent;
+}
+
 .accordion-slider .as-mask {
 	position: absolute;
 	width: 100%;
