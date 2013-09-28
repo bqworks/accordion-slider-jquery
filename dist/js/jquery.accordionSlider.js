@@ -2629,7 +2629,7 @@
 			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
 
 			// disable click events on links
-			$(event.target).closest('a').one('click.TouchSwipe', function(event) {
+			$(event.target).parents('.as-panel').find('a').one('click.TouchSwipe', function(event) {
 				event.preventDefault();
 			});
 		},
@@ -2678,7 +2678,7 @@
 					this.openPanel(index);
 				} else {
 					// re-enable click events on links
-					$(event.target).closest('a').off('click.TouchSwipe');
+					$(event.target).parents('.as-panel').find('a').off('click.TouchSwipe');
 				}
 
 				return;
@@ -2686,7 +2686,7 @@
 
 			// return if there was no movement and re-enable click events on links
 			if (this.isTouchMoving === false) {
-				$(event.target).closest('a').off('click.TouchSwipe');
+				$(event.target).parents('.as-panel').find('a').off('click.TouchSwipe');
 				return;
 			}
 
