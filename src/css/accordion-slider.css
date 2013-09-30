@@ -60,11 +60,13 @@
 .accordion-slider.as-horizontal .as-background,
 .accordion-slider.as-horizontal .as-background-opened {
 	height: 100%;
+	width: auto;
 }
 
 .accordion-slider.as-vertical .as-background,
 .accordion-slider.as-vertical .as-background-opened {
 	width: 100%;
+	height: auto;
 }
 
 .accordion-slider .as-background-opened {

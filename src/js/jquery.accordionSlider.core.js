@@ -150,7 +150,7 @@
 
 			// if a panels was not set to be opened but a page was specified,
 			// set that page index to be opened
-			if (this.currentIndex == -1 && this.settings.startPage !== 0)
+			if (this.settings.startPage != -1)
 				this.currentPage = this.settings.startPage;
 
 			// parse the breakpoints object and store the values into an array
@@ -248,12 +248,15 @@
 				});
 			} else {
 				this.$accordion.css({width: this.settings.width, height: this.settings.height, maxWidth: '', maxHeight: ''});
+				this.$maskContainer.attr('style', '');
 			}
 
 			// if the number of visible panels has change, update the current page to reflect
 			// the same relative position of the panels
 			if (this.settings.visiblePanels == -1) {
 				this.currentPage = 0;
+			} else if (this.currentIndex != -1) {
+				this.currentPage = Math.floor(this.currentIndex / this.settings.visiblePanels);
 			} else if (this.settings.visiblePanels != this.previousVisiblePanels && this.previousVisiblePanels !== -1) {
 				var correctPage = Math.round((this.currentPage * this.previousVisiblePanels) / this.settings.visiblePanels);
 
@@ -406,16 +409,13 @@
 			if (this.settings.aspectRatio != -1)
 				this.$accordion.css('height', this.$accordion.innerWidth() / this.settings.aspectRatio);
 
-			// set the initial computedOpenedPanelSize to the value defined in the options
-			this.computedOpenedPanelSize = this.settings.openedPanelSize;
-
 			// get the total size, in pixels, of the accordion
-			if (this.settings.responsiveMode == 'custom') {
+			if (this.settings.responsiveMode == 'custom' && this.settings.responsive === true) {
 				// clear previous styling
 				this.$maskContainer.attr('style', '');
 
 				this.totalSize = this.settings.orientation == "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
-			} else if (this.settings.responsiveMode == 'auto') {
+			} else if (this.settings.responsiveMode == 'auto' && this.settings.responsive === true) {
 				// get the accordion's size ratio based on the set size and the actual size
 				this.autoResponsiveRatio = this.$accordion.innerWidth() / this.settings.width;
 
@@ -429,6 +429,9 @@
 				
 				this.totalSize = this.settings.orientation == "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
 			}
+
+			// set the initial computedOpenedPanelSize to the value defined in the options
+			this.computedOpenedPanelSize = this.settings.openedPanelSize;
 
 			// parse computedOpenedPanelSize and set it to a pixel value
 			if (typeof this.computedOpenedPanelSize == 'string') {
@@ -494,19 +497,6 @@
 				this.$maskContainer.css(this.sizeProperty, roundedSize);
 			}
 
-			// reset the position and size of each panel
-			$.each(this.panels, function(index, element) {
-				if (that.currentIndex != -1)
-					that.currentIndex = -1;
-
-				var position = index * (that.closedPanelSize + that.computedPanelDistance);
-				element.setPosition(position);
-
-				if (that.isOverlapping === false) {
-					element.setSize(that.closedPanelSize);
-				}
-			});
-
 			// if there are multiple pages, set the correct position of the panels' container
 			if (this.settings.visiblePanels != -1) {
 				// recalculate the totalSize due to the fact that rounded sizes can cause incorrect positioning
@@ -522,6 +512,38 @@
 				cssObj[this.positionProperty] = targetPosition;
 				this.$panelsContainer.css(cssObj);
 			}
+
+			// calculate missing panels for the last page of panels
+			var missingPanels = (this.currentPage === this.getTotalPages() - 1) && (this.getTotalPanels() % this.settings.visiblePanels) !== 0 ? this.settings.visiblePanels - this.getTotalPanels() % this.settings.visiblePanels : 0;
+
+			// set the position and size of each panel
+			$.each(this.panels, function(index, element) {
+				// get the position of the panel based on the currently selected index and the panel's index
+				var position;
+
+				if (that.currentIndex == -1) {
+					position = index * (that.closedPanelSize + that.computedPanelDistance);
+				} else if (that.settings.visiblePanels == -1) {
+					position = index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+				} else {
+					if (that._getPageOfPanel(index) === that.currentPage) {
+						position = that.currentPage * (that.totalSize + that.computedPanelDistance) + (index + missingPanels - that.currentPage * that.settings.visiblePanels) * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+
+						if (that.currentPage === that.getTotalPages() - 1 && missingPanels !== 0)
+							position -= (that.getTotalPages() - that.getTotalPanels() / that.settings.visiblePanels) * (that.totalSize + that.computedPanelDistance);
+					} else {
+						position = index * (that.closedPanelSize + that.computedPanelDistance);
+					}
+				}
+
+				element.setPosition(position);
+
+				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
+				if (that.isOverlapping === false) {
+					var size = (that.currentIndex == -1 || (that.settings.visiblePanels != -1 && that._getPageOfPanel(index) != that.currentPage)) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+					element.setSize(size);
+				}
+			});
 
 			// check if the current window width is bigger than the biggest breakpoint
 			// and if necessary reset the properties to the original settings
@@ -1074,18 +1096,10 @@
 			Return the page that the specified panel belongs to
 		*/
 		_getPageOfPanel: function(index) {
+			if (this.currentPage == this.getTotalPages() - 1 && index >= this.getTotalPanels() - this.settings.visiblePanels)
+				return this.getTotalPages() - 1;
+
 			return Math.floor(index / this.settings.visiblePanels);
- 
-		},
- 
-		/*
-			Check if the specified panel belongs to the current page 
-		*/
-		_isPanelInPage: function(index) {
-			if (this.getPageOfPanel(index) == this.currentPage || this.currentPage == this.getTotalPages() - 1 && index >= this.getTotalPanels() - this.settings.visiblePanels)
-				return true;
- 
-			return false;
 		},
 
 		/*

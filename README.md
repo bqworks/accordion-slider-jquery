@@ -48,7 +48,8 @@ Features
 * + shadows
 * + overlay panels option
 * ? link & lightbox
-* ? resize while maintaining size and position
+* + resize while maintaining size and position
 * + add classes that describe the state of the accordion
 * + CSS shadows
 * + cross browser transform
+* deep linking position and size
