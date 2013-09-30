@@ -106,6 +106,10 @@
 		// keeps a reference to the ratio between the size actual size of the accordion and the set size
 		this.autoResponsiveRatio = 1;
 
+		// indicates whether the panels will overlap, based on the set panelOverlap property
+		// and also based on the computed distance between panels
+		this.isOverlapping = false;
+
 		// init the accordion
 		this._init();
 	};
@@ -265,6 +269,15 @@
 
 			// set the size of the accordion
 			this.resize();
+
+			// if there is distance between the panels, the panels can't overlap
+			if (this.computedPanelDistance > 0 || this.settings.panelOverlap === false) {
+				this.isOverlapping = false;
+				this.$accordion.removeClass('overlap');
+			} else if (this.settings.panelOverlap === true) {
+				this.isOverlapping = true;
+				this.$accordion.addClass('overlap');
+			}
 
 			// create or remove the shadow
 			if (this.settings.shadow === true) {
@@ -489,7 +502,7 @@
 				var position = index * (that.closedPanelSize + that.computedPanelDistance);
 				element.setPosition(position);
 
-				if (that.settings.panelsOverlap === false) {
+				if (that.isOverlapping === false) {
 					element.setSize(that.closedPanelSize);
 				}
 			});
@@ -817,7 +830,7 @@
 				if (targetPosition[i] !== startPosition[i])
 					animatedPanels.push(i);
 
-				if (this.settings.panelsOverlap === false) {
+				if (this.isOverlapping === false) {
 					startSize[i] = panel.getSize();
 					targetSize[i] = i === this.currentIndex ? this.computedOpenedPanelSize : this.collapsedPanelSize;
 
@@ -851,7 +864,7 @@
 
 						panel.setPosition(progress * (targetPosition[value] - startPosition[value]) + startPosition[value]);
 
-						if (that.settings.panelsOverlap === false)
+						if (that.isOverlapping === false)
 							panel.setSize(progress * (targetSize[value] - startSize[value]) + startSize[value]);
 					}
 				},
@@ -909,7 +922,7 @@
 				if (this.settings.visiblePanels != -1 && this.currentPage == this.getTotalPages() - 1)
 					targetPosition[i] -= (this.getTotalPages() - this.getTotalPanels() / this.settings.visiblePanels) * (this.totalSize + this.computedPanelDistance);
 
-				if (this.settings.panelsOverlap === false) {
+				if (this.isOverlapping === false) {
 					startSize[i] = panel.getSize();
 					targetSize[i] = this.closedPanelSize;
 				}
@@ -936,7 +949,7 @@
 
 						panel.setPosition(progress * (targetPosition[i] - startPosition[i]) + startPosition[i]);
 
-						if (that.settings.panelsOverlap === false)
+						if (that.isOverlapping === false)
 							panel.setSize(progress * (targetSize[i] - startSize[i]) + startSize[i]);
 					}
 				},
@@ -1155,7 +1168,7 @@
 			visiblePanels: -1,
 			startPage: 0,
 			shadow: true,
-			panelsOverlap: true,
+			panelOverlap: true,
 			init: function() {},
 			update: function() {},
 			accordionMouseOver: function() {},
@@ -1317,7 +1330,7 @@
 		getContentSize: function() {
 			var size;
 
-			if (this.settings.panelsOverlap === false) {
+			if (this.settings.panelOverlap === false || parseInt(this.settings.panelDistance, 10) > 0) {
 				size = this.sizeProperty == 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
 			} else {
 				// workaround for when scrollWidth and scrollHeight return incorrect values

@@ -1,6 +1,5 @@
 .accordion-slider {
 	position: relative;
-	border: 4px solid #000;
 }
 
 .accordion-slider * {
@@ -16,7 +15,6 @@
 
 .accordion-slider .as-panels {
 	position: absolute;
-	background-color: #000;
 }
 
 .accordion-slider.as-horizontal .as-panels {
@@ -30,7 +28,11 @@
 .accordion-slider .as-panel {
 	position: absolute;
 	display: block;
-	background-color: #FFF;
+	overflow: hidden;
+}
+
+.accordion-slider.overlap .as-panel {
+	overflow: visible;
 }
 
 .accordion-slider.as-horizontal .as-panel {

@@ -22,7 +22,7 @@
 
 	$(document).ready(function() {
 		accordion = $('#my-accordion').accordionSlider({
-						width: 1000, 
+						width: 960, 
 						height: 400,
 						responsiveMode: 'auto',
 						openedPanelSize: 'max',
@@ -32,24 +32,24 @@
 						orientation: 'horizontal',
 						openPanelOn: 'hover',
 						closePanelsOnMouseOut: false,
-						panelDistance: 0,
+						//panelDistance: 10,
 						autoplay: false,
 						autoplayDirection: 'normal',
 						autoplayOnHover: 'pause',
 						autoplayDelay: 2000,
-						visiblePanels: 7,
+						visiblePanels: 5,
 						startPage: 0,
 						touchSwipe: true,
 						mouseWheelTarget: 'page',
 						mouseWheelSensitivity: 50,
 						mouseWheel: true,
-						//panelsOverlap: false,
+						panelOverlap: true,
 						//shadow: true,
 						breakpoints: {
 							700: {height: 400, aspectRatio: -1, visiblePanels: 3, shadow: false},
 							1000: {width: 800, responsive: false, visiblePanels: 4},
 							500: {orientation: 'vertical', visiblePanels: 3},
-							1200: {visiblePanels: -1, shadow: false}
+							1200: {visiblePanels: -1, shadow: false, panelDistance: 0}
 						},
 						// breakpointReach: function(obj) {console.log(obj)},
 						// XMLSource: 'accordion.xml'
