@@ -33,16 +33,36 @@
 
 					$panel.find('img').each(function() {
 						var image = $(this);
-						that._loadImage(image);
+						that._loadImage(image, element);
 					});
 				}
 			});
 		},
 
-		_loadImage: function(image) {
+		_loadImage: function(image, panel) {
 			if (typeof image.attr('data-src') !== 'undefined') {
-				image.attr('src', image.attr('data-src'));
-				image.removeAttr('data-src');
+				// create a new image element
+				var newImage = new Image();
+
+				// copy the attributes from the current image to the newly created image
+				for (var i = 0, atts = image[0].attributes; i < atts.length; i++) {
+					$(newImage).attr(atts.item(i).nodeName, atts.item(i).nodeValue);
+				}
+
+				// add the new image in the same container and remove the older image
+				$(newImage).insertAfter(image);
+				image.remove();
+
+				// assign the source of the image
+				$(newImage).attr('src', image.attr('data-src'));
+				$(newImage).removeAttr('data-src');
+
+				// get the size of the panel, after the new image was added, and 
+				// if there aren't loading images, trigger the 'imagesComplete' event
+				var newSize = panel.getContentSize();
+				if (newSize != 'loading') {
+					panel.trigger({type: 'imagesComplete.' + NS, index: panel.getIndex(), contentSize: newSize});
+				}
 			}
 		},
 

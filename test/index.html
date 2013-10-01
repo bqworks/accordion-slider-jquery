@@ -24,10 +24,10 @@
 		accordion = $('#my-accordion').accordionSlider({
 						width: 960, 
 						height: 400,
-						responsiveMode: 'auto',
-						openedPanelSize: '70%',
+						responsiveMode: 'custom',
+						openedPanelSize: 'max',
 						maxOpenedPanelSize: '80%',
-						startPanel: 16,
+						startPanel: 4,
 						//aspectRatio: 2,
 						orientation: 'horizontal',
 						openPanelOn: 'hover',
@@ -43,7 +43,7 @@
 						mouseWheelTarget: 'page',
 						mouseWheelSensitivity: 50,
 						mouseWheel: true,
-						panelOverlap: true,
+						//panelOverlap: true,
 						//shadow: true,
 						breakpoints: {
 							700: {height: 400, aspectRatio: -1, visiblePanels: 3, shadow: false},
@@ -139,11 +139,11 @@
 		<div class="as-panels">
 			<div class="as-panel" id="first">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/1.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/1.jpg"/>
 				</a>
 
 				<a href="http://bqworks.com">
-					<img class="as-background-opened" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/9.jpg" width="950" height="400"/>
+					<img class="as-background-opened" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/9.jpg"/>
 				</a>
 				
 				<!-- <div class="as-layer as-always">
@@ -176,8 +176,8 @@
 			</div>
 
 	        <div class="as-panel" id="second">
-				<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/2.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
-				<img class="as-background-opened" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/10.jpg" width="950" height="400"/>
+				<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/2.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
+				<img class="as-background-opened" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/10.jpg"/>
 				
 				<!-- <div class="as-layer as-always">
 					<iframe class="as-video" src="//player.vimeo.com/video/74066023?api=1" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
@@ -190,7 +190,7 @@
 
 	        <div class="as-panel" id="third">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/3.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/> 
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/3.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 
 				<!-- <div class="as-layer as-always">
@@ -203,7 +203,7 @@
 
 	        <div class="as-panel" id="fourth">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/4.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/4.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 
 				<!-- <div class="as-layer as-always">
@@ -218,91 +218,91 @@
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/> 
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="#">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/> 
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/> 
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 			</div>
 
 	        <div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
 				<a href="http://bqworks.com">
-					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg" width="950" height="400"/>
+					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 		</div>

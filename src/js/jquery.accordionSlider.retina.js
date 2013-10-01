@@ -25,15 +25,23 @@
 			if (typeof this._loadImage !== 'undefined') {
 				this._loadImage = this._loadRetinaImage;
 			} else {
-				this.$accordion.find('img').each(function() {
-					var image = $(this);
-					that._loadRetinaImage(image);
+				$.each(this.panels, function(index, element) {
+					var $panel = element.$panel;
+
+					if (typeof $panel.attr('data-loaded') === 'undefined') {
+						$panel.attr('data-loaded', true);
+
+						$panel.find('img').each(function() {
+							var image = $(this);
+							that._loadRetinaImage(image, element);
+						});
+					}
 				});
 			}
 		},
 
 		_isRetina: function() {
-			if (window.devicePixelRatio > 1.5)
+			if (window.devicePixelRatio >= 2)
 				return true;
 
 			if (window.matchMedia && (window.matchMedia("(-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi)").matches))
@@ -42,23 +50,49 @@
 			return false;
 		},
 
-		_loadRetinaImage: function(image) {
-			var retinaFound = false;
+		_loadRetinaImage: function(image, panel) {
+			var retinaFound = false,
+				newImagePath = '';
 
 			// check if there is a retina image specified
 			if (typeof image.attr('data-retina') !== 'undefined') {
 				retinaFound = true;
 
-				image.attr('src', image.attr('data-retina'));
+				newImagePath = image.attr('data-retina');
 				image.removeAttr('data-retina');
 			}
 
 			// check if there is a lazy loaded, non-retina, image specified
 			if (typeof image.attr('data-src') !== 'undefined') {
 				if (retinaFound === false)
-					image.attr('src', image.attr('data-src'));
+					newImagePath = image.attr('data-src');
 
 				image.removeAttr('data-src');
+			}
+
+			// replace the image
+			if (newImagePath !== '') {
+				// create a new image element
+				var newImage = new Image();
+
+				// copy the attributes from the current image to the newly created image
+				for (var i = 0, atts = image[0].attributes; i < atts.length; i++) {
+					$(newImage).attr(atts.item(i).nodeName, atts.item(i).nodeValue);
+				}
+
+				// add the new image in the same container and remove the older image
+				$(newImage).insertAfter(image);
+				image.remove();
+
+				// assign the source of the image
+				$(newImage).attr('src', newImagePath);
+
+				// get the size of the panel, after the new image was added, and 
+				// if there aren't loading images, trigger the 'imagesComplete' event
+				var newSize = panel.getContentSize();
+				if (newSize != 'loading') {
+					panel.trigger({type: 'imagesComplete.' + NS, index: panel.getIndex(), contentSize: newSize});
+				}
 			}
 		},
 

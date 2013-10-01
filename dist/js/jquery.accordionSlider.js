@@ -382,6 +382,16 @@
 				if ($.isFunction(that.settings.panelClick))
 					that.settings.panelClick.call(that, eventObject);
 			});
+
+			// listen for 'imagesComplete' events and if the images were loaded in
+			// the panel that is currently opened and the size of the panel is different
+			// than the currently computed size of the panel, force the re-opening of the panel
+			// to the correct size
+			panel.on('imagesComplete.' + NS, function(event) {
+				if (event.index === that.currentIndex && event.contentSize !== that.computedOpenedPanelSize) {
+					that.openPanel(event.index, true);
+				}
+			});
 		},
 
 		/*
@@ -389,6 +399,11 @@
 		*/
 		removePanels: function() {
 			$.each(this.panels, function(index, element) {
+				element.off('panelMouseOver.' + NS);
+				element.off('panelMouseOut.' + NS);
+				element.off('panelClick.' + NS);
+				element.off('imagesComplete.' + NS);
+
 				element.destroy();
 			});
 
@@ -433,17 +448,6 @@
 			// set the initial computedOpenedPanelSize to the value defined in the options
 			this.computedOpenedPanelSize = this.settings.openedPanelSize;
 
-			// parse computedOpenedPanelSize and set it to a pixel value
-			if (typeof this.computedOpenedPanelSize == 'string') {
-				if (this.computedOpenedPanelSize.indexOf('%') != -1) {
-					this.computedOpenedPanelSize = this.totalSize * (parseInt(this.computedOpenedPanelSize, 10)/ 100);
-				} else if (this.computedOpenedPanelSize.indexOf('px') != -1) {
-					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
-				} else if (this.computedOpenedPanelSize == 'max') {
-					this.computedOpenedPanelSize = this.currentIndex == -1 ? this.totalSize * 0.5 : this.getPanelAt(this.currentIndex).getContentSize();
-				}
-			}
-
 			// if the panels are set to open to their maximum size,
 			// parse maxComputedOpenedPanelSize and set it to a pixel value
 			if (this.settings.openedPanelSize == 'max') {
@@ -458,6 +462,21 @@
 					}
 				}
 			}
+
+			// parse computedOpenedPanelSize and set it to a pixel value
+			if (typeof this.computedOpenedPanelSize == 'string') {
+				if (this.computedOpenedPanelSize.indexOf('%') != -1) {
+					this.computedOpenedPanelSize = this.totalSize * (parseInt(this.computedOpenedPanelSize, 10)/ 100);
+				} else if (this.computedOpenedPanelSize.indexOf('px') != -1) {
+					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
+				} else if (this.computedOpenedPanelSize == 'max') {
+					this.computedOpenedPanelSize = this.currentIndex == -1 ? this.totalSize * 0.5 : this.getPanelAt(this.currentIndex).getContentSize();
+					
+					if (this.computedOpenedPanelSize == 'loading' || this.computedOpenedPanelSize > this.maxComputedOpenedPanelSize)
+						this.computedOpenedPanelSize = this.maxComputedOpenedPanelSize;
+				}
+			}
+
 
 			// set the initial computedPanelDistance to the value defined in the options
 			this.computedPanelDistance = this.settings.panelDistance;
@@ -610,9 +629,7 @@
 			// dettach event handlers
 			this.off('mouseenter.' + NS);
 			this.off('mouseleave.' + NS);
-			this.off('panelMouseOver.' + NS);
-			this.off('panelMouseOut.' + NS);
-			this.off('panelClick.' + NS);
+
 			$(window).off('resize.' + this.uniqueId + '.' + NS);
 
 			// destroy modules
@@ -776,8 +793,8 @@
 		/*
 			Open the panel at the specified index
 		*/
-		openPanel: function(index) {
-			if (index === this.currentIndex)
+		openPanel: function(index, force) {
+			if (index === this.currentIndex && force !== true)
 				return;
 
 			// remove the "closed" class and add the "opened" class, which indicates
@@ -1342,10 +1359,20 @@
 			Get the real size of the panel's content
 		*/
 		getContentSize: function() {
-			var size;
+			var size,
+				that = this;
+
+			// check if there are loading images
+			if (this.checkImagesComplete() == 'loading')
+				return 'loading';
 
 			if (this.settings.panelOverlap === false || parseInt(this.settings.panelDistance, 10) > 0) {
+				// get the current size of the inner content and then temporarely set the panel to a small size
+				// in order to accurately calculate the size of the inner content
+				var currentSize = this.$panel.css(this.sizeProperty);
+				this.$panel.css(this.sizeProperty, 10);
 				size = this.sizeProperty == 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
+				this.$panel.css(this.sizeProperty, currentSize);
 			} else {
 				// workaround for when scrollWidth and scrollHeight return incorrect values
 				// this happens in some browsers (Firefox and Opera a.t.m.) unless there is a set width and height for the element
@@ -1361,6 +1388,43 @@
 			}
 
 			return size;
+		},
+
+		/*
+			Check the status of all images from the panel
+		*/
+		checkImagesComplete: function() {
+			var that = this,
+				status = 'complete';
+
+			// check if there is any unloaded image inside the panel
+			this.$panel.find('img').each(function(index) {
+				var image = $(this)[0];
+
+				if (image.complete === false)
+					status = 'loading';
+			});
+
+			// continue checking until all images have loaded
+			if (status == 'loading') {
+				var checkImage = setInterval(function() {
+					var isLoaded = true;
+
+					that.$panel.find('img').each(function(index) {
+						var image = $(this)[0];
+
+						if (image.complete === false)
+							isLoaded = false;
+					});
+
+					if (isLoaded === true) {
+						clearInterval(checkImage);
+						that.trigger({type: 'imagesComplete.' + NS, index: that.index, contentSize: that.getContentSize()});
+					}
+				}, 100);
+			}
+
+			return status;
 		},
 
 		/*
@@ -2130,16 +2194,36 @@
 
 					$panel.find('img').each(function() {
 						var image = $(this);
-						that._loadImage(image);
+						that._loadImage(image, element);
 					});
 				}
 			});
 		},
 
-		_loadImage: function(image) {
+		_loadImage: function(image, panel) {
 			if (typeof image.attr('data-src') !== 'undefined') {
-				image.attr('src', image.attr('data-src'));
-				image.removeAttr('data-src');
+				// create a new image element
+				var newImage = new Image();
+
+				// copy the attributes from the current image to the newly created image
+				for (var i = 0, atts = image[0].attributes; i < atts.length; i++) {
+					$(newImage).attr(atts.item(i).nodeName, atts.item(i).nodeValue);
+				}
+
+				// add the new image in the same container and remove the older image
+				$(newImage).insertAfter(image);
+				image.remove();
+
+				// assign the source of the image
+				$(newImage).attr('src', image.attr('data-src'));
+				$(newImage).removeAttr('data-src');
+
+				// get the size of the panel, after the new image was added, and 
+				// if there aren't loading images, trigger the 'imagesComplete' event
+				var newSize = panel.getContentSize();
+				if (newSize != 'loading') {
+					panel.trigger({type: 'imagesComplete.' + NS, index: panel.getIndex(), contentSize: newSize});
+				}
 			}
 		},
 
@@ -2261,15 +2345,23 @@
 			if (typeof this._loadImage !== 'undefined') {
 				this._loadImage = this._loadRetinaImage;
 			} else {
-				this.$accordion.find('img').each(function() {
-					var image = $(this);
-					that._loadRetinaImage(image);
+				$.each(this.panels, function(index, element) {
+					var $panel = element.$panel;
+
+					if (typeof $panel.attr('data-loaded') === 'undefined') {
+						$panel.attr('data-loaded', true);
+
+						$panel.find('img').each(function() {
+							var image = $(this);
+							that._loadRetinaImage(image, element);
+						});
+					}
 				});
 			}
 		},
 
 		_isRetina: function() {
-			if (window.devicePixelRatio > 1.5)
+			if (window.devicePixelRatio >= 2)
 				return true;
 
 			if (window.matchMedia && (window.matchMedia("(-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi)").matches))
@@ -2278,23 +2370,49 @@
 			return false;
 		},
 
-		_loadRetinaImage: function(image) {
-			var retinaFound = false;
+		_loadRetinaImage: function(image, panel) {
+			var retinaFound = false,
+				newImagePath = '';
 
 			// check if there is a retina image specified
 			if (typeof image.attr('data-retina') !== 'undefined') {
 				retinaFound = true;
 
-				image.attr('src', image.attr('data-retina'));
+				newImagePath = image.attr('data-retina');
 				image.removeAttr('data-retina');
 			}
 
 			// check if there is a lazy loaded, non-retina, image specified
 			if (typeof image.attr('data-src') !== 'undefined') {
 				if (retinaFound === false)
-					image.attr('src', image.attr('data-src'));
+					newImagePath = image.attr('data-src');
 
 				image.removeAttr('data-src');
+			}
+
+			// replace the image
+			if (newImagePath !== '') {
+				// create a new image element
+				var newImage = new Image();
+
+				// copy the attributes from the current image to the newly created image
+				for (var i = 0, atts = image[0].attributes; i < atts.length; i++) {
+					$(newImage).attr(atts.item(i).nodeName, atts.item(i).nodeValue);
+				}
+
+				// add the new image in the same container and remove the older image
+				$(newImage).insertAfter(image);
+				image.remove();
+
+				// assign the source of the image
+				$(newImage).attr('src', newImagePath);
+
+				// get the size of the panel, after the new image was added, and 
+				// if there aren't loading images, trigger the 'imagesComplete' event
+				var newSize = panel.getContentSize();
+				if (newSize != 'loading') {
+					panel.trigger({type: 'imagesComplete.' + NS, index: panel.getIndex(), contentSize: newSize});
+				}
 			}
 		},
 
