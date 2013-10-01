@@ -46,7 +46,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
+      files: ['<%= jshint.files %>', '<%= cssmin.minify.src %>'],
       tasks: ['jshint', 'concat', 'uglify', 'cssmin']
     }
   });

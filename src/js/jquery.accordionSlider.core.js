@@ -264,15 +264,6 @@
 					this.currentPage = correctPage;
 			}
 
-			// update panels
-			this._updatePanels();
-
-			// create or update the pagination buttons
-			this._updatePaginationButtons();
-
-			// set the size of the accordion
-			this.resize();
-
 			// if there is distance between the panels, the panels can't overlap
 			if (this.computedPanelDistance > 0 || this.settings.panelOverlap === false) {
 				this.isOverlapping = false;
@@ -281,6 +272,15 @@
 				this.isOverlapping = true;
 				this.$accordion.addClass('overlap');
 			}
+
+			// update panels
+			this._updatePanels();
+
+			// create or update the pagination buttons
+			this._updatePaginationButtons();
+
+			// set the size of the accordion
+			this.resize();
 
 			// create or remove the shadow
 			if (this.settings.shadow === true) {
@@ -556,7 +556,7 @@
 				}
 
 				element.setPosition(position);
-
+				
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
 				if (that.isOverlapping === false) {
 					var size = (that.currentIndex == -1 || (that.settings.visiblePanels != -1 && that._getPageOfPanel(index) != that.currentPage)) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
