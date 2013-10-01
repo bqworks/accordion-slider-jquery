@@ -83,7 +83,7 @@
 		this.closePanelsAnimation = {};
 
 		// generate a unique ID to be used for event listening
-		this.uniqueId = Date.now();
+		this.uniqueId = new Date().valueOf();
 
 		// stores size breakpoints in an array for sorting purposes
 		this.breakpoints = [];
@@ -165,11 +165,11 @@
 				});
 			}
 
-			// update the accordion
-			this.update();
-
 			// prepare request animation frame
 			this._prepareRAF();
+
+			// update the accordion
+			this.update();
 
 			// if there is a panel opened at start handle that panel as if it was manually opened
 			if (this.currentIndex != -1) {
@@ -714,7 +714,7 @@
 			Animate the panels using request animation frame
 		*/
 		_animatePanels: function(target, args) {
-			var startTime = Date.now(),
+			var startTime = new Date().valueOf(),
 				progress = 0;
 
 			target.isRunning = true;
@@ -723,7 +723,7 @@
 			function _animate() {
 				if (progress < 1) {
 					// get the progress by calculating the elapsed time
-					progress = (Date.now() - startTime) / args.duration;
+					progress = (new Date().valueOf() - startTime) / args.duration;
 
 					if (progress > 1)
 						progress = 1;
@@ -772,7 +772,7 @@
 				var lastTime = 0;
 
 				window.requestAnimationFrame = function(callback, element) {
-					var currentTime = Date.now(),
+					var currentTime = new Date().valueOf(),
 						timeToCall = Math.max(0, 16 - (currentTime - lastTime));
 
 					var id = window.setTimeout(function() {
@@ -2203,20 +2203,30 @@
 		_loadImage: function(image, panel) {
 			if (typeof image.attr('data-src') !== 'undefined') {
 				// create a new image element
-				var newImage = new Image();
+				var newImage = $(new Image());
 
-				// copy the attributes from the current image to the newly created image
-				for (var i = 0, atts = image[0].attributes; i < atts.length; i++) {
-					$(newImage).attr(atts.item(i).nodeName, atts.item(i).nodeValue);
-				}
+				// copy the class(es)
+				newImage.attr('class', image.attr('class'));
+
+				// copy the data attributes
+				$.each(image.data(), function(name, value) {
+					newImage.attr('data-' + name, value);
+				});
+
+				// copy the width and height attributes if they exist
+				if (typeof image.attr('width') !== 'undefined')
+					newImage.attr('width', image.attr('width'));
+
+				if (typeof image.attr('height') !== 'undefined')
+					newImage.attr('height', image.attr('height'));
 
 				// add the new image in the same container and remove the older image
-				$(newImage).insertAfter(image);
+				newImage.insertAfter(image);
 				image.remove();
 
 				// assign the source of the image
-				$(newImage).attr('src', image.attr('data-src'));
-				$(newImage).removeAttr('data-src');
+				newImage.attr('src', image.attr('data-src'));
+				newImage.removeAttr('data-src');
 
 				// get the size of the panel, after the new image was added, and 
 				// if there aren't loading images, trigger the 'imagesComplete' event
@@ -2393,19 +2403,29 @@
 			// replace the image
 			if (newImagePath !== '') {
 				// create a new image element
-				var newImage = new Image();
+				var newImage = $(new Image());
 
-				// copy the attributes from the current image to the newly created image
-				for (var i = 0, atts = image[0].attributes; i < atts.length; i++) {
-					$(newImage).attr(atts.item(i).nodeName, atts.item(i).nodeValue);
-				}
+				// copy the class(es)
+				newImage.attr('class', image.attr('class'));
+
+				// copy the data attributes
+				$.each(image.data(), function(name, value) {
+					newImage.attr('data-' + name, value);
+				});
+
+				// copy the width and height attributes if they exist
+				if (typeof image.attr('width') !== 'undefined')
+					newImage.attr('width', image.attr('width'));
+
+				if (typeof image.attr('height') !== 'undefined')
+					newImage.attr('height', image.attr('height'));
 
 				// add the new image in the same container and remove the older image
-				$(newImage).insertAfter(image);
+				newImage.insertAfter(image);
 				image.remove();
 
 				// assign the source of the image
-				$(newImage).attr('src', newImagePath);
+				newImage.attr('src', newImagePath);
 
 				// get the size of the panel, after the new image was added, and 
 				// if there aren't loading images, trigger the 'imagesComplete' event

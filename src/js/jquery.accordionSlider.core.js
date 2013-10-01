@@ -83,7 +83,7 @@
 		this.closePanelsAnimation = {};
 
 		// generate a unique ID to be used for event listening
-		this.uniqueId = Date.now();
+		this.uniqueId = new Date().valueOf();
 
 		// stores size breakpoints in an array for sorting purposes
 		this.breakpoints = [];
@@ -165,11 +165,11 @@
 				});
 			}
 
-			// update the accordion
-			this.update();
-
 			// prepare request animation frame
 			this._prepareRAF();
+
+			// update the accordion
+			this.update();
 
 			// if there is a panel opened at start handle that panel as if it was manually opened
 			if (this.currentIndex != -1) {
@@ -714,7 +714,7 @@
 			Animate the panels using request animation frame
 		*/
 		_animatePanels: function(target, args) {
-			var startTime = Date.now(),
+			var startTime = new Date().valueOf(),
 				progress = 0;
 
 			target.isRunning = true;
@@ -723,7 +723,7 @@
 			function _animate() {
 				if (progress < 1) {
 					// get the progress by calculating the elapsed time
-					progress = (Date.now() - startTime) / args.duration;
+					progress = (new Date().valueOf() - startTime) / args.duration;
 
 					if (progress > 1)
 						progress = 1;
@@ -772,7 +772,7 @@
 				var lastTime = 0;
 
 				window.requestAnimationFrame = function(callback, element) {
-					var currentTime = Date.now(),
+					var currentTime = new Date().valueOf(),
 						timeToCall = Math.max(0, 16 - (currentTime - lastTime));
 
 					var id = window.setTimeout(function() {
