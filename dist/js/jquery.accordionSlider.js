@@ -263,9 +263,9 @@
 				if (this.currentPage !== correctPage)
 					this.currentPage = correctPage;
 			}
-
+			
 			// if there is distance between the panels, the panels can't overlap
-			if (this.computedPanelDistance > 0 || this.settings.panelOverlap === false) {
+			if (this.settings.panelDistance > 0 || this.settings.panelOverlap === false) {
 				this.isOverlapping = false;
 				this.$accordion.removeClass('overlap');
 			} else if (this.settings.panelOverlap === true) {
