@@ -1931,13 +1931,13 @@
 			// hide the layer by default
 			this.$layer.css('visibility', 'hidden');
 
-			if (this.$layer.hasClass('as-always')) {
-				this.visibleOn = 'always';
-				this.show();
-			} else if (this.$layer.hasClass('as-opened')) {
+			if (this.$layer.hasClass('as-opened')) {
 				this.visibleOn = 'opened';
 			} else if (this.$layer.hasClass('as-closed')) {
 				this.visibleOn = 'closed';
+			} else {
+				this.visibleOn = 'always';
+				this.show();
 			}
 		},
 
