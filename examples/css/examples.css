@@ -1,0 +1,51 @@
+#example1 .layer-counter {
+	padding: 5px;
+	font-size: 20px;
+	color: #333;
+	-moz-transform-origin: left bottom;
+	-webkit-transform-origin: left bottom;
+	transform-origin: left bottom;
+	-moz-transform: rotate(-90deg) translateY(100%);
+	-webkit-transform: rotate(-90deg) translateY(100%);
+	transform: rotate(-90deg) translateY(100%);
+	top: auto !important;
+	bottom: 10px;
+	left: 10px !important;
+}
+
+#example3 .as-panel {
+	border: 3px solid #000;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+#example4 .text {
+	padding: 15px;
+	background-color: #F1F1F1;
+	color: #333;
+	line-height: 1.1;
+}
+
+#example4 .title {
+	font-size: 24px;
+	margin: 0;
+}
+
+#example4 .link {
+	position: absolute;
+	bottom: 0;
+}
+
+#example4 .link a {
+	color: #000;
+}
+
+.controls {
+	margin-top: 30px;
+	text-align: center;
+}
+
+.controls a {
+	color: #333;
+}
