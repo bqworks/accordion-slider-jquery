@@ -305,7 +305,13 @@
 			// check if there are removed items in the DOM and remove the from the array of panels
 			for (var i = this.panels.length - 1; i >= 0; i--) {
 				if (this.$accordion.find('.as-panel[data-index="' + i + '"]').length === 0) {
-					this.panels[i].destroy();
+					var panel = this.panels[i];
+					
+					panel.off('panelMouseOver.' + NS);
+					panel.off('panelMouseOut.' + NS);
+					panel.off('panelClick.' + NS);
+					panel.off('imagesComplete.' + NS);
+					panel.destroy();
 					this.panels.splice(i, 1);
 				}
 			}

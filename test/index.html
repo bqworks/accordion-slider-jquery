@@ -22,13 +22,13 @@
 
 	$(document).ready(function() {
 		accordion = $('#my-accordion').accordionSlider({
-						width: 960, 
+						width: '80%', 
 						height: 400,
 						responsiveMode: 'auto',
 						openedPanelSize: 'max',
 						maxOpenedPanelSize: '80%',
 						startPanel: 4,
-						//aspectRatio: 2,
+						aspectRatio: 2,
 						orientation: 'horizontal',
 						openPanelOn: 'hover',
 						closePanelsOnMouseOut: false,
@@ -45,12 +45,12 @@
 						mouseWheel: true,
 						//panelOverlap: true,
 						//shadow: true,
-						breakpoints: {
-							700: {height: 400, aspectRatio: -1, visiblePanels: 3, shadow: false},
-							1000: {width: 800, responsive: false, visiblePanels: 4},
-							500: {orientation: 'vertical', visiblePanels: 3},
-							1200: {shadow: false, panelDistance: 10}
-						},
+						// breakpoints: {
+						// 	700: {height: 400, aspectRatio: -1, visiblePanels: 3, shadow: false},
+						// 	1000: {width: 800, responsive: false, visiblePanels: 4},
+						// 	500: {orientation: 'vertical', visiblePanels: 3},
+						// 	1200: {shadow: false, panelDistance: 10}
+						// },
 						// breakpointReach: function(obj) {console.log(obj)},
 						// XMLSource: 'accordion.xml'
 						// panelOpenComplete: function(obj) {console.log(obj)},
@@ -95,10 +95,10 @@
 	}
 
 	function onButton3Click() {
-		/*accordion.find('.as-panel').eq(0).remove();
-		accordion.append('<div class="as-panel"><img class="as-background" src="http://bqworks.com/products/grid-accordion/images/11.jpg"/><img class="as-background-opened" src="http://bqworks.com/products/grid-accordion/images/12.jpg"/><p class="as-layer as-always as-black as-vertical">Layer 1</p><div class="as-layer as-opened as-white">Layer 2</div><h4 class="as-layer as-closed as-black as-padding">Layer 3</h4></div>');
-		$('#my-accordion').accordionSlider('refresh');*/
-		$('.smart-video').smartVideo('stop');
+		accordion.find('.as-panel').eq(0).remove();
+		accordion.find('.as-panels').append('<div class="as-panel"><img class="as-background" src="http://bqworks.com/products/grid-accordion/images/11.jpg"/><img class="as-background-opened" src="http://bqworks.com/products/grid-accordion/images/12.jpg"/><p class="as-layer as-always as-black as-vertical">Layer 1</p><div class="as-layer as-opened as-white">Layer 2</div><h4 class="as-layer as-closed as-black as-padding">Layer 3</h4></div>');
+		$('#my-accordion').accordionSlider('update');
+		//$('.smart-video').smartVideo('stop');
 	}
 
 	function onButton4Click() {
