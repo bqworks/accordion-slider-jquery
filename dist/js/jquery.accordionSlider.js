@@ -306,7 +306,7 @@
 			for (var i = this.panels.length - 1; i >= 0; i--) {
 				if (this.$accordion.find('.as-panel[data-index="' + i + '"]').length === 0) {
 					var panel = this.panels[i];
-					
+
 					panel.off('panelMouseOver.' + NS);
 					panel.off('panelMouseOut.' + NS);
 					panel.off('panelClick.' + NS);
@@ -1235,7 +1235,7 @@
 		this.settings = this.accordion.settings;
 
 		// set a namespace for the panel
-		this.panelNS =  'AccordionSliderPanel' + '.' + NS;
+		this.panelNS =  'AccordionSliderPanel' + index + '.' + NS;
 
 		// set the index of the panel
 		this.setIndex(index);
