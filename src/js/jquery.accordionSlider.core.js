@@ -263,7 +263,7 @@
 				if (this.currentPage !== correctPage)
 					this.currentPage = correctPage;
 			}
-			
+
 			// if there is distance between the panels, the panels can't overlap
 			if (this.settings.panelDistance > 0 || this.settings.panelOverlap === false) {
 				this.isOverlapping = false;
@@ -509,7 +509,7 @@
 			// reset the accordion's size so that the visible panels fit exactly inside if their size and position are rounded
 			var roundedSize = this.closedPanelSize * this.getVisiblePanels() + this.computedPanelDistance * (this.getVisiblePanels() - 1);
 
-			if (this.settings.responsiveMode == 'custom') {
+			if (this.settings.responsiveMode == 'custom' || this.settings.responsive === false) {
 				this.$accordion.css(this.sizeProperty, roundedSize);
 			} else {
 				this.$accordion.css(this.sizeProperty, roundedSize * this.autoResponsiveRatio);
