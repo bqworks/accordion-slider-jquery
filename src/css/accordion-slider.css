@@ -1,5 +1,7 @@
 .accordion-slider {
 	position: relative;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .accordion-slider * {
@@ -78,8 +80,6 @@
 
 .accordion-slider .as-layer {
 	position: absolute;
-	top: 0;
-	left: 0;
 	margin: 0;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -138,6 +138,20 @@
 
 .accordion-slider .as-pagination-buttons .as-selected {
 	background-color: #000;
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+	.accordion-slider .as-pagination-button {
+		width: 14px;
+		height: 14px;
+	}
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 568px) {
+	.accordion-slider .as-pagination-button {
+		width: 18px;
+		height: 18px;
+	}
 }
 
 .accordion-slider .selectable {

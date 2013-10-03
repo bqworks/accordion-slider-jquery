@@ -1,4 +1,9 @@
-#example1 .layer-counter {
+body {
+	font-family: 'Open Sans', Arial, sans-serif;
+	font-size: 14px;
+}
+
+#example1 .panel-counter {
 	padding: 5px;
 	font-size: 20px;
 	color: #333;
@@ -9,8 +14,42 @@
 	-webkit-transform: rotate(-90deg) translateY(100%);
 	transform: rotate(-90deg) translateY(100%);
 	top: auto !important;
-	bottom: 10px;
-	left: 10px !important;
+	bottom: 8px;
+	left: 8px !important;
+}
+
+#example1 .as-padding {
+	padding: 10px;
+}
+
+@media (max-width: 860px) {
+	#example1.custom-responsive .panel-counter {
+		font-size: 16px;
+		bottom: 2px;
+		left: 2px !important;
+		padding: 2px;
+	}
+
+	#example1.custom-responsive .hide-medium-screen {
+		display: none;
+	}
+}
+
+@media (max-width: 515px) {
+	#example1.custom-responsive .panel-counter {
+		font-size: 12px;
+		bottom: 0;
+		left: 0 !important;
+	}
+
+	#example1.custom-responsive h3 {
+		font-size: 14px;
+	}
+
+	#example1.custom-responsive .hide-medium-screen,
+	#example1.custom-responsive .hide-small-screen {
+		display: none;
+	}
 }
 
 #example3 .as-panel {
@@ -23,13 +62,17 @@
 #example4 .text {
 	padding: 15px;
 	background-color: #F1F1F1;
-	color: #333;
-	line-height: 1.1;
+	color: #222;
 }
 
 #example4 .title {
 	font-size: 24px;
 	margin: 0;
+}
+
+#example4 .description {
+	font-size: 14px;
+	line-height: 1.2;
 }
 
 #example4 .link {
@@ -48,4 +91,8 @@
 
 .controls a {
 	color: #333;
+}
+
+.controls span.custom-arrow {
+	display: none;
 }

@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="../dist/css/accordion-slider.min.css" media="screen"/>
 <link rel="stylesheet" type="text/css" href="../libs/video-js/video-js.min.css" media="screen"/>
 <link rel="stylesheet" type="text/css" href="css/examples.css" media="screen"/>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
 
 <script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
 <script type="text/javascript" src="../libs/video-js/video.js"></script>
@@ -19,6 +20,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		// instantiate the accordion
 		$('#example4').accordionSlider({
 			width: 960, 
 			height: 350,
@@ -38,6 +40,8 @@
 </head>
 
 <body>
+	
+	<!-- Accordion Slider -->
 
 	<div id="example4" class="accordion-slider">
 		<div class="as-panels">
@@ -104,8 +108,14 @@
 			</div>
 		</div>
     </div>
+	
+	<!-- End of Accordion Slider -->
 
-    <div class="controls">Open panel: <a href="#example4-0">1</a>, <a href="#example4-1">2</a>, <a href="#example4-2">3</a>, <a href="#example4-3">4</a> or <a href="#" onclick="$('#example4').accordionSlider('closePanels');">close all panels</a></div>
+
+    <div class="controls">
+    	Open panel: <a href="#example4-0">1</a>, <a href="#example4-1">2</a>, <a href="#example4-2">3</a>, <a href="#example4-3">4</a> 
+    	or <a href="#" onclick="$('#example4').accordionSlider('closePanels');">close all panels</a>
+    </div>
 
 </body>
 </html>
