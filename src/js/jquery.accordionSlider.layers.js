@@ -200,47 +200,38 @@
 			if (this.styled === false)
 				this._setStyle();
 
-			// get the initial left and top margins
-			var that = this,
-				start = {},
-				target = {};
-			
-			target.opacity = 1;
-			start.opacity = 0;
-
-			if (typeof this.data.showTransition !== 'undefined') {
-				var offset = typeof that.data.showOffset !== 'undefined' ? that.data.showOffset : 50,
-					targetHorizontal = parseInt(that.$layer.css(that.horizontalPosition), 10),
-					targetVertical = parseInt(that.$layer.css(that.verticalPosition), 10);
-
-				target[that.horizontalPosition] = targetHorizontal;
-				target[that.verticalPosition] = targetVertical;
-
-				if (that.data.showTransition == 'left') {
-					start[that.horizontalPosition] = targetHorizontal + (that.horizontalPosition == 'left' ? offset : -offset);
-				} else if (that.data.showTransition == 'right') {
-					start[that.horizontalPosition] = targetHorizontal + (that.horizontalPosition == 'left' ? -offset : offset);
-				} else if (that.data.showTransition == 'up') {
-					start[that.verticalPosition] = targetVertical + (that.verticalPosition == 'top' ? offset : -offset);
-				} else if (that.data.showTransition == 'down') {
-					start[that.verticalPosition] = targetVertical + (that.verticalPosition == 'top' ? -offset : offset);
-				}
-			}
-
-			// animate the layers only for modern browsers
-			// for IE7 and below make the layers visible instantly
 			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8 || this.visibleOn == 'always') {
-				this.$layer.css('visibility', 'visible')
-					.css(target);
+				this.$layer.css('visibility', 'visible');
 			} else {
-				this.$layer.stop()
-					.delay(this.data.showDelay)
-					.css(start)
-					.css('visibility', 'visible')
-					.animate(target, this.data.showDuration, this.data.showEasing, function() {
-						// reset the position of the layer
-						that._setPosition();
-					});
+				// get the initial left and top margins
+				var that = this,
+					offset = typeof this.data.showOffset !== 'undefined' ? this.data.showOffset : 50,
+					duration = typeof this.data.showDuration !== 'undefined' ? this.data.showDuration / 1000 : 0.4;
+
+				var start = {opacity: 0};
+
+				if (this.data.showTransition == 'left')
+					start.transform = 'translate3d(' + offset + 'px, 0, 0)';
+				else if (this.data.showTransition == 'right')
+					start.transform = 'translate3d(-' + offset + 'px, 0, 0)';
+				else if (this.data.showTransition == 'up')
+					start.transform = 'translate3d(0, ' + offset + 'px, 0)';
+				else if (this.data.showTransition == 'down')
+					start.transform = 'translate3d(0, -' + offset + 'px, 0)';
+
+				var target = {
+					visibility: 'visible',
+					opacity: 1,
+					transform: 'translate3d(0, 0, 0)',
+					transition: 'all ' + duration + 's'
+				};
+
+				this.$layer.css(start)
+							.delay(this.data.showDelay)
+							.queue(function() {
+								that.$layer.css(target);
+								$(this).dequeue();
+							});
 			}
 		},
 
@@ -253,44 +244,33 @@
 
 			this.isVisible = false;
 
-			var that = this,
-				start = {},
-				target = {};
-			
-			start.opacity = 1;
-			target.opacity = 0;
-
-			if (typeof this.data.hideTransition !== 'undefined') {
-				var offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
-					startHorizontal = parseInt(this.$layer.css(this.horizontalPosition), 10),
-					startVertical = parseInt(this.$layer.css(this.verticalPosition), 10);
-
-				if (this.data.hideTransition == 'left') {
-					target[this.horizontalPosition] = startHorizontal - (this.horizontalPosition == 'left' ? offset : -offset);
-				} else if (this.data.hideTransition == 'right') {
-					target[this.horizontalPosition] = startHorizontal - (this.horizontalPosition == 'left' ? -offset : offset);
-				} else if (this.data.hideTransition == 'up') {
-					target[this.verticalPosition] = startVertical - (this.verticalPosition == 'top' ? offset : -offset);
-				} else if (this.data.hideTransition == 'down') {
-					target[this.verticalPosition] = startVertical - (this.verticalPosition == 'top' ? -offset : offset);
-				}
-			}
-
-			// animate the layers only for modern browsers
-			// for IE7 and below make the layers invisible instantly
-			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 7) {
-				this.$layer.css('visibility', 'hidden')
-					.css(target);
+			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8 || this.visibleOn == 'always') {
+				this.$layer.css('visibility', 'hidden');
 			} else {
-				this.$layer.stop()
-					.delay(this.data.hideDelay)
-					.css(start)
-					.animate(target, this.data.hideDuration, this.data.hideEasing, function() {
-						that.$layer.css('visibility', 'visible');
-						
-						// reset the position of the layer
-						that._setPosition();
-					});
+				// get the initial left and top margins
+				var that = this,
+					offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
+					duration = typeof this.data.hideDuration !== 'undefined' ? this.data.hideDuration / 1000 : 0.4;
+
+				var target = {
+					opacity: 0,
+					transition: 'all ' + duration + 's'
+				};
+
+				if (this.data.hideTransition == 'left')
+					target.transform = 'translate(-' + offset + 'px, 0)';
+				else if (this.data.hideTransition == 'right')
+					target.transform = 'translate(' + offset + 'px, 0)';
+				else if (this.data.hideTransition == 'up')
+					target.transform = 'translate(0, -' + offset + 'px)';
+				else if (this.data.hideTransition == 'down')
+					target.transform = 'translate(0, ' + offset + 'px)';
+
+				this.$layer.delay(this.data.hideDelay)
+							.queue(function() {
+								that.$layer.css(target);
+								$(this).dequeue();
+							});
 			}
 		},
 
