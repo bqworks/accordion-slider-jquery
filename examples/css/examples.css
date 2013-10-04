@@ -13,21 +13,14 @@ body {
 	-moz-transform: rotate(-90deg) translateY(100%);
 	-webkit-transform: rotate(-90deg) translateY(100%);
 	transform: rotate(-90deg) translateY(100%);
-	top: auto !important;
-	bottom: 8px;
-	left: 8px !important;
-}
-
-#example1 .as-padding {
-	padding: 10px;
 }
 
 @media (max-width: 860px) {
 	#example1.custom-responsive .panel-counter {
 		font-size: 16px;
-		bottom: 2px;
-		left: 2px !important;
 		padding: 2px;
+		bottom: 2px !important;
+		left: 2px !important;
 	}
 
 	#example1.custom-responsive .hide-medium-screen {
@@ -35,15 +28,9 @@ body {
 	}
 }
 
-@media (max-width: 515px) {
-	#example1.custom-responsive .panel-counter {
+@media (max-width: 640px) {
+	#example1.custom-responsive .as-layer {
 		font-size: 12px;
-		bottom: 0;
-		left: 0 !important;
-	}
-
-	#example1.custom-responsive h3 {
-		font-size: 14px;
 	}
 
 	#example1.custom-responsive .hide-medium-screen,

@@ -244,6 +244,8 @@
 							} else {
 								that.$layer.css(that.horizontalPosition, that.data.horizontal);
 							}
+						} else {
+							that.$layer.css(that.horizontalPosition, 0);
 						}
 
 						// reset the vetical position of the layer based on the data set
@@ -259,6 +261,8 @@
 							} else {
 								that.$layer.css(that.verticalPosition, that.data.vertical);
 							}
+						} else {
+							that.$layer.css(that.verticalPosition, 0);
 						}
 					});
 			}
@@ -321,6 +325,8 @@
 							} else {
 								that.$layer.css(that.horizontalPosition, that.data.horizontal);
 							}
+						} else {
+							that.$layer.css(that.horizontalPosition, 0);
 						}
 
 						// reset the vetical position of the layer based on the data set
@@ -336,6 +342,8 @@
 							} else {
 								that.$layer.css(that.verticalPosition, that.data.vertical);
 							}
+						} else {
+							that.$layer.css(that.verticalPosition, 0);
 						}
 					});
 			}
