@@ -23,24 +23,28 @@ body {
 		left: 2px !important;
 	}
 
-	#example1.custom-responsive .hide-medium-screen {
+	#example1.custom-responsive .hide-medium-screen,
+	#example3 .hide-medium-screen {
 		display: none;
 	}
 }
 
 @media (max-width: 640px) {
-	#example1.custom-responsive .as-layer {
+	#example1.custom-responsive .as-layer,
+	#example3.as-horizontal .as-layer {
 		font-size: 12px;
 	}
 
 	#example1.custom-responsive .hide-medium-screen,
-	#example1.custom-responsive .hide-small-screen {
+	#example1.custom-responsive .hide-small-screen,
+	#example3.as-horizontal .hide-medium-screen,
+	#example3.as-horizontal .hide-small-screen {
 		display: none;
 	}
 }
 
 #example3 .as-panel {
-	border: 3px solid #000;
+	border: 2px solid #333;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;

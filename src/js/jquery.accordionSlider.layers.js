@@ -146,6 +146,13 @@
 			this.horizontalPosition = this.position.indexOf('right') != -1 ? 'right' : 'left';
 			this.verticalPosition = this.position.indexOf('bottom') != -1 ? 'bottom' : 'top';
 
+			this._setPosition();
+		},
+
+		/*
+			Set the position of the layer
+		*/
+		_setPosition: function() {
 			// set the horizontal position of the layer based on the data set
 			if (typeof this.data.horizontal !== 'undefined') {
 				if ((this.data.horizontal == 'left' && this.horizontalPosition == 'left') || (this.data.horizontal == 'right' && this.horizontalPosition == 'right')) {
@@ -202,27 +209,27 @@
 			start.opacity = 0;
 
 			if (typeof this.data.showTransition !== 'undefined') {
-				var offset = typeof this.data.showOffset !== 'undefined' ? this.data.showOffset : 50,
-					targetVertical = parseInt(this.$layer.css(this.horizontalPosition), 10),
-					targetHorizontal = parseInt(this.$layer.css(this.verticalPosition), 10);
+				var offset = typeof that.data.showOffset !== 'undefined' ? that.data.showOffset : 50,
+					targetHorizontal = parseInt(that.$layer.css(that.horizontalPosition), 10),
+					targetVertical = parseInt(that.$layer.css(that.verticalPosition), 10);
 
-				target[this.horizontalPosition] = targetVertical;
-				target[this.verticalPosition] = targetHorizontal;
+				target[that.horizontalPosition] = targetHorizontal;
+				target[that.verticalPosition] = targetVertical;
 
-				if (this.data.showTransition == 'left') {
-					start[this.horizontalPosition] = targetVertical + (this.horizontalPosition == 'left' ? offset : -offset);
-				} else if (this.data.showTransition == 'right') {
-					start[this.horizontalPosition] = targetVertical + (this.horizontalPosition == 'left' ? -offset : offset);
-				} else if (this.data.showTransition == 'up') {
-					start[this.verticalPosition] = targetHorizontal + (this.verticalPosition == 'top' ? offset : -offset);
-				} else if (this.data.showTransition == 'down') {
-					start[this.verticalPosition] = targetHorizontal + (this.verticalPosition == 'top' ? -offset : offset);
+				if (that.data.showTransition == 'left') {
+					start[that.horizontalPosition] = targetHorizontal + (that.horizontalPosition == 'left' ? offset : -offset);
+				} else if (that.data.showTransition == 'right') {
+					start[that.horizontalPosition] = targetHorizontal + (that.horizontalPosition == 'left' ? -offset : offset);
+				} else if (that.data.showTransition == 'up') {
+					start[that.verticalPosition] = targetVertical + (that.verticalPosition == 'top' ? offset : -offset);
+				} else if (that.data.showTransition == 'down') {
+					start[that.verticalPosition] = targetVertical + (that.verticalPosition == 'top' ? -offset : offset);
 				}
 			}
 
 			// animate the layers only for modern browsers
 			// for IE7 and below make the layers visible instantly
-			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8) {
+			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8 || this.visibleOn == 'always') {
 				this.$layer.css('visibility', 'visible')
 					.css(target);
 			} else {
@@ -231,39 +238,8 @@
 					.css(start)
 					.css('visibility', 'visible')
 					.animate(target, this.data.showDuration, this.data.showEasing, function() {
-						// reset the horizontal position of the layer based on the data set
-						if (typeof that.data.horizontal !== 'undefined') {
-							if ((that.data.horizontal == 'left' && that.horizontalPosition == 'left') || (that.data.horizontal == 'right' && that.horizontalPosition == 'right')) {
-								that.$layer.css(that.horizontalPosition, 0);
-							} else if ((that.data.horizontal == 'right' && that.horizontalPosition == 'left') || (that.data.horizontal == 'left' && that.horizontalPosition == 'right')) {
-								that.$layer.css('margin-' + that.horizontalPosition, - that.$layer.outerWidth(false));
-								that.$layer.css(that.horizontalPosition, '100%');
-							} else if (that.data.horizontal == 'center') {
-								that.$layer.css('margin-' + that.horizontalPosition, - that.$layer.outerWidth(false) * 0.5);
-								that.$layer.css(that.horizontalPosition, '50%');
-							} else {
-								that.$layer.css(that.horizontalPosition, that.data.horizontal);
-							}
-						} else {
-							that.$layer.css(that.horizontalPosition, 0);
-						}
-
-						// reset the vetical position of the layer based on the data set
-						if (typeof that.data.vertical !== 'undefined') {
-							if ((that.data.vertical == 'top' && that.verticalPosition == 'top') || (that.data.vertical == 'bottom' && that.verticalPosition == 'bottom')) {
-								that.$layer.css(that.verticalPosition, 0);
-							} else if ((that.data.vertical == 'bottom' && that.verticalPosition == 'top') || (that.data.vertical == 'top' && that.verticalPosition == 'bottom')) {
-								that.$layer.css('margin-' + that.verticalPosition, - that.$layer.outerHeight(false));
-								that.$layer.css(that.verticalPosition, '100%');
-							} else if (that.data.vertical == 'center') {
-								that.$layer.css('margin-' + that.verticalPosition, - that.$layer.outerHeight(false) * 0.5);
-								that.$layer.css(that.verticalPosition, '50%');
-							} else {
-								that.$layer.css(that.verticalPosition, that.data.vertical);
-							}
-						} else {
-							that.$layer.css(that.verticalPosition, 0);
-						}
+						// reset the position of the layer
+						that._setPosition();
 					});
 			}
 		},
@@ -286,17 +262,17 @@
 
 			if (typeof this.data.hideTransition !== 'undefined') {
 				var offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
-					startVertical = parseInt(this.$layer.css(this.horizontalPosition), 10),
-					startHorizontal = parseInt(this.$layer.css(this.verticalPosition), 10);
+					startHorizontal = parseInt(this.$layer.css(this.horizontalPosition), 10),
+					startVertical = parseInt(this.$layer.css(this.verticalPosition), 10);
 
 				if (this.data.hideTransition == 'left') {
-					target[this.horizontalPosition] = startVertical - (this.horizontalPosition == 'left' ? offset : -offset);
+					target[this.horizontalPosition] = startHorizontal - (this.horizontalPosition == 'left' ? offset : -offset);
 				} else if (this.data.hideTransition == 'right') {
-					target[this.horizontalPosition] = startVertical - (this.horizontalPosition == 'left' ? -offset : offset);
+					target[this.horizontalPosition] = startHorizontal - (this.horizontalPosition == 'left' ? -offset : offset);
 				} else if (this.data.hideTransition == 'up') {
-					target[this.verticalPosition] = startHorizontal - (this.verticalPosition == 'top' ? offset : -offset);
+					target[this.verticalPosition] = startVertical - (this.verticalPosition == 'top' ? offset : -offset);
 				} else if (this.data.hideTransition == 'down') {
-					target[this.verticalPosition] = startHorizontal - (this.verticalPosition == 'top' ? -offset : offset);
+					target[this.verticalPosition] = startVertical - (this.verticalPosition == 'top' ? -offset : offset);
 				}
 			}
 
@@ -311,40 +287,9 @@
 					.css(start)
 					.animate(target, this.data.hideDuration, this.data.hideEasing, function() {
 						that.$layer.css('visibility', 'visible');
-
-						// reset the horizontal position of the layer based on the data set
-						if (typeof that.data.horizontal !== 'undefined') {
-							if ((that.data.horizontal == 'left' && that.horizontalPosition == 'left') || (that.data.horizontal == 'right' && that.horizontalPosition == 'right')) {
-								that.$layer.css(that.horizontalPosition, 0);
-							} else if ((that.data.horizontal == 'right' && that.horizontalPosition == 'left') || (that.data.horizontal == 'left' && that.horizontalPosition == 'right')) {
-								that.$layer.css('margin-' + that.horizontalPosition, - that.$layer.outerWidth(false));
-								that.$layer.css(that.horizontalPosition, '100%');
-							} else if (that.data.horizontal == 'center') {
-								that.$layer.css('margin-' + that.horizontalPosition, - that.$layer.outerWidth(false) * 0.5);
-								that.$layer.css(that.horizontalPosition, '50%');
-							} else {
-								that.$layer.css(that.horizontalPosition, that.data.horizontal);
-							}
-						} else {
-							that.$layer.css(that.horizontalPosition, 0);
-						}
-
-						// reset the vetical position of the layer based on the data set
-						if (typeof that.data.vertical !== 'undefined') {
-							if ((that.data.vertical == 'top' && that.verticalPosition == 'top') || (that.data.vertical == 'bottom' && that.verticalPosition == 'bottom')) {
-								that.$layer.css(that.verticalPosition, 0);
-							} else if ((that.data.vertical == 'bottom' && that.verticalPosition == 'top') || (that.data.vertical == 'top' && that.verticalPosition == 'bottom')) {
-								that.$layer.css('margin-' + that.verticalPosition, - that.$layer.outerHeight(false));
-								that.$layer.css(that.verticalPosition, '100%');
-							} else if (that.data.vertical == 'center') {
-								that.$layer.css('margin-' + that.verticalPosition, - that.$layer.outerHeight(false) * 0.5);
-								that.$layer.css(that.verticalPosition, '50%');
-							} else {
-								that.$layer.css(that.verticalPosition, that.data.vertical);
-							}
-						} else {
-							that.$layer.css(that.verticalPosition, 0);
-						}
+						
+						// reset the position of the layer
+						that._setPosition();
 					});
 			}
 		},
