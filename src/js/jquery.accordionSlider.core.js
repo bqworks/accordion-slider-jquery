@@ -273,6 +273,9 @@
 				this.$accordion.addClass('overlap');
 			}
 
+			// clear inline size of the background images because the orientation might have changes
+			this.$accordion.find('img.as-background, img.as-background-opened').css({'width': '', 'height': ''});
+
 			// update panels
 			this._updatePanels();
 
@@ -450,6 +453,15 @@
 				
 				this.totalSize = this.settings.orientation == "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
 			}
+
+			// set the size of the background images explicitly because of a bug?
+			// that causes anchors not to adapt their size to the size of the image,
+			// when the image size is set in percentages, which causes the total size
+			// of the panel to be bigger than it should
+			if (this.settings.orientation == 'horizontal')
+				this.$accordion.find('img.as-background, img.as-background-opened').css('height', this.$panelsContainer.innerHeight());
+			else
+				this.$accordion.find('img.as-background, img.as-background-opened').css('width', this.$panelsContainer.innerWidth());
 
 			// set the initial computedOpenedPanelSize to the value defined in the options
 			this.computedOpenedPanelSize = this.settings.openedPanelSize;

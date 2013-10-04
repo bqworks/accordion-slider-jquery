@@ -75,8 +75,9 @@
 				// create a new image element
 				var newImage = $(new Image());
 
-				// copy the class(es)
+				// copy the class(es) and inline style
 				newImage.attr('class', image.attr('class'));
+				newImage.attr('style', image.attr('style'));
 
 				// copy the data attributes
 				$.each(image.data(), function(name, value) {

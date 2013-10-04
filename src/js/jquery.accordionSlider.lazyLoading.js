@@ -28,6 +28,7 @@
 			// loop through all the visible panels, verify if there are unloaded images, and load them
 			$.each(panelsToCheck, function(index, element) {
 				var $panel = element.$panel;
+
 				if (typeof $panel.attr('data-loaded') === 'undefined') {
 					$panel.attr('data-loaded', true);
 
@@ -44,8 +45,9 @@
 				// create a new image element
 				var newImage = $(new Image());
 
-				// copy the class(es)
+				// copy the class(es) and inline style
 				newImage.attr('class', image.attr('class'));
+				newImage.attr('style', image.attr('style'));
 
 				// copy the data attributes
 				$.each(image.data(), function(name, value) {

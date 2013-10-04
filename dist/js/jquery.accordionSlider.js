@@ -273,6 +273,9 @@
 				this.$accordion.addClass('overlap');
 			}
 
+			// clear inline size of the background images because the orientation might have changes
+			this.$accordion.find('img.as-background, img.as-background-opened').css({'width': '', 'height': ''});
+
 			// update panels
 			this._updatePanels();
 
@@ -450,6 +453,15 @@
 				
 				this.totalSize = this.settings.orientation == "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
 			}
+
+			// set the size of the background images explicitly because of a bug?
+			// that causes anchors not to adapt their size to the size of the image,
+			// when the image size is set in percentages, which causes the total size
+			// of the panel to be bigger than it should
+			if (this.settings.orientation == 'horizontal')
+				this.$accordion.find('img.as-background, img.as-background-opened').css('height', this.$panelsContainer.innerHeight());
+			else
+				this.$accordion.find('img.as-background, img.as-background-opened').css('width', this.$panelsContainer.innerWidth());
 
 			// set the initial computedOpenedPanelSize to the value defined in the options
 			this.computedOpenedPanelSize = this.settings.openedPanelSize;
@@ -2195,6 +2207,7 @@
 			// loop through all the visible panels, verify if there are unloaded images, and load them
 			$.each(panelsToCheck, function(index, element) {
 				var $panel = element.$panel;
+
 				if (typeof $panel.attr('data-loaded') === 'undefined') {
 					$panel.attr('data-loaded', true);
 
@@ -2211,8 +2224,9 @@
 				// create a new image element
 				var newImage = $(new Image());
 
-				// copy the class(es)
+				// copy the class(es) and inline style
 				newImage.attr('class', image.attr('class'));
+				newImage.attr('style', image.attr('style'));
 
 				// copy the data attributes
 				$.each(image.data(), function(name, value) {
@@ -2411,8 +2425,9 @@
 				// create a new image element
 				var newImage = $(new Image());
 
-				// copy the class(es)
+				// copy the class(es) and inline style
 				newImage.attr('class', image.attr('class'));
+				newImage.attr('style', image.attr('style'));
 
 				// copy the data attributes
 				$.each(image.data(), function(name, value) {
