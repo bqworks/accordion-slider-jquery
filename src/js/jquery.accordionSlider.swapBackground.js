@@ -28,7 +28,7 @@
 					opened.css({'visibility': 'visible', 'opacity': 0})
 						.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
 
-					if (background.length !== 0) {
+					if (background.length !== 0 && that.settings.fadeOutBackground === true) {
 						background.stop().animate({'opacity': 0}, that.settings.swapBackgroundDuration);
 					}
 				}
@@ -45,7 +45,7 @@
 							previousOpened.css({'visibility': 'hidden'});
 						});
 
-						if (previousBackground.length !== 0) {
+						if (previousBackground.length !== 0 && that.settings.fadeOutBackground === true) {
 							previousBackground.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
 						}
 					}
@@ -67,7 +67,7 @@
 						opened.css({'visibility': 'hidden'});
 					});
 
-					if (background.length !== 0) {
+					if (background.length !== 0 && that.settings.fadeOutBackground === true) {
 						background.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
 					}
 				}
@@ -80,7 +80,8 @@
 		},
 
 		swapBackgroundDefaults: {
-			swapBackgroundDuration: 700
+			swapBackgroundDuration: 700,
+			fadeOutBackground: false
 		}
 	};
 
