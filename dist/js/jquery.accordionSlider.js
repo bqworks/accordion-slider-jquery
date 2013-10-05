@@ -1939,7 +1939,7 @@
 
 		_init: function() {
 			// hide the layer by default
-			this.$layer.css('visibility', 'hidden');
+			this.$layer.css({'visibility': 'hidden', 'display': 'none'});
 
 			if (this.$layer.hasClass('as-opened')) {
 				this.visibleOn = 'opened';
@@ -1957,9 +1957,11 @@
 		_setStyle: function() {
 			this.styled = true;
 
+			this.$layer.css('display', '');
+
 			// get the data attributes specified in HTML
 			this.data = this.$layer.data();
-				
+			
 			if (typeof this.data.width !== 'undefined')
 				this.$layer.css('width', this.data.width);
 			
@@ -2742,6 +2744,8 @@
 
 		touchEndPoint: {x: 0, y: 0},
 
+		touchDistance: {x: 0, y: 0},
+
 		touchStartPosition: 0,
 
 		isTouchMoving: false,
@@ -2797,6 +2801,9 @@
 			this.touchStartPoint.y = eventObject.pageY;
 			this.touchStartPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
 
+			// clear the distance
+			this.touchDistance.x = this.touchDistance.y = 0;
+
 			// listen for move adn end events
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
 			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
@@ -2823,9 +2830,10 @@
 			this.touchEndPoint.y = eventObject.pageY;
 
 			// calculate the distance of the movement on both axis
-			var xDistance = this.touchEndPoint.x - this.touchStartPoint.x,
-				yDistance = this.touchEndPoint.y - this.touchStartPoint.y,
-				distance = this.settings.orientation == 'horizontal' ? xDistance : yDistance;
+			this.touchDistance.x = this.touchEndPoint.x - this.touchStartPoint.x;
+			this.touchDistance.y = this.touchEndPoint.y - this.touchStartPoint.y;
+			
+			var distance = this.settings.orientation == 'horizontal' ? this.touchDistance.x : this.touchDistance.y;
 			
 			// get the current position of panels' container
 			var currentPanelsPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
@@ -2846,11 +2854,14 @@
 			this.$panelsContainer.off(moveEvent + '.' + NS);
 			$(document).off(endEvent + '.' + this.uniqueId + '.' + NS);
 
+			// swap grabbing icons
+			this.$panelsContainer.removeClass('as-grabbing').addClass('as-grab');
+
 			// check if there is intention for a tap
-			if (this.isTouchSupport === true && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchEndPoint.x - this.touchStartPoint.x) < 10 && Math.abs(this.touchEndPoint.y - this.touchStartPoint.y) < 10)) {
+			if (this.isTouchSupport === true && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchDistance.x) < 10 && Math.abs(this.touchDistance.y) < 10)) {
 				var index = $(event.target).parents('.as-panel').index();
 
-				if (index !== this.currentIndex) {
+				if (index !== this.currentIndex && index !== -1) {
 					this.openPanel(index);
 				} else {
 					// re-enable click events on links
@@ -2868,50 +2879,43 @@
 
 			this.isTouchMoving = false;
 
-			// calculate the distance of the movement
-			var xDistance = this.touchEndPoint.x - this.touchStartPoint.x,
-				yDistance = this.touchEndPoint.y - this.touchStartPoint.y,
-				noScrollAnimObj = {};
-
+			var noScrollAnimObj = {};
 			noScrollAnimObj[this.positionProperty] = this.touchStartPosition;
 
 			// set the accordion's page based on the distance of the movement and the accordion's settings
 			if (this.settings.orientation == 'horizontal') {
-				if (xDistance > this.settings.touchSwipeThreshold) {
+				if (this.touchDistance.x > this.settings.touchSwipeThreshold) {
 					if (this.currentPage > 0) {
 						this.previousPage();
 					} else {
 						this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
 					}
-				} else if (- xDistance > this.settings.touchSwipeThreshold) {
+				} else if (- this.touchDistance.x > this.settings.touchSwipeThreshold) {
 					if (this.currentPage < this.getTotalPages() - 1) {
 						this.nextPage();
 					} else {
 						this.gotoPage(this.currentPage);
 					}
-				} else if (Math.abs(xDistance) < this.settings.touchSwipeThreshold) {
+				} else if (Math.abs(this.touchDistance.x) < this.settings.touchSwipeThreshold) {
 					this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
 				}
 			} else if (this.settings.orientation == 'vertical') {
-				if (yDistance > this.settings.touchSwipeThreshold) {
+				if (this.touchDistance.y > this.settings.touchSwipeThreshold) {
 					if (this.currentPage > 0) {
 						this.previousPage();
 					} else {
 						this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
 					}
-				} else if (- yDistance > this.settings.touchSwipeThreshold) {
+				} else if (- this.touchDistance.y > this.settings.touchSwipeThreshold) {
 					if (this.currentPage < this.getTotalPages() - 1) {
 						this.nextPage();
 					} else {
 						this.$panelsContainer.animate(noScrollAnimObj, 300);
 					}
-				} else if (Math.abs(yDistance) < this.settings.touchSwipeThreshold) {
+				} else if (Math.abs(this.touchDistance.y) < this.settings.touchSwipeThreshold) {
 					this.$panelsContainer.stop().animate(noScrollAnimObj, 300);
 				}
 			}
-
-			// swap grabbing icons
-			this.$panelsContainer.removeClass('as-grabbing').addClass('as-grab');
 		},
 
 		destroyTouchSwipe: function() {

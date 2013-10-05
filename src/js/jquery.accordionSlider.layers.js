@@ -110,7 +110,7 @@
 
 		_init: function() {
 			// hide the layer by default
-			this.$layer.css('visibility', 'hidden');
+			this.$layer.css({'visibility': 'hidden', 'display': 'none'});
 
 			if (this.$layer.hasClass('as-opened')) {
 				this.visibleOn = 'opened';
@@ -128,9 +128,11 @@
 		_setStyle: function() {
 			this.styled = true;
 
+			this.$layer.css('display', '');
+
 			// get the data attributes specified in HTML
 			this.data = this.$layer.data();
-				
+			
 			if (typeof this.data.width !== 'undefined')
 				this.$layer.css('width', this.data.width);
 			

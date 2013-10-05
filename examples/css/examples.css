@@ -35,11 +35,17 @@ body {
 		font-size: 12px;
 	}
 
-	#example1.custom-responsive .hide-medium-screen,
 	#example1.custom-responsive .hide-small-screen,
-	#example3.as-horizontal .hide-medium-screen,
-	#example3.as-horizontal .hide-small-screen {
+	#example3 .hide-small-screen {
 		display: none;
+	}
+}
+
+@media (max-width: 450px) {
+	#example1.custom-responsive .as-layer,
+	#example3.as-horizontal .as-layer {
+		font-size: 10px;
+		padding: 2px;
 	}
 }
 
