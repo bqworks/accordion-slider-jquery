@@ -33,8 +33,8 @@
 
 			if ($(this).hasClass('auto')) {
 				// change the responsive mode to 'auto' and remove the 'custom-responsive' class
-				$('#example1').accordionSlider('responsiveMode', 'auto');
 				$('#example1').removeClass('custom-responsive');
+				$('#example1').accordionSlider('responsiveMode', 'auto');
 
 				// change the arrows' visibility
 				$('.auto-arrow').show();
@@ -42,8 +42,8 @@
 			} else if ($(this).hasClass('custom')) {
 				// change the responsive mode to 'custom' and add the 'custom-responsive' 
 				// class in order to use it as a reference in the CSS code
-				$('#example1').accordionSlider('responsiveMode', 'custom');
 				$('#example1').addClass('custom-responsive');
+				$('#example1').accordionSlider('responsiveMode', 'custom');
 
 				// change the arrows' visibility
 				$('.custom-arrow').show();

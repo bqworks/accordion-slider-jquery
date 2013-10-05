@@ -88,8 +88,6 @@
 		}
 	};
 
-	$.AccordionSlider.addModule('Layers', Layers, 'panel');
-
 	var Layer = function(layer) {
 
 		// reference to the layer jQuery object
@@ -155,14 +153,14 @@
 		_setPosition: function() {
 			// set the horizontal position of the layer based on the data set
 			if (typeof this.data.horizontal !== 'undefined') {
-				if ((this.data.horizontal == 'left' && this.horizontalPosition == 'left') || (this.data.horizontal == 'right' && this.horizontalPosition == 'right')) {
-					this.$layer.css(this.horizontalPosition, 0);
-				} else if ((this.data.horizontal == 'right' && this.horizontalPosition == 'left') || (this.data.horizontal == 'left' && this.horizontalPosition == 'right')) {
-					this.$layer.css('margin-' + this.horizontalPosition, - this.$layer.outerWidth(false));
-					this.$layer.css(this.horizontalPosition, '100%');
-				} else if (this.data.horizontal == 'center') {
-					this.$layer.css('margin-' + this.horizontalPosition, - this.$layer.outerWidth(false) * 0.5);
-					this.$layer.css(this.horizontalPosition, '50%');
+				if (this.data.horizontal == 'center') {
+					// prevent content wrapping while setting the width
+					if (this.$layer.attr('style').indexOf('width') == -1) {
+						this.$layer.css('white-space', 'nowrap');
+						this.$layer.css('width', this.$layer.outerWidth(true));
+					}
+					// center horizontally
+					this.$layer.css({'marginLeft': 'auto', 'marginRight': 'auto', 'left': 0, 'right': 0});
 				} else {
 					this.$layer.css(this.horizontalPosition, this.data.horizontal);
 				}
@@ -172,14 +170,14 @@
 
 			// set the vetical position of the layer based on the data set
 			if (typeof this.data.vertical !== 'undefined') {
-				if ((this.data.vertical == 'top' && this.verticalPosition == 'top') || (this.data.vertical == 'bottom' && this.verticalPosition == 'bottom')) {
-					this.$layer.css(this.verticalPosition, 0);
-				} else if ((this.data.vertical == 'bottom' && this.verticalPosition == 'top') || (this.data.vertical == 'top' && this.verticalPosition == 'bottom')) {
-					this.$layer.css('margin-' + this.verticalPosition, - this.$layer.outerHeight(false));
-					this.$layer.css(this.verticalPosition, '100%');
-				} else if (this.data.vertical == 'center') {
-					this.$layer.css('margin-' + this.verticalPosition, - this.$layer.outerHeight(false) * 0.5);
-					this.$layer.css(this.verticalPosition, '50%');
+				if (this.data.vertical == 'center') {
+					// prevent content wrapping while setting the height
+					if (this.$layer.attr('style').indexOf('height') == -1) {
+						this.$layer.css('white-space', 'nowrap');
+						this.$layer.css('height', this.$layer.outerHeight(true));
+					}
+					// center vertically
+					this.$layer.css({'marginTop': 'auto', 'marginBottom': 'auto', 'top': 0, 'bottom': 0});
 				} else {
 					this.$layer.css(this.verticalPosition, this.data.vertical);
 				}
@@ -206,28 +204,34 @@
 				// get the initial left and top margins
 				var that = this,
 					offset = typeof this.data.showOffset !== 'undefined' ? this.data.showOffset : 50,
-					duration = typeof this.data.showDuration !== 'undefined' ? this.data.showDuration / 1000 : 0.4;
+					duration = typeof this.data.showDuration !== 'undefined' ? this.data.showDuration / 1000 : 0.4,
+					delay = typeof this.data.showDelay !== 'undefined' ? this.data.showDelay : 10;
 
-				var start = {opacity: 0};
+				var start = {opacity: 0},
+					transformValues = '';
 
 				if (this.data.showTransition == 'left')
-					start.transform = 'translate3d(' + offset + 'px, 0, 0)';
+					transformValues = offset + 'px, 0';
 				else if (this.data.showTransition == 'right')
-					start.transform = 'translate3d(-' + offset + 'px, 0, 0)';
+					transformValues = '-' + offset + 'px, 0';
 				else if (this.data.showTransition == 'up')
-					start.transform = 'translate3d(0, ' + offset + 'px, 0)';
+					transformValues = '0, ' + offset + 'px';
 				else if (this.data.showTransition == 'down')
-					start.transform = 'translate3d(0, -' + offset + 'px, 0)';
+					transformValues = '0, -' + offset + 'px';
+
+				start.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(' + transformValues + ', 0)' : 'translate(' + transformValues + ')';
 
 				var target = {
 					visibility: 'visible',
 					opacity: 1,
-					transform: 'translate3d(0, 0, 0)',
 					transition: 'all ' + duration + 's'
 				};
 
+				if (typeof this.data.showTransition !== 'undefined')
+					target.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(0, 0, 0)' : 'translate(0, 0)';
+
 				this.$layer.css(start)
-							.delay(this.data.showDelay)
+							.delay(delay)
 							.queue(function() {
 								that.$layer.css(target);
 								$(this).dequeue();
@@ -250,23 +254,27 @@
 				// get the initial left and top margins
 				var that = this,
 					offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
-					duration = typeof this.data.hideDuration !== 'undefined' ? this.data.hideDuration / 1000 : 0.4;
+					duration = typeof this.data.hideDuration !== 'undefined' ? this.data.hideDuration / 1000 : 0.4,
+					delay = typeof this.data.hideDelay !== 'undefined' ? this.data.hideDelay : 10;
 
 				var target = {
-					opacity: 0,
-					transition: 'all ' + duration + 's'
-				};
+						opacity: 0,
+						transition: 'all ' + duration + 's'
+					},
+					transformValues = '';
 
 				if (this.data.hideTransition == 'left')
-					target.transform = 'translate(-' + offset + 'px, 0)';
+					transformValues = '-' + offset + 'px, 0';
 				else if (this.data.hideTransition == 'right')
-					target.transform = 'translate(' + offset + 'px, 0)';
+					transformValues = offset + 'px, 0';
 				else if (this.data.hideTransition == 'up')
-					target.transform = 'translate(0, -' + offset + 'px)';
+					transformValues = '0, -' + offset + 'px';
 				else if (this.data.hideTransition == 'down')
-					target.transform = 'translate(0, ' + offset + 'px)';
+					transformValues = '0, ' + offset + 'px';
 
-				this.$layer.delay(this.data.hideDelay)
+				target.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(' + transformValues + ', 0)' : 'translate(' + transformValues + ')';
+
+				this.$layer.delay(delay)
 							.queue(function() {
 								that.$layer.css(target);
 								$(this).dequeue();
@@ -276,6 +284,54 @@
 
 		destroy: function() {
 			this.$layer.attr('style', '');
+		}
+	};
+
+	$.AccordionSlider.addModule('Layers', Layers, 'panel');
+
+	var LayersHelper = {
+
+		checked: false,
+
+		transforms: '',
+
+		/*
+			Check if 2D and 3D transforms are supported
+			Inspired by Modernizr
+		*/
+		useTransforms: function() {
+			if (this.checked === true)
+				return this.transforms;
+
+			this.checked = true;
+
+			var div = document.createElement('div');
+
+			// check if 3D transforms are supported
+			if (typeof div.style.WebkitPerspective !== 'undefined' || typeof div.style.perspective !== 'undefined')
+				this.transforms = '3d';
+
+			// additional checks for Webkit
+			if (this.transforms == '3d' && typeof div.styleWebkitPerspective !== 'undefined') {
+				var style = document.createElement('style');
+				style.textContent = '@media (transform-3d),(-webkit-transform-3d){#test-3d{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0;}}';
+				document.getElementsByTagName('head')[0].appendChild(style);
+
+				div.id = 'test-3d';
+				document.body.appendChild(div);
+
+				if (!(div.offsetLeft === 9 && div.offsetHeight === 5))
+					this.transforms = '';
+
+				style.parentNode.removeChild(style);
+				div.parentNode.removeChild(div);
+			}
+
+			// check if 2D transforms are supported
+			if (this.transforms === '' && typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style.transform !== 'undefined')
+				this.transforms = '2d';
+
+			return this.transforms;
 		}
 	};
 	
