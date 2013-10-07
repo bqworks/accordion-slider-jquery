@@ -1877,6 +1877,12 @@
 				that.layers.push(layer);
 			});
 
+			// check the index pf the panel against the index of the selected/opened panel
+            if (this.index === this.accordion.getCurrentIndex())
+                this._handleLayersInOpenedState();
+            else
+                this._handleLayersInClosedState();
+
 			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
 			this.accordion.on('panelOpen.Layers.' + this.panelNS, function(event) {
@@ -2040,15 +2046,19 @@
 			if (this.styled === false)
 				this._setStyle();
 
-			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8 || this.visibleOn == 'always') {
-				this.$layer.css('visibility', 'visible');
-			} else {
-				// get the initial left and top margins
-				var that = this,
-					offset = typeof this.data.showOffset !== 'undefined' ? this.data.showOffset : 50,
-					duration = typeof this.data.showDuration !== 'undefined' ? this.data.showDuration / 1000 : 0.4,
-					delay = typeof this.data.showDelay !== 'undefined' ? this.data.showDelay : 10;
+			var that = this,
+				offset = typeof this.data.showOffset !== 'undefined' ? this.data.showOffset : 50,
+				duration = typeof this.data.showDuration !== 'undefined' ? this.data.showDuration / 1000 : 0.4,
+				delay = typeof this.data.showDelay !== 'undefined' ? this.data.showDelay : 10;
 
+			if (this.visibleOn == 'always' || browserName == 'msie' && parseInt(browserVersion, 10) <= 7) {
+				this.$layer.css('visibility', 'visible');
+			} else if (browserName == 'msie' && parseInt(browserVersion, 10) <= 9) {
+				this.$layer.stop()
+							.delay(delay)
+							.css({'opacity': 0, 'visibility': 'visible'})
+							.animate({'opacity': 1}, duration * 1000);
+			} else {
 				var start = {opacity: 0},
 					transformValues = '';
 
@@ -2090,15 +2100,20 @@
 
 			this.isVisible = false;
 
-			if (browserName == 'msie' && parseInt(browserVersion, 10) <= 8 || this.visibleOn == 'always') {
-				this.$layer.css('visibility', 'hidden');
-			} else {
-				// get the initial left and top margins
-				var that = this,
-					offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
-					duration = typeof this.data.hideDuration !== 'undefined' ? this.data.hideDuration / 1000 : 0.4,
-					delay = typeof this.data.hideDelay !== 'undefined' ? this.data.hideDelay : 10;
+			var that = this,
+				offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
+				duration = typeof this.data.hideDuration !== 'undefined' ? this.data.hideDuration / 1000 : 0.4,
+				delay = typeof this.data.hideDelay !== 'undefined' ? this.data.hideDelay : 10;
 
+			if (this.visibleOn == 'always' || browserName == 'msie' && parseInt(browserVersion, 10) <= 7) {
+				this.$layer.css('visibility', 'hidden');
+			} else if (browserName == 'msie' && parseInt(browserVersion, 10) <= 9) {
+				this.$layer.stop()
+							.delay(delay)
+							.animate({'opacity': 0}, duration * 1000, function() {
+								$(this).css({'visibility': 'hidden'});
+							});
+			} else {
 				var target = {
 						opacity: 0,
 						transition: 'all ' + duration + 's'
@@ -2115,6 +2130,12 @@
 					transformValues = '0, ' + offset + 'px';
 
 				target.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(' + transformValues + ', 0)' : 'translate(' + transformValues + ')';
+
+				// hide the layer after transition
+				this.$layer.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
+					that.$layer.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
+					that.$layer.css('visibility', 'hidden');
+				});
 
 				this.$layer.delay(delay)
 							.queue(function() {
@@ -2170,7 +2191,7 @@
 			}
 
 			// check if 2D transforms are supported
-			if (this.transforms === '' && typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style.transform !== 'undefined')
+			if (this.transforms === '' && (typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style.transform !== 'undefined'))
 				this.transforms = '2d';
 
 			return this.transforms;
