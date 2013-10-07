@@ -34,15 +34,12 @@
 				that.layers.push(layer);
 			});
 
-			// check the index pf the panel against the index of the selected/opened panel
-			if (this.index === this.accordion.getCurrentIndex())
-				this._handleLayersInOpenedState();
-			else
-				this._handleLayersInClosedState();
-
 			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
 			this.accordion.on('panelOpen.Layers.' + this.panelNS, function(event) {
+				if (event.index === event.previousIndex)
+					return;
+
 				if (that.index === event.previousIndex)
 					that._handleLayersInClosedState();
 
