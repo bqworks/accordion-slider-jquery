@@ -1036,6 +1036,9 @@
 			Return the total number of pages
 		*/
 		getTotalPages: function() {
+			if (this.settings.visiblePanels == -1)
+				return 1;
+			
 			return Math.ceil(this.getTotalPanels() / this.settings.visiblePanels);
 		},
 
@@ -2797,26 +2800,28 @@
 			// listen to touch events or, if touch support doesn't exist, listen to mouse events
 			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown';
 			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this._onTouchStart, this));
-
-			// add grabbing icon
-			this.$panelsContainer.addClass('as-grab');
-
-			// remove mouse events on panels
-			if (this.isTouchSupport) {
-				this.on('update.TouchSwipe.' + NS, function() {
+			
+			this.on('update.TouchSwipe.' + NS, function() {
+				// remove mouse events on panels
+				if (this.isTouchSupport)
 					$.each(that.panels, function(index, element) {
 						var panel = element;
 						panel.off('panelMouseOver.' + NS);
 						panel.off('panelMouseOut.' + NS);
 						panel.off('panelClick.' + NS);
 					});
-				});
-			}
+
+				// add or remove grabbing icon
+				if (that.getTotalPages() > 1)
+					that.$panelsContainer.addClass('as-grab');
+				else
+					that.$panelsContainer.removeClass('as-grab');
+			});
 		},
 
 		_onTouchStart: function(event) {
 			// disable dragging if the element is set to allow selections
-			if ($(event.target).closest('.selectable').length >= 1)
+			if ($(event.target).closest('.selectable').length >= 1 || this.getTotalPages() == 1)
 				return;
 
 			// prevent default behaviour only for mouse events

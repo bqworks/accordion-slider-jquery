@@ -1036,6 +1036,9 @@
 			Return the total number of pages
 		*/
 		getTotalPages: function() {
+			if (this.settings.visiblePanels == -1)
+				return 1;
+			
 			return Math.ceil(this.getTotalPanels() / this.settings.visiblePanels);
 		},
 
