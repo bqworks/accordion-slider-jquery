@@ -43,11 +43,11 @@
 			// listen when a panel is opened and when the panels are closed, and handle 
 			// the layer's behaviour based on the state of the panel
 			this.accordion.on('panelOpen.Layers.' + this.panelNS, function(event) {
-				if (that.index === event.index)
-					that._handleLayersInOpenedState();
-
 				if (that.index === event.previousIndex)
 					that._handleLayersInClosedState();
+
+				if (that.index === event.index)
+					that._handleLayersInOpenedState();
 			});
 
 			this.accordion.on('panelsClose.Layers.' + this.panelNS, function(event) {

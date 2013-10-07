@@ -949,7 +949,6 @@
 
 			this.currentIndex = -1;
 
-
 			// remove the "opened" class and add the "closed" class, which indicates
 			// that the accordion is closed
 			if (this.$accordion.hasClass('as-closed') === false) {
