@@ -216,7 +216,7 @@
 							.css({'opacity': 0, 'visibility': 'visible'})
 							.animate({'opacity': 1}, duration * 1000);
 			} else {
-				var start = {opacity: 0},
+				var start = {opacity: 0, visibility: 'visible'},
 					transformValues = '';
 
 				if (this.data.showTransition == 'left')
@@ -231,7 +231,6 @@
 				start.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(' + transformValues + ', 0)' : 'translate(' + transformValues + ')';
 
 				var target = {
-					visibility: 'visible',
 					opacity: 1,
 					transition: 'all ' + duration + 's'
 				};
