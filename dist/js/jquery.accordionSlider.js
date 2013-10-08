@@ -2136,7 +2136,9 @@
 				// hide the layer after transition
 				this.$layer.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
 					that.$layer.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
-					that.$layer.css('visibility', 'hidden');
+
+					if (that.isVisible === false)
+						that.$layer.css('visibility', 'hidden');
 				});
 
 				this.$layer.delay(delay)
