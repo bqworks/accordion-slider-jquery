@@ -216,7 +216,9 @@
 							.css({'opacity': 0, 'visibility': 'visible'})
 							.animate({'opacity': 1}, duration * 1000);
 			} else {
-				var start = {opacity: 0, visibility: 'visible'},
+				var start = {
+						'opacity': 0, 'visibility': 'visible'
+					},
 					transformValues = '';
 
 				if (this.data.showTransition == 'left')
@@ -231,8 +233,8 @@
 				start.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(' + transformValues + ', 0)' : 'translate(' + transformValues + ')';
 
 				var target = {
-					opacity: 1,
-					transition: 'all ' + duration + 's'
+					'opacity': 1,
+					'transition': 'all ' + duration + 's'
 				};
 
 				if (typeof this.data.showTransition !== 'undefined')
@@ -271,8 +273,8 @@
 							});
 			} else {
 				var target = {
-						opacity: 0,
-						transition: 'all ' + duration + 's'
+						'opacity': 0,
+						'transition': 'all ' + duration + 's'
 					},
 					transformValues = '';
 

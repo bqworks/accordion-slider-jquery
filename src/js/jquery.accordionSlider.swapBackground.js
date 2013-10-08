@@ -25,12 +25,11 @@
 
 				// fade in the opened content
 				if (opened.length !== 0) {
-					opened.css({'visibility': 'visible', 'opacity': 0})
-						.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
+					opened.css({'visibility': 'visible', 'opacity': 0});
+					that._fadeInBackground(opened);
 
-					if (background.length !== 0 && that.settings.fadeOutBackground === true) {
-						background.stop().animate({'opacity': 0}, that.settings.swapBackgroundDuration);
-					}
+					if (background.length !== 0 && that.settings.fadeOutBackground === true)
+						that._fadeOutBackground(background);
 				}
 
 				if (event.previousIndex != -1) {
@@ -41,13 +40,10 @@
 
 					// fade out the opened content
 					if (previousOpened.length !== 0) {
-						previousOpened.stop().animate({'opacity': 0}, that.settings.swapBackgroundDuration, function() {
-							previousOpened.css({'visibility': 'hidden'});
-						});
+						that._fadeOutBackground(previousOpened);
 
-						if (previousBackground.length !== 0 && that.settings.fadeOutBackground === true) {
-							previousBackground.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
-						}
+						if (previousBackground.length !== 0 && that.settings.fadeOutBackground === true)
+							that._fadeInBackground(previousBackground);
 					}
 				}
 			});
@@ -63,14 +59,21 @@
 
 				// fade out the opened content
 				if (opened.length !== 0) {
-					opened.stop().animate({'opacity': 0}, that.settings.swapBackgroundDuration, function() {
-						opened.css({'visibility': 'hidden'});
-					});
+					that._fadeOutBackground(opened);
 
-					if (background.length !== 0 && that.settings.fadeOutBackground === true) {
-						background.stop().animate({'opacity': 1}, that.settings.swapBackgroundDuration);
-					}
+					if (background.length !== 0 && that.settings.fadeOutBackground === true)
+						that._fadeInBackground(background);
 				}
+			});
+		},
+
+		_fadeInBackground: function(target) {
+			target.stop().animate({'opacity': 1}, this.settings.swapBackgroundDuration);
+		},
+
+		_fadeOutBackground: function(target) {
+			target.stop().animate({'opacity': 0}, this.settings.swapBackgroundDuration, function() {
+				target.css({'visibility': 'hidden'});
 			});
 		},
 
