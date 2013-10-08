@@ -93,8 +93,6 @@
 		},
 
 		_onTouchMove: function(event) {
-			event.preventDefault();
-
 			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent;
 
 			// indicate that the move event is being fired
@@ -108,7 +106,13 @@
 			this.touchDistance.x = this.touchEndPoint.x - this.touchStartPoint.x;
 			this.touchDistance.y = this.touchEndPoint.y - this.touchStartPoint.y;
 			
-			var distance = this.settings.orientation == 'horizontal' ? this.touchDistance.x : this.touchDistance.y;
+			var distance = this.settings.orientation == 'horizontal' ? this.touchDistance.x : this.touchDistance.y,
+				oppositeDistance = this.settings.orientation == 'horizontal' ? this.touchDistance.y : this.touchDistance.x;
+
+			if (Math.abs(distance) > Math.abs(oppositeDistance))
+				event.preventDefault();
+			else
+				return;
 			
 			// get the current position of panels' container
 			var currentPanelsPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
