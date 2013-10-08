@@ -159,9 +159,9 @@
 }
 
 .accordion-slider .as-grab {
-	cursor: url(images/openhand.cur), default;
+	cursor: url(images/openhand.cur), move;
 }
 
 .accordion-slider .as-grabbing {
-	cursor: url(images/closedhand.cur), default;
+	cursor: url(images/closedhand.cur), move;
 }
