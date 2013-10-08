@@ -10,6 +10,28 @@
 	
 	var NS = $.AccordionSlider.namespace;
 
+	var SwapBackgroundHelper = {
+		cssTransitions: null,
+
+		checkCSSTransitions: function() {
+			if (this.cssTransitions !== null)
+				return this.cssTransitions;
+
+			var element = document.body || document.documentElement,
+				elementStyle = element.style;
+
+			if (typeof elementStyle.transition !== 'undefined' ||
+				typeof elementStyle.WebkitTransition !== 'undefined' ||
+				typeof elementStyle.MozTransition !== 'undefined' ||
+				typeof elementStyle.OTransition !== 'undefined')
+				this.cssTransitions = true;
+			else
+				this.cssTransitions = false;
+
+			return this.cssTransitions;
+		}
+	};
+
 	var SwapBackground = {
 
 		initSwapBackground: function() {
@@ -68,13 +90,34 @@
 		},
 
 		_fadeInBackground: function(target) {
-			target.stop().animate({'opacity': 1}, this.settings.swapBackgroundDuration);
+			var duration = this.settings.swapBackgroundDuration;
+
+			if (SwapBackgroundHelper.checkCSSTransitions() === true) {
+				setTimeout(function() {
+					target.css({'opacity': 1, 'transition': 'all ' + duration / 1000 + 's'});
+				}, 100);
+			} else {
+				target.stop().animate({'opacity': 1}, duration);
+			}
 		},
 
 		_fadeOutBackground: function(target) {
-			target.stop().animate({'opacity': 0}, this.settings.swapBackgroundDuration, function() {
-				target.css({'visibility': 'hidden'});
-			});
+			var duration = this.settings.swapBackgroundDuration;
+
+			if (SwapBackgroundHelper.checkCSSTransitions() === true) {
+				target.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
+					target.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
+					target.css('visibility', 'hidden');
+				});
+
+				setTimeout(function() {
+					target.css({'opacity': 0, 'transition': 'all ' + duration / 1000 + 's'});
+				}, 100);
+			} else {
+				target.stop().animate({'opacity': 0}, duration, function() {
+					target.css({'visibility': 'hidden'});
+				});
+			}
 		},
 
 		destroySwapBackground: function() {
