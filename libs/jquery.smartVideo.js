@@ -1,5 +1,11 @@
 (function($) {
 	
+	// check if an iOS device is used
+	var	userAgent = window.navigator.userAgent.toLowerCase(),
+		isIOS = (userAgent.match(/ipad/i) !== null) ||
+				(userAgent.match(/ipod/i) !== null) ||
+				(userAgent.match(/iphone/i) !== null);
+
 	var SmartVideo = function(instance, options) {
 		this.$video = $(instance);
 		this.options = options;
@@ -72,18 +78,30 @@
 		},
 		
 		play: function() {
+			if (isIOS === true && this.player.isStarted() === false)
+				return;
+
 			this.player.play();
 		},
 		
 		stop: function() {
+			if (isIOS === true && this.player.isStarted() === false)
+				return;
+
 			this.player.stop();
 		},
 		
 		pause: function() {
+			if (isIOS === true && this.player.isStarted() === false)
+				return;
+
 			this.player.pause();
 		},
 
 		replay: function() {
+			if (isIOS === true && this.player.isStarted() === false)
+				return;
+			
 			this.player.replay();
 		},
 
@@ -168,6 +186,10 @@
 
 		isReady: function() {
 			return this.ready;
+		},
+
+		isStarted: function() {
+			return this.started;
 		},
 
 		getState: function() {

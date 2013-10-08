@@ -2657,7 +2657,7 @@
 
 		smartVideoDefaults: {
 			openPanelVideoAction: 'playVideo',
-			closePanelVideoAction: 'stopVideo',
+			closePanelVideoAction: 'pauseVideo',
 			playVideoAction: 'stopAutoplay',
 			pauseVideoAction: 'none',
 			stopVideoAction: 'none',
