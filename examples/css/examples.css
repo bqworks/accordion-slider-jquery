@@ -81,6 +81,18 @@ body {
 	color: #000;
 }
 
+#example-xml .as-panel-counter {
+	padding: 5px;
+	font-size: 20px;
+	color: #333;
+	-moz-transform-origin: left bottom;
+	-webkit-transform-origin: left bottom;
+	transform-origin: left bottom;
+	-moz-transform: rotate(-90deg) translateY(100%);
+	-webkit-transform: rotate(-90deg) translateY(100%);
+	transform: rotate(-90deg) translateY(100%);
+}
+
 .controls {
 	margin-top: 30px;
 	text-align: center;

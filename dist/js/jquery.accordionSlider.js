@@ -1144,16 +1144,17 @@
 		*/
 		_updatePaginationButtons: function() {
 			var paginationButtons = this.$accordion.find('.as-pagination-buttons'),
-				that = this;
+				that = this,
+				totalPages = this.getTotalPages();
 
 			// remove the buttons if there are no more pages
-			if (this.settings.visiblePanels == -1 && paginationButtons.length !== 0) {
+			if (totalPages <= 1 && paginationButtons.length !== 0) {
 				paginationButtons.remove();
 				paginationButtons.off('click.' + NS, '.as-pagination-button');
 				this.off('pageScroll.' + NS);
 			
 			// if there are pages and the buttons were not created yet, create them now
-			} else if (this.settings.visiblePanels != -1 && paginationButtons.length === 0) {
+			} else if (totalPages > 1 && paginationButtons.length === 0) {
 				// create the buttons' container
 				paginationButtons = $('<div class="as-pagination-buttons"></div>').appendTo(this.$accordion);
 
@@ -1176,9 +1177,9 @@
 					paginationButtons.find('.as-pagination-button').eq(event.index).addClass('as-selected');
 				});
 
-			// update the panels if they already exist but their number differs from
+			// update the buttons if they already exist but their number differs from
 			// the number of existing pages
-			} else if (this.settings.visiblePanels != -1 && paginationButtons.length !== 0) {
+			} else if (totalPages > 1 && paginationButtons.length !== 0) {
 				paginationButtons.empty();
 
 				// create the buttons
@@ -1203,8 +1204,8 @@
 			aspectRatio: -1,
 			orientation: 'horizontal',
 			startPanel: -1,
-			openedPanelSize: '50%',
-			maxOpenedPanelSize: '90%',
+			openedPanelSize: 'max',
+			maxOpenedPanelSize: '80%',
 			openPanelOn: 'hover',
 			closePanelsOnMouseOut: true,
 			mouseDelay: 200,
@@ -3090,12 +3091,21 @@
 				that.$maskContainer = $('<div class="as-mask"></div>').appendTo(that.$accordion);
 				that.$panelsContainer = $('<div class="as-panels"></div>').appendTo(that.$maskContainer);
 
+				// check if lazy loading is enabled
+				var lazyLoading = xmlData.find('accordion')[0].attributes.lazyLoading;
+
+				if (typeof lazyLoading !== 'undefined')
+					lazyLoading = lazyLoading.nodeValue;
+
+
 				// parse the panel node
 				xmlData.find('panel').each(function() {
 					var xmlPanel = $(this),
 						xmlBackground = xmlPanel.find('background'),
+						xmlBackgroundRetina = xmlPanel.find('backgroundRetina'),
 						xmlBackgroundLink = xmlPanel.find('backgroundLink'),
 						xmlBackgroundOpened = xmlPanel.find('backgroundOpened'),
+						xmlBackgroundOpenedRetina = xmlPanel.find('backgroundOpenedRetina'),
 						xmlBackgroundOpenedLink = xmlPanel.find('backgroundOpenedLink'),
 						xmlLayer = xmlPanel.find('layer'),
 						backgroundLink,
@@ -3116,7 +3126,15 @@
 					}
 
 					if (xmlBackground.length >= 1) {
-						var background = $('<img class="as-background" src="' + xmlBackground.text() + '"/>');
+						var background = $('<img class="as-background"/>');
+
+						if (typeof lazyLoading !== 'undefined')
+							background.attr({'src': lazyLoading, 'data-src': xmlBackground.text()});
+						else
+							background.attr({'src': xmlBackground.text()});
+
+						if (xmlBackgroundRetina.length >= 1)
+							background.attr({'data-retina': xmlBackgroundRetina.text()});
 
 						$.each(xmlBackground[0].attributes, function(index, attribute) {
 							background.attr(attribute.nodeName, attribute.nodeValue);
@@ -3137,7 +3155,15 @@
 					}
 
 					if (xmlBackgroundOpened.length >= 1) {
-						var backgroundOpened = $('<img class="as-background-opened" src="' + xmlBackgroundOpened.text() + '"/>');
+						var backgroundOpened = $('<img class="as-background-opened"/>');
+
+						if (typeof lazyLoading !== 'undefined')
+							backgroundOpened.attr({'src': lazyLoading, 'data-src': xmlBackgroundOpened.text()});
+						else
+							backgroundOpened.attr({'src': xmlBackgroundOpened.text()});
+
+						if (xmlBackgroundOpenedRetina.length >= 1)
+							backgroundOpened.attr({'data-retina': xmlBackgroundOpenedRetina.text()});
 
 						$.each(xmlBackgroundOpened[0].attributes, function(index, attribute) {
 							backgroundOpened.attr(attribute.nodeName, attribute.nodeValue);
@@ -3151,7 +3177,8 @@
 						$.each(xmlLayer, function() {
 							var xmlLayerItem = $(this),
 								classes = '',
-								dataAttributes = '';
+								dataAttributes = '',
+								parent = panel;
 
 							// parse the attributes specified for the layer and extract the classes and data attributes
 							$.each(xmlLayerItem[0].attributes, function(attributeIndex, attribute) {
@@ -3167,9 +3194,28 @@
 							});
 
 							// create the layer element
-							$('<div class="as-layer' + classes + '"' + dataAttributes + '">' + xmlLayerItem.text() + '</div>').appendTo(panel);
-						});
+							var layer = $('<div class="as-layer' + classes + '"' + dataAttributes + '"></div>');
 
+							// check if the layer is a container for other layers and if so
+							// assign it a unique class in order to target it when the child layers
+							// are added
+							if (xmlLayerItem.find('layer').length >= 1) {
+								var id = new Date().valueOf();
+
+								xmlLayerItem.attr('parentID', id);
+								layer.attr('class', layer.attr('class') + ' ' + id);
+							} else {
+								layer.html(xmlLayerItem.text());
+							}
+
+							// check if the XML parent element is a layer and 
+							// find the corresponding HTML parent
+							if (xmlLayerItem.parent().is('layer'))
+								parent = panel.find('.' + xmlLayerItem.parent().attr('parentID'));
+
+							// add the layer to its parent
+							layer.appendTo(parent);
+						});
 				});
 
 				that.update();

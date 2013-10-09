@@ -29,7 +29,6 @@
 
 .accordion-slider .as-panel {
 	position: absolute;
-	display: block;
 	overflow: hidden;
 }
 
