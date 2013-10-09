@@ -129,6 +129,10 @@
 			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
 			this.$panelsContainer = this.$accordion.find('.as-panels').appendTo(this.$maskContainer);
 
+			// create the 'as-panels' element if it wasn't created manually
+			if (this.$panelsContainer.length === 0)
+				this.$panelsContainer = $('<div class="as-panels"></div>').appendTo(this.$maskContainer);
+
 			// init accordion modules
 			var modules = $.AccordionSlider.modules.accordion;
 

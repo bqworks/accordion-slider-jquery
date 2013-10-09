@@ -48,23 +48,18 @@
 
 			// clear existing content and data
 			this.removePanels();
-			this.$accordion.empty();
+			this.$panelsContainer.empty();
 			this.off('XMLReady.' + NS);
 
 			// parse the XML data and construct the panels
 			this.on('XMLReady.' + NS, function(event) {
 				var xmlData = $(event.xmlData);
 
-				// create the main containers
-				that.$maskContainer = $('<div class="as-mask"></div>').appendTo(that.$accordion);
-				that.$panelsContainer = $('<div class="as-panels"></div>').appendTo(that.$maskContainer);
-
 				// check if lazy loading is enabled
 				var lazyLoading = xmlData.find('accordion')[0].attributes.lazyLoading;
 
 				if (typeof lazyLoading !== 'undefined')
 					lazyLoading = lazyLoading.nodeValue;
-
 
 				// parse the panel node
 				xmlData.find('panel').each(function() {
