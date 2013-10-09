@@ -2122,6 +2122,14 @@
 				if (typeof this.data.showTransition !== 'undefined')
 					target.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(0, 0, 0)' : 'translate(0, 0)';
 
+				// listen when the layer animation is complete
+				this.$layer.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
+					that.$layer.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
+
+					// remove the transition property in order to prevent other animations of the element
+					that.$layer.css('transition', '');
+				});
+
 				this.$layer.css(start)
 							.delay(delay)
 							.queue(function() {
@@ -2170,11 +2178,15 @@
 					transformValues = '0, ' + offset + 'px';
 
 				target.transform = LayersHelper.useTransforms() == '3d' ? 'translate3d(' + transformValues + ', 0)' : 'translate(' + transformValues + ')';
-
-				// hide the layer after transition
+				
+				// listen when the layer animation is complete
 				this.$layer.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
 					that.$layer.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
 
+					// remove the transition property in order to prevent other animations of the element
+					that.$layer.css('transition', '');
+
+					// hide the layer after transition
 					if (that.isVisible === false)
 						that.$layer.css('visibility', 'hidden');
 				});
