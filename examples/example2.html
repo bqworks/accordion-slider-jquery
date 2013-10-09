@@ -7,10 +7,12 @@
 <title>Accordion Slider - Example 2</title>
 
 <link rel="stylesheet" type="text/css" href="../dist/css/accordion-slider.min.css" media="screen"/>
+<link rel="stylesheet" type="text/css" href="../libs/fancybox/jquery.fancybox.css" media="screen"/>
 <link rel="stylesheet" type="text/css" href="css/examples.css" media="screen"/>
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
 
 <script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../libs/fancybox/jquery.fancybox.pack.js"></script>
 <script type="text/javascript" src="../dist/js/jquery.accordionSlider.min.js"></script>
 
 <script type="text/javascript">
@@ -26,6 +28,18 @@
 				700: {visiblePanels: 6},
 				500: {visiblePanels: 4}
 			}
+		});
+
+		// instantiate fancybox
+		$('#example2 .as-panel > a').on('click', function(event) {
+			event.preventDefault();
+
+			// check if the clicked link is also used in swiping the accordion
+			// by checking if the link has the 'as-swiping' class attached.
+			// if the accordion is not being swiped, open the lightbox programmatically,
+			// at the correct index
+			if ($(this).hasClass('as-swiping') === false)
+				$.fancybox.open($('#example2 .as-panel > a'), {index:$(this).index('a')});
 		});
 	});
 </script>

@@ -41,7 +41,7 @@
 			
 			this.on('update.TouchSwipe.' + NS, function() {
 				// remove mouse events on panels
-				if (this.isTouchSupport)
+				if (that.isTouchSupport)
 					$.each(that.panels, function(index, element) {
 						var panel = element;
 						panel.off('panelMouseOver.' + NS);
@@ -87,7 +87,7 @@
 			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
 
 			// disable click events on links
-			$(event.target).parents('.as-panel').find('a').one('click.TouchSwipe', function(event) {
+			$(event.target).parents('.as-panel').find('a').addClass('as-swiping').one('click.TouchSwipe', function(event) {
 				event.preventDefault();
 			});
 		},
@@ -118,7 +118,7 @@
 			var currentPanelsPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
 			
 			// reduce the movement speed if the panels' container is outside its bounds
-			if ((currentPanelsPosition > 0 && this.currentPage === 0) || (currentPanelsPosition < - this.totalPanelsSize + this.totalSize && this.currentPage === this.getTotalPages() - 1))
+			if ((currentPanelsPosition >= 0 && this.currentPage === 0) || (currentPanelsPosition <= - this.totalPanelsSize + this.totalSize && this.currentPage === this.getTotalPages() - 1))
 				distance = distance * 0.2;
 
 			// move the panels' container
@@ -144,7 +144,7 @@
 					this.openPanel(index);
 				} else {
 					// re-enable click events on links
-					$(event.target).parents('.as-panel').find('a').off('click.TouchSwipe');
+					$(event.target).parents('.as-panel').find('a').removeClass('as-swiping').off('click.TouchSwipe');
 				}
 
 				return;
@@ -152,11 +152,19 @@
 
 			// return if there was no movement and re-enable click events on links
 			if (this.isTouchMoving === false) {
-				$(event.target).parents('.as-panel').find('a').off('click.TouchSwipe');
+				$(event.target).parents('.as-panel').find('a').removeClass('as-swiping').off('click.TouchSwipe');
 				return;
 			}
 
 			this.isTouchMoving = false;
+
+			// remove the 'as-swiping' class but with a delay
+			// because there might be other event listeners that check
+			// the existance of this class, and this class should still be 
+			// applied for those listeners, since there was a swipe event
+			setTimeout(function() {
+				$(event.target).parents('.as-panel').find('a').removeClass('as-swiping');
+			}, 1);
 
 			var noScrollAnimObj = {};
 			noScrollAnimObj[this.positionProperty] = this.touchStartPosition;
