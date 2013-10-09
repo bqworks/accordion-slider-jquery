@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 
-<title>Accordion Slider - Example XML</title>
+<title>Accordion Slider - Example JSON</title>
 
 <link rel="stylesheet" type="text/css" href="../dist/css/accordion-slider.min.css" media="screen"/>
 <link rel="stylesheet" type="text/css" href="css/examples.css" media="screen"/>
@@ -16,13 +16,17 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		// instantiate the accordion
-		$('#example-xml').accordionSlider({
-			XMLSource: 'accordion.xml',
+		$('#example-json').accordionSlider({
+			JSONSource: 'accordion.json',
 			width: 960, 
 			height: 400,
-			visiblePanels: 5,
-			closePanelsOnMouseOut: false,
-			autoplay: false
+			responsiveMode: 'custom',
+			autoplay: false,
+			mouseWheel:false,
+			breakpoints: {
+				700: {visiblePanels: 6},
+				500: {visiblePanels: 4}
+			}
 		});
 	});
 </script>
@@ -33,7 +37,7 @@
 	
 	<!-- Accordion Slider -->
 
-	<div id="example-xml" class="accordion-slider"></div>
+	<div id="example-json" class="accordion-slider"></div>
 
     <!-- End of Accordion Slider -->
 

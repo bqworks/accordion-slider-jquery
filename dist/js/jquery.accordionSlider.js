@@ -1726,17 +1726,16 @@
 
 			// clear existing content and data
 			this.removePanels();
-			this.$accordion.empty();
+			this.$panelsContainer.empty();
 			this.off('JSONReady.' + NS);
-
-			// create the main containers
-			that.$maskContainer = $('<div class="as-mask"></div>').appendTo(that.$accordion);
-			that.$panelsContainer = $('<div class="as-panels"></div>').appendTo(that.$maskContainer);
 
 			// parse the JSON data and construct the panels
 			this.on('JSONReady.' + NS, function(event) {
 				var jsonData = event.jsonData,
 					panels = jsonData.accordion.panels;
+
+				// check if lazy loading is enabled
+				var lazyLoading = jsonData.accordion.lazyLoading;
 
 				$.each(panels, function(index, value) {
 					var panel = value,
@@ -1759,7 +1758,17 @@
 					}
 
 					if (typeof panel.background !== 'undefined') {
-						var background = $('<img class="as-background" src="' + panel.background.source + '"/>');
+						var background = $('<img class="as-background"/>');
+
+						// check if the image will be lazy loaded
+						if (typeof lazyLoading !== 'undefined')
+							background.attr({'src': lazyLoading, 'data-src': panel.background.source});
+						else
+							background.attr({'src': panel.background.source});
+
+						// check if a retina image was specified
+						if (typeof panel.backgroundRetina !== 'undefined')
+							background.attr({'data-retina': panel.backgroundRetina.source});
 
 						$.each(panel.background, function(name, value) {
 							if (name != 'source')
@@ -1782,7 +1791,17 @@
 					}
 
 					if (typeof panel.backgroundOpened !== 'undefined') {
-						var backgroundOpened = $('<img class="as-background-opened" src="' + panel.backgroundOpened.source + '"/>');
+						var backgroundOpened = $('<img class="as-background-opened"/>');
+
+						// check if the image will be lazy loaded
+						if (typeof lazyLoading !== 'undefined')
+							backgroundOpened.attr({'src': lazyLoading, 'data-src': panel.backgroundOpened.source});
+						else
+							backgroundOpened.attr({'src': panel.backgroundOpened.source});
+
+						// check if a retina image was specified
+						if (typeof panel.backgroundOpenedRetina !== 'undefined')
+							backgroundOpened.attr({'data-retina': panel.backgroundOpenedRetina.source});
 
 						$.each(panel.backgroundOpened, function(name, value) {
 							if (name != 'source')
@@ -1792,35 +1811,47 @@
 						backgroundOpened.appendTo(typeof backgroundOpenedLink !== 'undefined' ? backgroundOpenedLink : panelElement);
 					}
 
-					// parse the layer(s)
+					// parse the layers recursively 
 					if (typeof panel.layers !== 'undefined')
-						$.each(panel.layers, function(index, value) {
-							var layer = value,
-								classes = '',
-								dataAttributes = '';
-
-							// parse the data specified for the layer and extract the classes and data attributes
-							$.each(layer, function(name, value) {
-								if (name == 'style') {
-									var classList = value.split(' ');
-									
-									$.each(classList, function(classIndex, className) {
-										classes += ' as-' + className;
-									});
-								} else if (name !== 'content'){
-									dataAttributes += ' ' + that.JSONDataAttributesMap[name] + '="' + value + '"';
-								}
-							});
-
-							// create the layer element
-							$('<div class="as-layer' + classes + '"' + dataAttributes + '">' + layer.content + '</div>').appendTo(panelElement);
-						});
+						that._parseLayers(panel.layers, panelElement);
 				});
 
 				that.update();
 			});
 
 			this._loadJSON();
+		},
+
+		_parseLayers: function(target, parent) {
+			var that = this;
+
+			$.each(target, function(index, value) {
+				var layer = value,
+					classes = '',
+					dataAttributes = '';
+				
+				// parse the data specified for the layer and extract the classes and data attributes
+				$.each(layer, function(name, value) {
+					if (name == 'style') {
+						var classList = value.split(' ');
+						
+						$.each(classList, function(classIndex, className) {
+							classes += ' as-' + className;
+						});
+					} else if (name != 'content' && name != 'layers'){
+						dataAttributes += ' ' + that.JSONDataAttributesMap[name] + '="' + value + '"';
+					}
+				});
+
+				// create the layer element
+				var layerElement = $('<div class="as-layer' + classes + '"' + dataAttributes + '></div>').appendTo(parent);
+
+				// check if there are inner layers and parse those
+				if (typeof value.layers !== 'undefined')
+					that._parseLayers(value.layers, layerElement);
+				else
+					layerElement.html(layer.content);
+			});
 		},
 
 		_loadJSON: function() {
