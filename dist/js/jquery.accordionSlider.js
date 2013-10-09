@@ -2803,6 +2803,12 @@
 			var duration = this.settings.swapBackgroundDuration;
 
 			if (SwapBackgroundHelper.checkCSSTransitions() === true) {
+				// remove the transition property after the animation completes
+				target.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
+					target.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
+					target.css({'transition': ''});
+				});
+
 				setTimeout(function() {
 					target.css({'opacity': 1, 'transition': 'all ' + duration / 1000 + 's'});
 				}, 100);
@@ -2815,9 +2821,10 @@
 			var duration = this.settings.swapBackgroundDuration;
 
 			if (SwapBackgroundHelper.checkCSSTransitions() === true) {
+				// remove the transition property and make the image invisible after the animation completes
 				target.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
 					target.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
-					target.css('visibility', 'hidden');
+					target.css({'visibility': 'hidden', 'transition': ''});
 				});
 
 				setTimeout(function() {
