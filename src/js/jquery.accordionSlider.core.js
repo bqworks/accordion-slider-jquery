@@ -180,7 +180,7 @@
 				this.$accordion.find('.as-panel').eq(this.currentIndex).addClass('as-opened');
 
 				// fire 'panelOpen' event
-				var eventObject = {type: 'panelOpen', index: this.currentIndex, previousIndex: -1, element: this.getPanelAt(this.currentIndex)};
+				var eventObject = {type: 'panelOpen', index: this.currentIndex, previousIndex: -1};
 				this.trigger(eventObject);
 				if ($.isFunction(this.settings.panelOpen))
 					this.settings.panelOpen.call(this, eventObject);
@@ -362,7 +362,7 @@
 					}, that.settings.mouseDelay);
 				}
 
-				var eventObject = {type: 'panelMouseOver', index: index, element: $element};
+				var eventObject = {type: 'panelMouseOver', index: index};
 				that.trigger(eventObject);
 				if ($.isFunction(that.settings.panelMouseOver))
 					that.settings.panelMouseOver.call(that, eventObject);
@@ -373,7 +373,7 @@
 				if (that.isPageScrolling === true)
 					return;
 
-				var eventObject = {type: 'panelMouseOut', index: index, element: $element};
+				var eventObject = {type: 'panelMouseOut', index: index};
 				that.trigger(eventObject);
 				if ($.isFunction(that.settings.panelMouseOut))
 					that.settings.panelMouseOut.call(that, eventObject);
@@ -390,7 +390,7 @@
 						that.closePanels();
 				}
 
-				var eventObject = {type: 'panelClick', index: index, element: $element};
+				var eventObject = {type: 'panelClick', index: index};
 				that.trigger(eventObject);
 				if ($.isFunction(that.settings.panelClick))
 					that.settings.panelClick.call(that, eventObject);
@@ -594,7 +594,7 @@
 			if (this.settings.breakpoints !== null && this.breakpoints.length > 0) {
 				if ($(window).width() > this.breakpoints[this.breakpoints.length - 1].size && this.currentBreakpoint != -1) {
 					this.currentBreakpoint = -1;
-					this.setProperties(this.originalSettings, false);
+					this._setProperties(this.originalSettings, false);
 				} else {
 					for (var i = 0, n = this.breakpoints.length; i < n; i++) {
 						if ($(window).width() <= this.breakpoints[i].size) {
@@ -607,7 +607,7 @@
 
 								this.currentBreakpoint = this.breakpoints[i].size;
 								var settings = $.extend({}, this.originalSettings, this.breakpoints[i].properties);
-								this.setProperties(settings, false);
+								this._setProperties(settings, false);
 							}
 							break;
 						}
@@ -619,7 +619,7 @@
 		/*
 			Set properties on runtime
 		*/
-		setProperties: function(properties, store) {
+		_setProperties: function(properties, store) {
 			// parse the properties passed as an object
 			for (var prop in properties) {
 				// if the number of visible panels is changed, store a reference of the previous value
@@ -939,7 +939,7 @@
 			});
 
 			// fire 'panelOpen' event
-			var eventObject = {type: 'panelOpen', index: index, previousIndex: previousIndex, element: this.getPanelAt(index)};
+			var eventObject = {type: 'panelOpen', index: index, previousIndex: previousIndex};
 			this.trigger(eventObject);
 			if ($.isFunction(this.settings.panelOpen))
 				this.settings.panelOpen.call(this, eventObject);
@@ -1049,7 +1049,7 @@
 		/*
 			Return the current page
 		*/
-		getPage: function() {
+		getCurrentPage: function() {
 			return this.settings.visiblePanels == -1 ? 0 : this.currentPage;
 		},
 
@@ -1201,8 +1201,8 @@
 			The default options of the accordion
 		*/
 		defaults: {
-			width: 500,
-			height: 300,
+			width: 800,
+			height: 400,
 			responsive: true,
 			responsiveMode: 'auto',
 			aspectRatio: -1,
@@ -1216,8 +1216,6 @@
 			panelDistance: 0,
 			openPanelDuration: 700,
 			closePanelDuration: 700,
-			openPanelEasing: 'swing',
-			closePanelEasing: 'swing',
 			pageScrollDuration: 500,
 			pageScrollEasing: 'swing',
 			breakpoints: null,
@@ -1496,9 +1494,9 @@
 				} else if (typeof currentInstance.settings[options] !== 'undefined') {
 					var obj = {};
 					obj[options] = args[0];
-					currentInstance.setProperties(obj);
+					currentInstance._setProperties(obj);
 				} else if (typeof options === 'object') {
-					currentInstance.setProperties(options);
+					currentInstance._setProperties(options);
 				} else {
 					$.error(options + ' does not exist in accordionSlider.');
 				}

@@ -16,8 +16,8 @@
 
 			$.extend(this.settings, this.retinaDefaults, this.options);
 
-			// check if retina is enabled and the current display supports high DPI
-			if (this.settings.retina === false || this._isRetina() === false)
+			// check if the current display supports high DPI
+			if (this._isRetina() === false)
 				return;
 
 			// check if the Lazy Loading module is enabled and overwrite its loading method
@@ -109,10 +109,6 @@
 
 		destroyRetina: function() {
 
-		},
-
-		retinaDefaults : {
-			retina: true
 		}
 	};
 

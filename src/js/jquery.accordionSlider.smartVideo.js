@@ -159,7 +159,6 @@
 			closePanelVideoAction: 'pauseVideo',
 			playVideoAction: 'stopAutoplay',
 			pauseVideoAction: 'none',
-			stopVideoAction: 'none',
 			endVideoAction: 'startAutoplay',
 			videoPlay: function() {},
 			videoPause: function() {},
