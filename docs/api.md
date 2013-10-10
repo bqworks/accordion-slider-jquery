@@ -1,196 +1,502 @@
-<h1>JavaScript API (properties, methods and callbacks)</h1>
-<h2>Customizing the core of the plugin</h2>
+# JavaScript API #
 
-<h3>1. Properties</h3>
+## 1. Properties ##
 
-Accordion Slider can be customized using several options which are described in the following table:
+Accordion Slider can be customized using several properties which are described below. These properties must be passed to the accordion when the accordion is instantiated.
 
-<table>
-<tr>
-<th>Property name</th><th>Default value</th><th>Other values</th><th>Description</th>
-</tr>
-<tr>
-<td>width</td><td>500</td><td></td><td>Sets the width of the accordion.</td>
-</tr>
-<tr>
-<td>height</td><td>300</td><td></td><td>Sets the height of the accordion.</td>
-</tr>
-<tr>
-<td>responsive</td><td>true</td><td></td><td>Makes the accordion responsive.</td>
-</tr>
-<tr>
-<td>responsiveMode</td><td>'auto'</td><td>'custom'</td><td>Sets the responsive mode of the accordion: 'auto' resizes the accordion and all of its elements (e.g., captions), while 'custom' only resizes the accordion.</td>
-</tr>
-<tr>
-<td>aspectRatio</td><td>-1</td><td></td><td>Sets the aspect ratio of the accordion panels.</td>
-</tr>
-<tr>
-<td>orientation</td><td>'horizontal'</td><td>'vertical'</td><td>Sets the orientation of the panels.</td>
-</tr>
-<tr>
-<td>startPanel</td><td>-1</td><td></td><td>Indicates which panel will be opened when the accordion loads (0 for the first panel, 1 for the second panel, etc.). If set to -1, no panel will be opened.</td>
-</tr>
-<tr>
-<td>openedPanelSize</td><td>'50%'</td><td></td><td>Sets the size of an open panel.</td>
-</tr>
-<tr>
-<td>maxOpenedPanelSize</td><td>'90%'</td><td></td><td>Sets the maximum size of an open panel.</td>
-</tr>
-<tr>
-<td>openPanelOn</td><td>'hover'</td><td>'click'</td><td>If set to 'hover', the panels will be opened by moving the mouse pointer over them; if set to 'click', the panels will only open when clicked.</td>
-</tr>
-<tr>
-<td>closePanelsOnMouseOut</td><td>true</td><td></td><td>Determines whether the opened panel closes or remains open when the mouse pointer is moved away.</td>
-</tr>
-<tr>
-<td>mouseDelay</td><td>200</td><td></td><td>Sets the delay in milliseconds between the movement of the mouse pointer and the opening of the panel.</td>
-</tr>
-<tr>
-<td>panelDistance</td><td>0</td><td></td><td>Sets the distance between consecutive panels.</td>
-</tr>
-<tr>
-<td>openPanelDuration</td><td>500</td><td></td><td>Determines the duration in milliseconds for the opening of a panel.</td>
-</tr>
-<tr>
-<td>closePanelDuration</td><td>500</td><td></td><td>Determines the duration in milliseconds for the closing of a panel.</td>
-</tr>
-<tr>
-<td>openPanelEasing</td><td>'swing'</td><td></td><td>Sets the easing type of the panel opening effect.</td>
-</tr>
-<tr>
-<td>closePanelEasing</td><td>'swing'</td><td></td><td>Sets the easing type of the panel closing effect.</td>
-</tr>
-<tr>
-<td>pageScrollDuration</td><td>500</td><td></td><td>Indicates the duration of the page scroll effect.</td>
-</tr>
-<tr>
-<td>pageScrollEasing</td><td>'swing'</td><td></td><td>Indicates the easing type of the page scroll effect.</td>
-</tr>
-<tr>
-<td>breakpoints</td><td>null</td><td></td><td>Sets specific breakpoints which allow changing the behavior of the accordion (decreasing the number of panels visible per page, shifting the orientation of the panels, etc.) when resized.</td>
-</tr>
-<tr>
-<td>visiblePanels</td><td>-1</td><td></td><td>Indicates the number of panels visible per page. If set to -1, all the panels will be displayed on one page.</td>
-</tr>
-<tr>
-<td>startPage</td><td>0</td><td></td><td>Indicates which page will be opened when the accordion loads, if the panels are displayed on more than one page.</td>
-</tr>
-</table>
+*Example:*
 
-Note: most of the optional modules also have specific properties which you can modify in order to customize the plugin; you can read about them in the <a href="modules.md">Modules</a> chapter.
+```
+$('#my-accordion').accordionSlider({
+	width: 960, 
+	height: 400,
+	responsiveMode: 'custom',
+	visiblePanels: 7,
+	startPanel: 3,
+	closePanelsOnMouseOut: false,
+	shadow: false,
+	panelDistance: 10,
+	autoplay: false,
+	mouseWheel: false
+});
+```
 
-<h3>2. Public methods</h3>
+#### width ####
 
-The public methods below allow you to manipulate the accordion using external controls:
+Sets the width of the accordion. Can be set to a fixed value, like 900 (indicating 900 pixels) or to a percentage value, like '100%'. It's important to note that percentage values need to be specified inside quotes. For fixed values, the quotes are not necessary. Also, please note that in order to make the accordion responsive it's not necessary to use percentage values. More about this in the description of the 'responsive' property.
 
-<table>
-<tr>
-<th>Method name</th><th>Description</th>
-</tr>
-<tr>
-<td>getPanelAt</td><td>Gets all the data of the panel at the specified index. Returns an object that contains all the data specified for that panel.</td>
-</tr>
-<tr>
-<td>getCurrentIndex</td><td>Gets the index of the current panel.</td>
-</tr>
-<tr>
-<td>getTotalPanels</td><td>Gets the total number of panels.</td>
-</tr>
-<tr>
-<td>nextPanel</td><td>Opens the next panel.</td>
-</tr>
-<tr>
-<td>previousPanel</td><td>Opens the previous panel.</td>
-</tr>
-<tr>
-<td>openPanel</td><td>Opens the panel at the specified index.</td>
-</tr>
-<tr>
-<td>closePanels</td><td>Closes all the panels.</td>
-</tr>
-<tr>
-<td>getVisiblePanels</td><td>Gets the number of visible panels.</td>
-</tr>
-<tr>
-<td>getTotalPages</td><td>Gets the number of pages.</td>
-</tr>
-<tr>
-<td>getPage</td><td>Gets the index of the page currently displayed.</td>
-</tr>
-<tr>
-<td>gotoPage</td><td>Opens the specified page.</td>
-</tr>
-<tr>
-<td>nextPage</td><td>Goes to the next page.</td>
-</tr>
-<tr>
-<td>previousPage</td><td>Goes to the previous page.</td>
-</tr>
-<tr>
-<td>on</td><td></td>
-</tr>
-<tr>
-<td>off</td><td></td>
-</tr>
-<tr>
-<td>destroy</td><td>Stops all running actions.</td>
-</tr>
-<tr>
-<td>setProperties({})</td><td></td>
-</tr>
-<tr>
-<td>update()</td><td></td>
-</tr>
-<tr>
-<td>removePanels()</td><td></td>
-</tr>
-<tr>
-<td>resize()</td><td></td>
-</tr>
-</table>
+*Default value:* 800
 
-<h3>3. Callbacks</h3>
+#### height ####
 
-Callbacks (or events) are used to detect when certain actions take place:
+Sets the height of the accordion. The same rules available for the 'width' property also apply for the 'height' property.
 
-<table>
-<tr>
-<th>Callback name</th><th>Description</th>
-</tr>
-<tr>
-<td>accordionMouseOver</td><td>Triggered when the mouse pointer moves over the accordion.</td>
-</tr>
-<tr>
-<td>accordionMouseOut</td><td>Triggered when the mouse pointer leaves the accordion.</td>
-</tr>
-<tr>
-<td>panelClick</td><td>Triggered when a panel is clicked.</td>
-</tr>
-<tr>
-<td>panelMouseOver</td><td>Triggered when the mouse pointer moves over a panel.</td>
-</tr>
-<tr>
-<td>panelMouseOut</td><td>Triggered when the mouse pointer leaves a panel.</td>
-</tr>
-<tr>
-<td>panelOpen</td><td>Triggered when a panel is opened.</td>
-</tr>
-<tr>
-<td>panelsClose</td><td>Triggered when a panel is closed.</td>
-</tr>
-<tr>
-<td>pageScroll</td><td>Triggered when a new page is displayed.</td>
-</tr>
-<tr>
-<td>panelOpenComplete</td><td>Triggered when the opening of a panel is completed.</td>
-</tr>
-<tr>
-<td>panelsCloseComplete</td><td>Triggered when the closing of a panel is completed.</td>
-</tr>
-<tr>
-<td>pageScrollComplete</td><td>Triggered when the opening of a page is completed.</td>
-</tr>
-<tr>
-<td>breakpointReach</td><td>Triggered when a breakpoint is reached.</td>
-</tr>
-</table>
+*Default value:* 400
+
+#### responsive ####
+
+Makes the accordion responsive. The accordion can be responsive even if the 'width' and/or 'height' properties are set to fixed values. In this situation, the 'width' and 'height' will act as the maximum width and maximum height of the accordion.
+
+*Default value:* true
+
+#### responsiveMode ####
+
+Sets the responsive mode of the accordion. Possible values are 'auto' and 'custom'. 'auto' resizes the accordion and all of its elements (e.g., layers, videos) automatically, while 'custom' only resizes the accordion container and panels, while you are being given flexibility over the way inner elements (e.g., layers, videos) will respond to smaller sizes. For example, you could use CSS media queries to define different text sizes or to hide certain elements when the accordion becomes smaller, ensuring that all content remains readable without having to zoom in.
+
+It's important to note that if 'auto' responsiveness is used, the 'width' and 'height' need to be set to fixed values, so that the accordion can calculate correctly how much it needs to scale.
+
+*Default value:* 'auto'
+
+#### aspectRatio ####
+
+Sets the aspect ratio of the accordion. The accordion will set its height depending on what value its width has, so that this ratio is maintained. For this reason, the set 'height' might be overridden.
+
+This property can be used only when 'responsiveMode' is set to 'custom'. When it's set to 'auto', the 'aspectRatio' needs to remain to -1.
+
+*Default value:* -1 (determined by the ratio of the set 'width' and 'height')
+
+#### orientation ####
+
+Sets the orientation of the panels. Possible values are 'horizontal' and 'vertical'.
+
+*Default value:* 'horizontal'
+
+#### startPanel ####
+
+Indicates which panel will be opened when the accordion loads (0 for the first panel, 1 for the second panel, etc.). If set to -1, no panel will be opened.
+
+*Default value:* -1
+
+#### openedPanelSize ####
+Sets the size (width if the accordion's orientation is horizontal; height if the accordion's orientation is vertical) of the opened panel. Possible values are 'max', which will open the panel to its maximum size, so that all the inner content is visible, a percentage value, like '50%', which indicates the percentage from the total size (width or height, depending on the orientation) of the accordion, or to a fixed value.
+
+*Default value:* 'max'
+
+#### maxOpenedPanelSize ####
+
+Sets the maximum allowed size of the opened panel. This should be used when the 'openedPanelSize' is set to 'max' because sometimes the maximum size of the panel might be to big and we want to set a limit. The property can be set to a percentage (from the total size of the accordion) or to a fixed value.
+
+*Default value:* '80%'
+
+#### openPanelOn ####
+
+If set to 'hover', the panels will be opened by moving the mouse pointer over them; if set to 'click', the panels will only open when clicked.
+
+*Default value:* 'hover'
+
+#### closePanelsOnMouseOut ####
+
+Determines whether the opened panel closes or remains open when the mouse pointer is moved away.
+
+*Default value:* true
+
+#### mouseDelay ####
+
+Sets the delay in milliseconds between the movement of the mouse pointer and the opening of the panel. Setting a delay ensures that panels are not opened if the mouse pointer only moves over them without an intent to open the panel.
+
+*Default value:* 200
+
+#### panelDistance ####
+
+Sets the distance between consecutive panels. Can be set to a percentage of fixed value.
+
+*Default value:* 0
+
+#### openPanelDuration ####
+
+Determines the duration in milliseconds for the opening of a panel.
+
+*Default value:* 700
+
+#### closePanelDuration ####
+
+Determines the duration in milliseconds for the closing of a panel.
+
+*Default value:* 700
+
+#### pageScrollDuration ####
+
+Indicates the duration of the page scroll.
+
+*Default value:* 500
+
+#### pageScrollEasing ####
+
+Indicates the easing type of the page scroll. Setting a custom value requires the use of a jQuery easing plugin.
+
+*Default value:* 500
+
+#### breakpoints ####
+
+Sets specific breakpoints which allow changing the look and behavior of the accordion (decreasing the number of panels visible per page, shifting the orientation of the panels, etc.) when the page resizes. 
+
+*Example:*
+
+```
+$('#my-accordion').accordionSlider({
+	width: 960, 
+	height: 400,
+	...
+	breakpoints: {
+		960: {visiblePanels: 5},
+		800: {visiblePanels: 3, orientation: 'vertical', width: 600, height: 500},
+		650: {visiblePanels: 4},
+		500: {visiblePanels: 3, orientation: 'vertical', aspectRatio: 1.2}
+	}
+});
+```
+
+As you can see, the 'breakpoints' property is assigned an object which contains certain browser window widths and the accordion properties that are applied to those specific widths. This is very similar to CSS media queries. However, please note that these custom properties will not be inherited between different breakpoints. The slider's properties will reset to the original values before applying a new set of properties, so if you want a certain property value to persist, you need to set it for each breakpoint.
+
+#### visiblePanels ####
+
+Indicates the number of panels visible per page. If set to -1, all the panels will be displayed on one page.
+
+*Default value:* -1
+
+#### startPage ####
+
+Indicates which page will be opened when the accordion loads, if the panels are displayed on more than one page.
+
+*Default value:* 0
+
+#### shadow ####
+
+Indicates if the panels will have a drop shadow effect.
+
+*Default value:* true
+
+#### panelOverlap ####
+
+Indicates if the panels will be overlapped. If set to false, the panels will have their width or height set so that they are next to each other but not overlapped.
+
+*Default value:* true
+
+#### autoplay ####
+
+Indicates if the autoplay will be enabled.
+
+*Default value:* true
+
+#### autoplayDelay ####
+
+Sets the delay, in milliseconds, of the autoplay cycle.
+
+*Default value:* 5000
+
+#### autoplayDirection ####
+
+Sets the direction in which the panels will be opened. Can be set to 'normal' (ascending order) or 'backwards' (descending order).
+
+*Default value:* 'normal'
+
+#### autoplayOnHover ####
+
+Indicates if the autoplay will be paused when the accordion is hovered.
+
+*Default value:* 'pause'
+
+#### mouseWheel ####
+
+Indicates if the accordion will respond to mouse wheel input.
+
+*Default value:* true
+
+#### mouseWheelSensitivity ####
+
+Sets how sensitive will the accordion be to mouse wheel input. Lower values indicate stronger sensitivity.
+
+*Default value:* 50
+
+#### mouseWheelTarget ####
+
+Sets what elements will be targeted by the mouse wheel input. Can be set to 'panel' or 'page'. Setting it to 'panel' will indicate that the panels will be scrolled while setting it to 'page' indicate that the pages will be scrolled.
+
+*Default value:* 'panel'
+
+#### swapBackgroundDuration ####
+
+Sets the duration, in milliseconds, of the transition effect.
+
+*Default value:* 700
+
+#### fadeOutBackground ####
+
+Indicates if the main image background will be faded out when the opened/alternative background fades in.
+
+*Default value:* false
+
+#### touchSwipe ####
+
+Indicates if the touch swipe functionality will be enabled.
+
+*Default value:* true
+
+#### touchSwipeThreshold ####
+
+Sets how many pixels the distance of the swipe gesture needs to be in order to trigger a page change.
+
+*Default value:* 50
+
+#### openPanelVideoAction ####
+
+Sets what will the video do when the panel is opened. Can be set to: 'playVideo' or 'none'.
+
+*Default value:* 'playVideo'
+
+#### closePanelVideoAction ####
+
+Sets what will the video do when the panel is closed. Can be set to: 'pauseVideo' or 'stopVideo.'
+
+*Default value:* 'pauseVideo'
+
+#### playVideoAction ####
+
+Sets what will the accordion do when a video starts playing. Can be set to 'stopAutoplay' or 'none'.
+
+*Default value:* 'stopAutoplay'
+
+#### pauseVideoAction ####
+
+Sets what will the accordion do when a video is paused. Can be set to 'startAutoplay' or 'none'.
+
+*Default value:* 'none'
+
+#### endVideoAction ####
+
+Sets what will the accordion to when a video ends. Can be set to 'startAutoplay', 'nextPanel', 'replayVideo' or 'none'.
+
+*Default value:* 'startAutoplay'
+
+#### XMLSource ####
+
+Sets the XML source for the accordion. Can be set to a path to an XML file or to an XML string.
+
+#### JSONSource ####
+
+Sets the JSON source for the accordion. Can be set to a path to a JSON file or to a JSON string.
+
+## 2. Public methods ##
+
+The public methods below allow you to manipulate the accordion using external controls. There are two variations of calling a public method:
+
+### First method: ###
+
+```
+$('#my-accordion').accordionSlider('openPanel', 3);
+```
+
+The first argument represents the name of the method and the second argument represents the value which will be applied. Please note that some method don't have a second argument. For example:
+
+```
+$('#my-accordion').accordionSlider('nextPanel');
+```
+
+### Second method: ###
+
+This method is mandatory when you use public methods that return values.
+
+```
+// get a reference to the AccordionSlider instance
+var accordion = $('#my-accordion').data('accordionSlider');
+
+console.log(accordion.getTotalPanels());
+
+accordion.gotoPage(2);
+```
+
+Here is the list of available public methods:
+
+#### getPanelAt(index) ####
+
+Gets all the data of the panel at the specified index. Returns an object that contains all the data specified for that panel.
+		
+#### getCurrentIndex() ####
+
+Gets the index of the current panel.
+
+#### getTotalPanels() ####
+
+Gets the total number of panels.
+
+#### nextPanel() ####
+
+Opens the next panel.
+
+#### previousPanel() ####
+
+Opens the previous panel.
+
+#### openPanel(index) ####
+
+Opens the panel at the specified index.
+
+#### closePanels() ####
+
+Closes all the panels.
+
+#### getVisiblePanels() ####
+
+Gets the number of visible panels.
+
+#### getTotalPages() ####
+
+Gets the number of pages.
+
+#### getCurrentPage() ####
+
+Gets the index of the page currently displayed.
+
+#### gotoPage(index) ####
+
+Scrolls to the specified page.
+
+#### nextPage() ####
+
+Goes to the next page.
+
+#### previousPage() ####
+
+Goes to the previous page.
+
+#### on(eventType, callback) ####
+
+Adds an event listener to the accordion. More details about the use of this method will pe presented in the 'Callbacks' chapter.
+
+#### off(eventType) ####
+
+Remove an event listener from the accordion.
+
+#### destroy() ####
+
+Destroys an accordion, by removing all the visual elements and functionality added by the plugin. Basically, it leaves the accordion in the state it was before the plugin was instantiated.
+
+#### update() ####
+
+This is called by the plugin automatically, when a property is changed. You can call this manually in order to refresh the accordion after changing its HTML, like removing or adding panels.
+
+#### removePanels() ####
+
+Removes all the panels.
+
+#### resize() ####
+
+This is called by the plugin automatically, when the browser window is resized. You can also call it manually if you find it necessary to have the accordion resize itself.
+
+## 3. Callbacks ##
+
+Callbacks (or events) are used to detect when certain actions take place. The callbacks can be added when the accordion is instantiated or at a later time.
+
+*Examples:*
+
+```
+$('#my-accordion').accordionSlider({
+	width: 1200, 
+	height: 400,
+	responsiveMode: 'custom',
+	panelOpenComplete: function(event) {
+		console.log(event.index);
+	},
+	panelsCloseComplete: function(event) {
+		console.log(event.previousIndex);
+	}
+});
+
+$('#my-accordion').on('panelOpen', function(event) {
+	console.log(event.index);
+})
+```
+
+As you can notice, the callback functions have an "event" parameter, which contains some information about that event.
+
+The list of available events:
+
+#### init ####
+
+Triggered after the accordion was created.
+
+#### update ####
+
+Triggered when the 'update' method is called, either automatically or manually.
+
+#### accordionMouseOver ####
+
+Triggered when the mouse pointer moves over the accordion.
+
+#### accordionMouseOut ####
+
+Triggered when the mouse pointer leaves the accordion.
+
+#### panelClick ####
+
+Triggered when a panel is clicked. Returned data:
+
+* index: the index of the clicked panel
+
+#### panelMouseOver ####
+
+Triggered when the mouse pointer moves over a panel. Returned data:
+
+* index: the index of the panel over which the mouse pointer has moved
+
+#### panelMouseOut ####
+
+Triggered when the mouse pointer leaves a panel. Returned data:
+
+* index: the index of panel from which the mouse pointer has moved away
+
+#### panelOpen ####
+
+Triggered when a panel is opened. Returned data:
+
+* index: the index of the opened panel
+* previousIndex: the index of the previously opened panel
+
+#### panelsClose ####
+
+Triggered when the panels are closed. Returned data:
+
+* previousIndex: the index of the previously opened panel
+
+#### pageScroll ####
+
+Triggered when a the accordion scrolls to another page. Returned data:
+
+* index: the index of the current page
+
+#### panelOpenComplete ####
+
+Triggered when the opening of a panel is completed. Returned data:
+
+* index: the index of the opened panel
+
+#### panelsCloseComplete ####
+
+Triggered when the closing of the panels is completed. Returned data:
+
+* previousIndex: the index of the previously opened panel
+
+#### pageScrollComplete ####
+
+Triggered when the scroll to a page is completed. Returned data:
+
+* index: the index of the current page
+
+#### breakpointReach ####
+
+Triggered when a breakpoint is reached. Returned data:
+
+* size: the specified size that was reached
+* settings: the settings specified for the current size
+
+#### videoPlay ####
+
+Triggered when a video starts playing.
+
+#### videoPause ####
+
+Triggered when a video is paused.
+
+#### videoEnd ####
+
+Triggered when a video ends.

@@ -1,22 +1,22 @@
+# Setup1 #
+## Installing and instantiating Accordion Slider ##
 
-<h1>Setup</h1>
-<h2>Installing and instantiating Accordion Slider</h2>
-
-<h3>1. Copying the required files</h3>
+### 1. Copying the required files ###
 
 First of all, you will need to copy the files needed for the plugin. You may want to create separate directories for the JavaScript and CSS files for better organization; for this demonstration, we'll name the two folders 'js' and 'css'.
 
-<h4>JavaScript files</h4>
+#### JavaScript files ####
 
-Copy the Accordion Slider script (jquery.accordionSlider.min.js) from the 'dist/js' folder to your 'js' folder. You will also need to copy the jQuery script (jquery-1.10.1.min.js) from the 'libs' folder, or you can download it from <a href="http://jquery.com/">the official jQuery website</a>.
+Copy the Accordion Slider script (jquery.accordionSlider.min.js) from the 'dist/js' folder to your 'js' folder. You will also need to copy the jQuery script (jquery-1.10.1.min.js) from the 'libs' folder, or you can download it from [the official jQuery website](http://jquery.com/).
 
-<h4>CSS files</h4>
+#### CSS files ####
 
-From 'dist/js', copy accordion-slider.min.css and the 'images' folder into your 'css' folder.
+From 'dist/css', copy accordion-slider.min.css and the 'images' folder into your 'css' folder.
 
-<h3>2. Including the required files in the page</h3>
+### 2. Including the required files in the page ###
 
 Once you have copied the files mentioned above, you will need to include them in the header of the HTML page:
+
 ```
 <!DOCTYPE html>
 <html>
@@ -38,25 +38,53 @@ Once you have copied the files mentioned above, you will need to include them in
 </html>
 ```
 
-<h3>3. Creating HTML markup</h3>
+### 3. Creating HTML markup ###
 
 Inside the `<body>` tag, you need to specify HTML markup like in the example below:
+
 ```
-HTML markup here
+<body>
+	<div id="my-accordion" class="accordion-slider">
+		<div class="as-panels">
+			<div class="as-panel">
+				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image1.jpg"/>
+			</div>
+			
+			<div class="as-panel">
+				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image2.jpg"/>
+			</div>
+			
+			<div class="as-panel">
+				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image3.jpg"/>
+			</div>
+
+			<div class="as-panel">
+				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image4.jpg"/>
+			</div>
+
+			<div class="as-panel">
+				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image5.jpg"/>
+			</div>
+		</div>
+    </div>
+</body>
 ```
 
+This is one of the most basic accordions that you can create. In the "Modules" chapter you will learn how to add richer functionality to the accordion, which will require some additional HTML code.
 
-<h3>4. Instantiating the accordion</h3>
+The accordion's main DIV element needs to have the `accordion-slider` class. Then, inside the main accordion container you create another DIV, which has the `as-panels` class. This DIV will be a container for the individual panel elements. The panel elements need to be DIV's that have the `as-panel` class.
 
-After including the required files in the header, you will also need to add the following code:
+Please note that all class names are prefixed with `as-` in order to prevent CSS conflicts with other scripts from the page.
+
+### 4. Instantiating the accordion ###
+
+After including the required files in the header and creating the HTML markup, you will need to instantiate the accordion by adding the following code before the `</head>` tag:
 ```
 <script type="text/javascript">
-	var accordion;
-
-	$(document).ready(function() {
-		accordion = $('#my-accordion').accordionSlider();
+	jQuery(document).ready(function($) {
+		$('#my-accordion').accordionSlider();
 	});
 </script>
 ```
 
-If you want to change any of the default settings for the accordion, you can also pass various properties to the accordion here - more about that in the <a href="api.md">API</a> chapter.
+If you want to change any of the default settings for the accordion, you can also pass various properties to the accordion here - more about that in the [API](api.md) chapter.
