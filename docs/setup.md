@@ -47,23 +47,19 @@ Inside the `<body>` tag, you need to specify HTML markup like in the example bel
 	<div id="my-accordion" class="accordion-slider">
 		<div class="as-panels">
 			<div class="as-panel">
-				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image1.jpg"/>
+				<img class="as-background" src="path/to/image1.jpg"/>
 			</div>
-			
 			<div class="as-panel">
-				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image2.jpg"/>
+				<img class="as-background" src="path/to/image2.jpg"/>
 			</div>
-			
 			<div class="as-panel">
-				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image3.jpg"/>
+				<img class="as-background" src="path/to/image3.jpg"/>
 			</div>
-
 			<div class="as-panel">
-				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image4.jpg"/>
+				<img class="as-background" src="path/to/image4.jpg"/>
 			</div>
-
 			<div class="as-panel">
-				<img class="as-background" data-src="http://bqworks.com/accordion-slider/images/image5.jpg"/>
+				<img class="as-background" src="path/to/image5.jpg"/>
 			</div>
 		</div>
     </div>
@@ -72,7 +68,7 @@ Inside the `<body>` tag, you need to specify HTML markup like in the example bel
 
 This is one of the most basic accordions that you can create. In the "Modules" chapter you will learn how to add richer functionality to the accordion, which will require some additional HTML code.
 
-The accordion's main DIV element needs to have the `accordion-slider` class. Then, inside the main accordion container you create another DIV, which has the `as-panels` class. This DIV will be a container for the individual panel elements. The panel elements need to be DIV's that have the `as-panel` class.
+The accordion's main DIV element needs to have the `accordion-slider` class. Then, inside the main accordion container you create another DIV, which has the `as-panels` class. This DIV will be a container for the individual panel elements. The panel elements need to be DIV's that have the `as-panel` class. Inside the panels you can insert any HTML content. If you want to add a background image you need to add to it the `as-background` class.
 
 Please note that all class names are prefixed with `as-` in order to prevent CSS conflicts with other scripts from the page.
 
