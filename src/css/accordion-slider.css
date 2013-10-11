@@ -105,15 +105,6 @@
 	padding: 10px;
 }
 
-.accordion-slider .as-layer.as-vertical {
-	-moz-transform: translate(-100%) rotate(-90deg);
-	-webkit-transform: translate(-100%) rotate(-90deg);
-	transform: translate(-100%) rotate(-90deg);
-	-moz-transform-origin: right top;
-	-webkit-transform-origin: right top;
-	transform-origin: right top;
-}
-
 .accordion-slider .as-pagination-buttons {
 	position: absolute;
 	top: 100%;
