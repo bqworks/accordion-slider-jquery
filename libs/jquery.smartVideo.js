@@ -1,4 +1,11 @@
-(function($) {
+/*
+	Smart Video jQuery plugin
+
+	Adds automatic control for several video players and providers
+*/
+;(function(window, $) {
+
+	"use strict";
 	
 	// check if an iOS device is used
 	var	userAgent = window.navigator.userAgent.toLowerCase(),
@@ -359,7 +366,7 @@
 	VimeoVideo.prototype._setup = function() {
 		var that = this;
 
-		this.player = Froogaloop(this.$video[0]);
+		this.player = $f(this.$video[0]);
 		
 		this.player.addEvent('ready', function() {
 			that.ready = true;
@@ -693,4 +700,4 @@
 		this.player.play(true);
 	};
 
-})(jQuery);
+})(window, jQuery);
