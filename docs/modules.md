@@ -336,6 +336,16 @@ Each SublimeVideo instance mush have a unique 'id' attribute. Also, instead of a
 
 Please note that in order to use SublimeVideo you will also need to load a script in your page which you need to download from the SublimeVideo page. More information about how to use SublimeVideo, in general, can be found on the [official SublimeVideo page](http://www.sublimevideo.net/).
 
+##### Notes #####
+
+* Most of the videos will work correctly only if the page is on a server. It can be a local server or an online server.
+
+* iOS doesn't allow videos to play automatically, so an initial user action is required in order to play the video. After the initial action, the videos will be controlled automatically.
+
+* When pausing a YouTube video automatically, on iOS, the video will be stopped instead, because only pausing it makes the entire region that the video occupies unresponsive to user input. For example, if another video slides in over the YouTube video, we won't be able to play this video because the controls will be unresponsive. However, this doesn't occur if the YouTube video is stopped instead of paused, so the accordion does this.
+
+* The control bar of SublimeVideo videos will become unresponsive on iOS if the 'auto' responsive mode is used. It seems that, in general, scaling SublimeVideo using the CSS3 'transform' property will make them unresponsive to user input.
+
 This module is showcased in example4.html.
 
 ### 10. XML ###
