@@ -7,8 +7,9 @@ This guide is meant to help you set up and use the Accordion Slider jQuery plugi
 
 In order to make it easier and faster to look for specific information, this guide is divided into the following chapters:
 
-* [Setup](setup.md) - how to install and instantiate Accordion Slider
-* [JavaScript API](api.md) - how to customize the accordion using the various JavaScript properties, public methods/functions and callbacks/events available
-* [Modules](modules.md) - how to install and customize the optional modules included
-* [Troubleshoot](troubleshoot.md) - how to fix some of the problems that may appear during installation and customization of the plugin
+* [Setup](setup.md) - how to set up Accordion Slider
+* [JavaScript API](api.md) - how to customize the accordion using the various JavaScript properties, public methods and callbacks available
+* [Modules](modules.md) - presentation of the Accordion Slider's  modules
+* [Examples](examples.md) - contains information about the examples included with the plugin
+* [Troubleshoot](troubleshoot.md) - solutions to some of the issues that may appear
 * [Updates](update.md) - how to update Accordion Slider

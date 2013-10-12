@@ -278,23 +278,21 @@ Sets the JSON source for the accordion. Can be set to a path to a JSON file or t
 
 ## 2. Public methods ##
 
-The public methods below allow you to manipulate the accordion using external controls. There are two variations of calling a public method:
+The public methods below allow you to manipulate the accordion using external controls. There are two ways of calling a public method:
 
-### First method: ###
+The first way is by calling the `accordionSlider` plugin and passing the name of the method and additional arguments:
 
 ```
 $('#my-accordion').accordionSlider('openPanel', 3);
 ```
 
-The first argument represents the name of the method and the second argument represents the value which will be applied. Please note that some method don't have a second argument. For example:
+The first argument represents the name of the method and the second argument represents the value which will be applied. Please note that some methods don't have a second argument. For example:
 
 ```
 $('#my-accordion').accordionSlider('nextPanel');
 ```
 
-### Second method: ###
-
-This method is mandatory when you use public methods that return values.
+The second way is by getting a reference to the AccordionSlider instance and call the method on the instance:
 
 ```
 // get a reference to the AccordionSlider instance
@@ -304,6 +302,8 @@ console.log(accordion.getTotalPanels());
 
 accordion.gotoPage(2);
 ```
+
+This way of calling a public method is mandatory when you use public methods that return data: `getPanelAt`, `getCurrentIndex`, `getTotalPanels`, `getVisiblePanels`, `getTotalPages` and `getCurrentPage`, but it can be used with all the other public methods as well.
 
 Here is the list of available public methods:
 
