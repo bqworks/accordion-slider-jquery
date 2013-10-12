@@ -266,7 +266,7 @@ Sets what will the accordion do when a video is paused. Can be set to 'startAuto
 
 Sets what will the accordion to when a video ends. Can be set to 'startAutoplay', 'nextPanel', 'replayVideo' or 'none'.
 
-*Default value:* 'startAutoplay'
+*Default value:* 'none'
 
 #### XMLSource ####
 
