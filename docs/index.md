@@ -1,8 +1,9 @@
-# Accordion Slider - by [BQWorks](http://bqworks.com/) #
+# Accordion Slider - by [bqworks](http://bqworks.com/) #
+*__Version 2.0__*
 
 Hi, and thank you for purchasing Accordion Slider!
 
-This guide is meant to help you set up and use the Accordion Slider jQuery plugin. It contains information relevant to installing the accordion, customizing it, updating it, as well as troubleshooting a few of the most common issues that may appear when using Accordion Slider. If you have a question or technical problem that is not covered by this guide, please use [the official BQWorks Support Center](http://support.bqworks.com/home).
+This guide is meant to help you set up and use the Accordion Slider jQuery plugin. It assumes a basic understanding of HTML, CSS and JavaScript and will present only information about using this plugin. If you have a question or technical problem that is not covered by this guide, please use [the official bqworks Support Center](http://support.bqworks.com/home).
 
 In order to make it easier and faster to look for specific information, this guide is divided into the following chapters:
 

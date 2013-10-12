@@ -1,4 +1,29 @@
-# Setup1 #
+# Setup #
+
+## Package presentation ##
+
+The package downloaded from CodeCanyon includes several files and folders:
+
+**dist**
+
+Contains the concatenated and compressed JavaScript and CSS files, which you can use in your project.
+
+**src**
+
+Contains the uncompressed JavaScript and CSS files. The JavaScript code is separated in a core and several modules, each in its own file. More about this in the Modules chapter.
+
+**libs**
+
+Contains the jQuery library and other scripts used in the examples.
+
+**examples**
+
+Contains several examples that showcase some of the accordion's capabilities.
+
+**docs**
+
+Contains the documentation.
+
 ## Installing and instantiating Accordion Slider ##
 
 ### 1. Copying the required files ###
