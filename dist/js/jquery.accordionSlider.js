@@ -2702,7 +2702,7 @@
 			closePanelVideoAction: 'pauseVideo',
 			playVideoAction: 'stopAutoplay',
 			pauseVideoAction: 'none',
-			endVideoAction: 'startAutoplay',
+			endVideoAction: 'none',
 			videoPlay: function() {},
 			videoPause: function() {},
 			videoEnd: function() {}
@@ -3023,7 +3023,10 @@
 	};
 
 	YoutubeVideo.prototype.pause = function() {
-		this.player.pauseVideo();
+		if (isIOS === true)
+			this.stop();
+		else
+			this.player.pauseVideo();
 	};
 
 	YoutubeVideo.prototype.stop = function() {
