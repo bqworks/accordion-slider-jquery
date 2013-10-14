@@ -125,7 +125,7 @@
 			this.settings = $.extend({}, this.defaults, this.options);
 
 			// get reference to the panels' container and 
-			// create additional mask container, which will maks the panels'container
+			// create additional mask container, which will mask the panels'container
 			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
 			this.$panelsContainer = this.$accordion.find('.as-panels').appendTo(this.$maskContainer);
 
@@ -648,7 +648,7 @@
 			this.$accordion.attr('style', '');
 			this.$panelsContainer.attr('style', '');
 
-			// dettach event handlers
+			// detach event handlers
 			this.off('mouseenter.' + NS);
 			this.off('mouseleave.' + NS);
 
@@ -682,7 +682,7 @@
 		},
 
 		/*
-			Dettach an event handler
+			Detach an event handler
 		*/
 		off: function(type) {
 			return this.$accordion.off(type);
@@ -882,7 +882,7 @@
 				// the rest of the panels. this requires some amendments to the position of the last panels
 				// by replacing the current page index with a float number: this.getTotalPanels() / this.settings.visiblePanels, 
 				// which would represent the actual number of existing pages.
-				// here we substract the float number from the formal number of pages in order to calculate
+				// here we subtract the float number from the formal number of pages in order to calculate
 				// how much length it's necessary to subtract from the initially calculated value
 				if (this.settings.visiblePanels != -1 && this.currentPage == this.getTotalPages() - 1)
 					targetPosition[i] -= (this.getTotalPages() - this.getTotalPanels() / this.settings.visiblePanels) * (this.totalSize + this.computedPanelDistance);
@@ -1390,7 +1390,7 @@
 				return 'loading';
 
 			if (this.settings.panelOverlap === false || parseInt(this.settings.panelDistance, 10) > 0) {
-				// get the current size of the inner content and then temporarely set the panel to a small size
+				// get the current size of the inner content and then temporarily set the panel to a small size
 				// in order to accurately calculate the size of the inner content
 				var currentSize = this.$panel.css(this.sizeProperty);
 				this.$panel.css(this.sizeProperty, 10);
@@ -1458,7 +1458,7 @@
 		},
 
 		/*
-			Dettach an event handler to the panel
+			Detach an event handler to the panel
 		*/
 		off: function(type) {
 			return this.$panel.off(type);
@@ -1519,6 +1519,8 @@
 
 	var Autoplay = {
 
+		autoplayIndex: -1,
+
 		autoplayTimer: null,
 
 		isTimerRunning: false,
@@ -1535,6 +1537,8 @@
 
 			// start the autoplay timer each time the panel opens
 			this.on('panelOpen.Autoplay.' + NS, function(event) {
+				that.autoplayIndex = event.index;
+
 				if (that.settings.autoplay === true) {
 					// stop previous timers before starting a new one
 					if (that.isTimerRunning === true)
@@ -1543,6 +1547,17 @@
 					if (that.isTimerPaused === false)
 						that.startAutoplay();
 				}
+			});
+
+			// store the index of the previously opened panel
+			this.on('panelsClose.Autoplay.' + NS, function(event) {
+				if (event.previousIndex != -1)
+					that.autoplayIndex = event.previousIndex;
+			});
+
+			// store the index of the first panel from the new page
+			this.on('pageScroll.Autoplay.' + NS, function(event) {
+				that.autoplayIndex = that._getFirstPanelFromPage() - 1;
 			});
 
 			// on accordion hover stop the autoplay if autoplayOnHover is set to pause or stop
@@ -1567,6 +1582,12 @@
 			this.isTimerRunning = true;
 
 			this.autoplayTimer = setTimeout(function() {
+				// check if there is a stored index from which the autoplay needs to continue
+				if (that.autoplayIndex !== -1)	{
+					that.currentIndex = that.autoplayIndex;
+					that.autoplayIndex = -1;
+				}
+
 				if (that.settings.autoplayDirection == 'normal') {
 					that.nextPanel();
 				} else if (that.settings.autoplayDirection == 'backwards') {
@@ -1585,6 +1606,7 @@
 			clearTimeout(this.autoplayTimer);
 
 			this.off('panelOpen.Autoplay.' + NS);
+			this.off('pageScroll.Autoplay.' + NS);
 			this.off('mouseenter.Autoplay.' + NS);
 			this.off('mouseleave.Autoplay.' + NS);
 		},
@@ -1921,7 +1943,7 @@
                 this._handleLayersInClosedState();
 
 			// listen when a panel is opened and when the panels are closed, and handle 
-			// the layer's behaviour based on the state of the panel
+			// the layer's behavior based on the state of the panel
 			this.accordion.on('panelOpen.Layers.' + this.panelNS, function(event) {
 				if (event.index === event.previousIndex)
 					return;
@@ -2053,7 +2075,7 @@
 				this.$layer.css(this.horizontalPosition, 0);
 			}
 
-			// set the vetical position of the layer based on the data set
+			// set the vertical position of the layer based on the data set
 			if (typeof this.data.vertical !== 'undefined') {
 				if (this.data.vertical == 'center') {
 					// prevent content wrapping while setting the height
@@ -2276,7 +2298,7 @@
 				firstVisiblePanel = this._getFirstPanelFromPage(),
 				lastVisiblePanel = this._getLastPanelFromPage(),
 
-				// get all panels that are curernt visible
+				// get all panels that are currently visible
 				panelsToCheck = lastVisiblePanel !== this.getTotalPanels() - 1 ? this.panels.slice(firstVisiblePanel, lastVisiblePanel + 1) : this.panels.slice(firstVisiblePanel);
 
 			// loop through all the visible panels, verify if there are unloaded images, and load them
@@ -3628,7 +3650,7 @@
 			if ($(event.target).closest('.selectable').length >= 1 || (this.isTouchSupport === false && this.getTotalPages() == 1))
 				return;
 
-			// prevent default behaviour only for mouse events
+			// prevent default behavior only for mouse events
 			if (this.isTouchSupport === false)
 				event.preventDefault();
 
@@ -3645,7 +3667,7 @@
 			// clear the distance
 			this.touchDistance.x = this.touchDistance.y = 0;
 
-			// listen for move adn end events
+			// listen for move and end events
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
 			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
 
@@ -3726,7 +3748,7 @@
 
 			// remove the 'as-swiping' class but with a delay
 			// because there might be other event listeners that check
-			// the existance of this class, and this class should still be 
+			// the existence of this class, and this class should still be 
 			// applied for those listeners, since there was a swipe event
 			setTimeout(function() {
 				$(event.target).parents('.as-panel').find('a').removeClass('as-swiping');

@@ -11,6 +11,8 @@
 
 	var Autoplay = {
 
+		autoplayIndex: -1,
+
 		autoplayTimer: null,
 
 		isTimerRunning: false,
@@ -27,6 +29,8 @@
 
 			// start the autoplay timer each time the panel opens
 			this.on('panelOpen.Autoplay.' + NS, function(event) {
+				that.autoplayIndex = event.index;
+
 				if (that.settings.autoplay === true) {
 					// stop previous timers before starting a new one
 					if (that.isTimerRunning === true)
@@ -35,6 +39,17 @@
 					if (that.isTimerPaused === false)
 						that.startAutoplay();
 				}
+			});
+
+			// store the index of the previously opened panel
+			this.on('panelsClose.Autoplay.' + NS, function(event) {
+				if (event.previousIndex != -1)
+					that.autoplayIndex = event.previousIndex;
+			});
+
+			// store the index of the first panel from the new page
+			this.on('pageScroll.Autoplay.' + NS, function(event) {
+				that.autoplayIndex = that._getFirstPanelFromPage() - 1;
 			});
 
 			// on accordion hover stop the autoplay if autoplayOnHover is set to pause or stop
@@ -59,6 +74,12 @@
 			this.isTimerRunning = true;
 
 			this.autoplayTimer = setTimeout(function() {
+				// check if there is a stored index from which the autoplay needs to continue
+				if (that.autoplayIndex !== -1)	{
+					that.currentIndex = that.autoplayIndex;
+					that.autoplayIndex = -1;
+				}
+
 				if (that.settings.autoplayDirection == 'normal') {
 					that.nextPanel();
 				} else if (that.settings.autoplayDirection == 'backwards') {
@@ -77,6 +98,7 @@
 			clearTimeout(this.autoplayTimer);
 
 			this.off('panelOpen.Autoplay.' + NS);
+			this.off('pageScroll.Autoplay.' + NS);
 			this.off('mouseenter.Autoplay.' + NS);
 			this.off('mouseleave.Autoplay.' + NS);
 		},

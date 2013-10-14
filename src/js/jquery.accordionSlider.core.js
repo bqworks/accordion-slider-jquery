@@ -125,7 +125,7 @@
 			this.settings = $.extend({}, this.defaults, this.options);
 
 			// get reference to the panels' container and 
-			// create additional mask container, which will maks the panels'container
+			// create additional mask container, which will mask the panels'container
 			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
 			this.$panelsContainer = this.$accordion.find('.as-panels').appendTo(this.$maskContainer);
 
@@ -648,7 +648,7 @@
 			this.$accordion.attr('style', '');
 			this.$panelsContainer.attr('style', '');
 
-			// dettach event handlers
+			// detach event handlers
 			this.off('mouseenter.' + NS);
 			this.off('mouseleave.' + NS);
 
@@ -682,7 +682,7 @@
 		},
 
 		/*
-			Dettach an event handler
+			Detach an event handler
 		*/
 		off: function(type) {
 			return this.$accordion.off(type);
@@ -882,7 +882,7 @@
 				// the rest of the panels. this requires some amendments to the position of the last panels
 				// by replacing the current page index with a float number: this.getTotalPanels() / this.settings.visiblePanels, 
 				// which would represent the actual number of existing pages.
-				// here we substract the float number from the formal number of pages in order to calculate
+				// here we subtract the float number from the formal number of pages in order to calculate
 				// how much length it's necessary to subtract from the initially calculated value
 				if (this.settings.visiblePanels != -1 && this.currentPage == this.getTotalPages() - 1)
 					targetPosition[i] -= (this.getTotalPages() - this.getTotalPanels() / this.settings.visiblePanels) * (this.totalSize + this.computedPanelDistance);
@@ -1390,7 +1390,7 @@
 				return 'loading';
 
 			if (this.settings.panelOverlap === false || parseInt(this.settings.panelDistance, 10) > 0) {
-				// get the current size of the inner content and then temporarely set the panel to a small size
+				// get the current size of the inner content and then temporarily set the panel to a small size
 				// in order to accurately calculate the size of the inner content
 				var currentSize = this.$panel.css(this.sizeProperty);
 				this.$panel.css(this.sizeProperty, 10);
@@ -1458,7 +1458,7 @@
 		},
 
 		/*
-			Dettach an event handler to the panel
+			Detach an event handler to the panel
 		*/
 		off: function(type) {
 			return this.$panel.off(type);

@@ -41,7 +41,7 @@
                 this._handleLayersInClosedState();
 
 			// listen when a panel is opened and when the panels are closed, and handle 
-			// the layer's behaviour based on the state of the panel
+			// the layer's behavior based on the state of the panel
 			this.accordion.on('panelOpen.Layers.' + this.panelNS, function(event) {
 				if (event.index === event.previousIndex)
 					return;
@@ -173,7 +173,7 @@
 				this.$layer.css(this.horizontalPosition, 0);
 			}
 
-			// set the vetical position of the layer based on the data set
+			// set the vertical position of the layer based on the data set
 			if (typeof this.data.vertical !== 'undefined') {
 				if (this.data.vertical == 'center') {
 					// prevent content wrapping while setting the height

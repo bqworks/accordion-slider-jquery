@@ -62,7 +62,7 @@
 			if ($(event.target).closest('.selectable').length >= 1 || (this.isTouchSupport === false && this.getTotalPages() == 1))
 				return;
 
-			// prevent default behaviour only for mouse events
+			// prevent default behavior only for mouse events
 			if (this.isTouchSupport === false)
 				event.preventDefault();
 
@@ -79,7 +79,7 @@
 			// clear the distance
 			this.touchDistance.x = this.touchDistance.y = 0;
 
-			// listen for move adn end events
+			// listen for move and end events
 			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
 			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
 
@@ -160,7 +160,7 @@
 
 			// remove the 'as-swiping' class but with a delay
 			// because there might be other event listeners that check
-			// the existance of this class, and this class should still be 
+			// the existence of this class, and this class should still be 
 			// applied for those listeners, since there was a swipe event
 			setTimeout(function() {
 				$(event.target).parents('.as-panel').find('a').removeClass('as-swiping');

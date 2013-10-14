@@ -22,7 +22,7 @@
 				firstVisiblePanel = this._getFirstPanelFromPage(),
 				lastVisiblePanel = this._getLastPanelFromPage(),
 
-				// get all panels that are curernt visible
+				// get all panels that are currently visible
 				panelsToCheck = lastVisiblePanel !== this.getTotalPanels() - 1 ? this.panels.slice(firstVisiblePanel, lastVisiblePanel + 1) : this.panels.slice(firstVisiblePanel);
 
 			// loop through all the visible panels, verify if there are unloaded images, and load them
