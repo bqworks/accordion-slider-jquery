@@ -100,7 +100,7 @@
 					<p class="link">Source: <a href="http://www.sintel.org/" target="_blank">sintel.org</a></p>
 	        	</div>
 				<div class="as-layer" data-horizontal="245">
-					<video id="video2" class="as-video video-js vjs-default-skin" poster="http://bqworks.com/products/assets/videos/sintel/sintel-poster.jpg" width="500" height="350" controls="controls" preload="none">
+					<video id="video2" class="as-video videojs" poster="http://bqworks.com/products/assets/videos/sintel/sintel-poster.jpg" width="500" height="350" controls="controls" preload="none">
 						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.mp4" type="video/mp4"/>
 						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.ogv" type="video/ogg"/>
 					</video>
@@ -113,7 +113,7 @@
 
     <div class="controls">
     	Open panel: <a href="#example4/0">1</a>, <a href="#example4/1">2</a>, <a href="#example4/2">3</a>, <a href="#example4/3">4</a> 
-    	or <a href="#" onclick="$('#example4').accordionSlider('closePanels');">close all panels</a>
+    	or <a href="#" onclick="$('#example4').accordionSlider('closePanels'); return false;">close all panels</a>
     </div>
 
 </body>

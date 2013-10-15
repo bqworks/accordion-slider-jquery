@@ -2609,13 +2609,14 @@
 				}
 
 				// instantiate VideoJS videos
-				if (typeof videojs !== 'undefined' && video.hasClass('video-js')) {
+				if (typeof videojs !== 'undefined' && video.hasClass('videojs')) {
+					video.attr('id', video.attr('id') + '_' + new Date().valueOf());
+					video.addClass('video-js vjs-default-skin');
 					videojs(video.attr('id'), video.data('video'));
 				}
-					
+
 				// load sublime API
-				if (typeof sublime === 'object' && video.hasClass('sublime-video')) {
-					video.addClass('sublime');
+				if (typeof sublime === 'object') {
 					sublime.load();
 				}
 			});
@@ -2866,7 +2867,8 @@
 		},
 
 		destroy: function() {
-			this.stop();
+			if (this.player.isStarted() === true)
+				this.stop();
 
 			this.player.off('videoReady');
 			this.player.off('videoStart');
@@ -3252,7 +3254,7 @@
 	$.SmartVideo.addPlayer('VideoJSVideo', VideoJSVideo);
 
 	VideoJSVideo.isType = function(video) {
-		if (video.hasClass('video-js'))
+		if (video.hasClass('videojs'))
 			return true;
 
 		return false;
@@ -3334,6 +3336,11 @@
 
 		sublime.ready(function() {
 			that.ready = true;
+
+			// prepare the video
+			sublime.prepare(that.$video.attr('id'));
+
+			// get a reference to the player object
 			that.player = sublime.player(that.$video.attr('id'));
 
 			that.player.on('play', function() {
