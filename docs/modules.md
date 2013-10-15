@@ -308,12 +308,12 @@ Simple HTML5 videos don't need any other preparations, other than having the `as
 
 ##### Video.js #####
 
-Each Video.js video must have a unique 'id' attribute. Another requirement is to not pass the video the `data-setup` attribute as shown in the VideoJS documentation. Instead, you can use the `data-video` attribute to pass additional options.
+Each Video.js video must have a unique 'id' attribute. Another requirement is to not pass the video the `data-setup` attribute as the VideoJS documentation indicates. Instead, you can use the `data-video` attribute to pass additional options. Also, instead of adding the `video-js` and `vjs-default-skin` class names, you only need to add `videojs`.
 
 *Example:*
 
 ```
-<video id="video1" class="as-video video-js vjs-default-skin" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none">
+<video id="video1" class="as-video videojs" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none">
 	<source src="path/to/video.mp4" type="video/mp4"/>
 	<source src="path/to/video.ogv" type="video/ogg"/>
 </video>
