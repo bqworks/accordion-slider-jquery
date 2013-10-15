@@ -2861,6 +2861,17 @@
 			return this.$video.triggerHandler(data);
 		},
 
+		destroy: function() {
+			this.stop();
+
+			this.player.off('videoReady');
+			this.player.off('videoStart');
+			this.player.off('videoLoad');
+			this.player.off('videoPlay');
+			this.player.off('videoPause');
+			this.player.off('videoEnd');
+		},
+
 		defaults: {
 			ready: function() {},
 			start: function() {},

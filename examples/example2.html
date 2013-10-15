@@ -19,7 +19,7 @@
 	jQuery(document).ready(function($) {
 		// instantiate the accordion
 		$('#example2').accordionSlider({
-			width: 960, 
+			width: 960,
 			height: 400,
 			responsiveMode: 'custom',
 			autoplay: false,
@@ -39,7 +39,7 @@
 			// if the accordion is not being swiped, open the lightbox programmatically,
 			// at the correct index
 			if ($(this).hasClass('as-swiping') === false)
-				$.fancybox.open($('#example2 .as-panel > a'), {index:$(this).index('a')});
+				$.fancybox.open($('#example2 .as-panel > a'), {index:$(this).parent().index()});
 		});
 	});
 </script>
