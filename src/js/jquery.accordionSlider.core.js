@@ -654,6 +654,10 @@
 
 			$(window).off('resize.' + this.uniqueId + '.' + NS);
 
+			// stop animations
+			this._stopPanelsAnimation(this.openPanelAnimation);
+			this._stopPanelsAnimation(this.closePanelsAnimation);
+
 			// destroy modules
 			var modules = $.AccordionSlider.modules.accordion;
 
