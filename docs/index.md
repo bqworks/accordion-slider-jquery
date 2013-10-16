@@ -12,4 +12,4 @@ In order to make it easier and faster to look for specific information, this gui
 * [Modules](modules.md) - presentation of the Accordion Slider's  modules
 * [Examples](examples.md) - contains information about the examples included with the plugin
 * [Troubleshoot](troubleshoot.md) - solutions to some of the issues that may appear
-* [Updates](update.md) - how to update Accordion Slider
+* [Update](update.md) - how to update Accordion Slider

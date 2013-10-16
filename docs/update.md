@@ -1,4 +1,4 @@
-# Updates #
+# Update #
 
 Updates will be announced on the [bqworks](https://twitter.com/bqworks) Twitter channel, so I recommend following in order to be up to date with the latest releases. Also, updates will be announced in the Changelog section of the accordion's CodeCanyon page.
 

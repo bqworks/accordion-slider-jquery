@@ -263,6 +263,8 @@ Allows you to set an alternative background image that will appear when the pane
 
 As you can see, the alternative image can be lazy loaded and can have a high resolution version as well.
 
+Please note that the size of 'opened' image should be equal or bigger than the size of the default image in order to prevent parts of the default image to be visible behind the 'opened' image when the panel is opened.
+
 This module is showcased in example2.html.
 
 ### 9. Smart Video ###
