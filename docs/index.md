@@ -3,7 +3,7 @@
 
 Hi, and thank you for purchasing Accordion Slider!
 
-This guide is meant to help you set up and use the Accordion Slider jQuery plugin. It assumes a basic understanding of HTML, CSS and JavaScript and will present only information about using this plugin. If you have a question or technical problem that is not covered by this guide, please use [the official bqworks Support Center](http://support.bqworks.com/home).
+This guide is meant to help you set up and use the Accordion Slider jQuery plugin. It assumes a basic understanding of HTML, CSS and JavaScript, and will only present information about using this plugin. If you have a question or technical problem that is not covered by this guide, please use [the official bqworks Support Center](http://support.bqworks.com/home).
 
 In order to make it easier and faster to look for specific information, this guide is divided into the following chapters:
 
