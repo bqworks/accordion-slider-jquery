@@ -2,23 +2,23 @@
 
 ## Introduction ##
 
-Accordion Slider has a modular architecture. It consists of a core and several optional modules. The advantage of modular architecture is that it allows you to load only the code you need and leave out what you don't need, resulting in a smaller file size for the script and, theoretically, better performance, although, practically, the performance impact is not noticeable even if you load all the modules. There are also advantages for developers because the plugin is easier to extend and maintain.
+Accordion Slider has a modular architecture. It consists of a core and several optional modules. The advantage of modular architecture is that it allows you to only load the code you need and leave out what you don't need, resulting in a smaller file size for the script and, theoretically, better performance, although, practically, the performance impact is not noticeable even if you load all the modules. There are also advantages for developers, because the plugin is easier to extend and maintain.
 
 The jquery.accordionSlider.js file (and its minified version, jquery.accordionSlider.min.js) from the 'dist' folder includes all the modules, so that you can have quick and easy access to all the available features. However, if you would like to build a custom file, and you're familiar enough with JavaScript, please see the 'Building a custom file' chapter. Even if you don't want to construct a custom file, please go through the 'Modules presentation' chapter in order to learn how to use the Accordion Slider's features.
 
 ## Building a custom file ##
 
-You can find all the modules, in separate files, in the 'src/js' folder. What you need to do is copy the code from those files in a separate file, starting with the jquery.advancedSlider.core.js file. It's important that the jquery.advancedSlider.core.js code is the first block of code in your script. The order of the optional modules is not important. After you created your script, you can obtain a minified version by using Google's [Closure Compiler](http://closure-compiler.appspot.com/home).
+You can find all the modules, in separate files, in the 'src/js' folder. What you need to do is copy the code from those files in a separate file, starting with the jquery.advancedSlider.core.js file. It's important that the jquery.advancedSlider.core.js code is the first block of code in your script. The order of the optional modules is not important. After you have created your script, you can obtain a minified version by using Google's [Closure Compiler](http://closure-compiler.appspot.com/home).
 
 ## Modules presentation ##
 
 ### 1. Touch Swipe ###
 
-Although it's an optional module, you will most likely want to include it in all your projects because it enables touch functionality for touch screen devices. The module also adds mouse drag functionality (on non-touch screen devices) when the accordion has more than one page.
+Although it's an optional module, you will most likely want to include it in all your projects, because it enables touch functionality for touch screen devices. The module also adds mouse drag functionality (on non-touch screen devices) when the accordion has more than one page.
 
 ### 2. Autoplay ###
 
-Adds autoplay functionality. In the [Javascript API](api.md) chapter you can see the properties that allow you to control this module. If you do include this module but you want to disable the autoplay, you can set the 'autoplay' property to false.
+Adds autoplay functionality. In the [Javascript API](api.md) chapter, you can see the properties that allow you to control this module. If you do include this module but want to disable the autoplay, you can set the 'autoplay' property to false.
 
 ### 3. Mouse Wheel ###
 
@@ -42,7 +42,7 @@ Layers have several predefined styles and support various settings, all of which
 </div>
 ```
 
-As you can see above, the layers need to have `as-layer` class but they can be any HTML element: paragraphs, headings or just DIV elements.
+As you can see above, the layers need to have the `as-layer` class, but they can be any HTML element: paragraphs, headings or just DIV elements.
 
 Here is an example that adds some styling and animates the layers:
 
@@ -62,7 +62,7 @@ Here is an example that adds some styling and animates the layers:
 </div>
 ```
 
-There are several predefined classes that can be passed to layers in order to style them. The position, size and animations are set using data attributes. For a better organization of the HTML code I added the classes, the attributes that set the position and size, and the attributes that set the animation on separate lines, but you can add them in a single line if you want to.
+There are several predefined classes that can be passed to layers in order to style them. The position, size and animations are set using data attributes. For a better organization of the HTML code, I added the classes, the attributes that set the position and size, and the attributes that set the animation on separate lines, but you can add them in a single line if you want to.
 
 This is the list of predefined classes that can be passed to the layers:
 
@@ -84,7 +84,7 @@ Adds a white and transparent background and makes the font color black.
 
 ##### as-padding #####
 
-Adds a 10 pixels padding to the layer.
+Adds a 10 pixel padding to the layer.
 
 ##### as-rounded #####
 
@@ -150,7 +150,7 @@ Sets the duration of the hide transition.
 
 Sets a delay for the hide transition. This delay starts from the moment when the panel starts closing.
 
-The layers are animated using CSS3 transitions in most browsers. In IE9 and IE8 (where CSS3 transitions are not supported) the layers will only fade in/out and in IE7 and older, the layers will appear without any animation.
+The layers are animated using CSS3 transitions in most browsers. In IE9 and IE8 (where CSS3 transitions are not supported), the layers will only fade in/out and in IE7 and older, the layers will appear without any animation.
 
 This module is showcased in example1.html, example3.html and example4.html.
 
@@ -176,7 +176,7 @@ Enables the accordion to load images only when they are in view. It makes sense 
 </div>
 ```
 
-The `src` attribute of the image will point to a placeholder image and the actual image will be specified in the `data-src` attribute. When the panel becomes visible, the placeholder image will be replaced by the actual image. You can use the placeholder image that comes with the accordion or you can create your own placeholder image. The bundled placeholder image is located in dist/css/images/blank.gif and it's a 1 pixel by 1 pixel blank image.
+The `src` attribute of the image will point to a placeholder image, and the actual image will be specified in the `data-src` attribute. When the panel becomes visible, the placeholder image will be replaced by the actual image. You can use the placeholder image that comes with the accordion, or you can create your own placeholder image. The bundled placeholder image is located in dist/css/images/blank.gif and it's a 1 pixel by 1 pixel blank image.
 
 This module is showcased in example1.html and example3.html.
 
@@ -234,7 +234,7 @@ It's also possible to specify the 'id' attribute of the panel instead of its ind
 </div>
 ```
 
-In order to open the second panel you can use either `http://domain.com/page#my-accordion/1` or `http://domain.com/page#my-accordion/my-panel`.
+In order to open the second panel, you can use either `http://domain.com/page#my-accordion/1` or `http://domain.com/page#my-accordion/my-panel`.
 
 This module is showcased in example4.html.
 
@@ -263,7 +263,7 @@ Allows you to set an alternative background image that will appear when the pane
 
 As you can see, the alternative image can be lazy loaded and can have a high resolution version as well.
 
-Please note that the size of 'opened' image should be equal or bigger than the size of the default image in order to prevent parts of the default image to be visible behind the 'opened' image when the panel is opened.
+Please note that the size of the 'opened' image should be equal or bigger than the size of the default image, in order to prevent parts of the default image to be visible behind the 'opened' image when the panel is opened.
 
 This module is showcased in example2.html.
 
@@ -297,7 +297,7 @@ The videos need to have the `api=1` parameter appended to the URL of the video.
 
 ##### HTML5 #####
 
-Simple HTML5 videos don't need any other preparations, other than having the `as-video` class.
+Simple HTML5 videos don't need any preparations other than having the `as-video` class.
 
 *Example:*
 
@@ -321,11 +321,11 @@ Each Video.js video must have a unique 'id' attribute. Another requirement is to
 </video>
 ```
 
-Please note that in order to use Video.js you need to load the Video.js JavaScript and CSS files in your page. More information about how to use Video.js, in general, can be found on the [official Video.js page](http://www.videojs.com/). 
+Please note that, in order to use Video.js, you need to load the Video.js JavaScript and CSS files in your page. More information about how to use Video.js, in general, can be found on the [official Video.js page](http://www.videojs.com/). 
 
 ##### SublimeVideo #####
 
-Each SublimeVideo instance mush have a unique 'id' attribute. Also, instead of adding the `sublime` class, as the SublimeVideo documentation indicates, add the `sublime-video` class.
+Each SublimeVideo instance must have a unique 'id' attribute. Also, instead of adding the `sublime` class, as the SublimeVideo documentation indicates, add the `sublime-video` class.
 
 *Example:*
 
@@ -336,7 +336,7 @@ Each SublimeVideo instance mush have a unique 'id' attribute. Also, instead of a
 </video>
 ```
 
-Please note that in order to use SublimeVideo you will also need to load a script in your page which you need to download from the SublimeVideo page. More information about how to use SublimeVideo, in general, can be found on the [official SublimeVideo page](http://www.sublimevideo.net/).
+Please note that, in order to use SublimeVideo, you will also need to load a script in your page which you need to download from the SublimeVideo page. More information about how to use SublimeVideo, in general, can be found on the [official SublimeVideo page](http://www.sublimevideo.net/).
 
 ##### Notes #####
 
@@ -364,13 +364,13 @@ $('#example-xml').accordionSlider({
 });
 ```
 
-In the accordion's HTML code you will only need to create the main container DIV. The rest will be created by automatically, based on the XML data.
+In the accordion's HTML code, you will only need to create the main container DIV. The rest will be created automatically, based on the XML data.
 
 ```
 <div id="example-xml" class="accordion-slider"></div>
 ```
 
-The syntax used in XML is similar to that used in HTML. Some differences would be that the `as-` prefix is not used anymore for classes, the `data-` prefix is not used for attributes and using the dash (-) as a delimiter is replaced with using the CamelCase notation.
+The syntax used in XML is similar to that used in HTML. Some differences would be that the `as-` prefix is not used anymore for classes, the `data-` prefix is not used for attributes, and using the dash (-) as a delimiter is replaced with using the CamelCase notation.
 
 These are the node names that need to be used:
 
@@ -406,7 +406,7 @@ These are the node names that need to be used:
 </accordion>
 ```
 
-If you wan to use lazy loading you simply need to add the `lazyLoading` attribute to the root `accordion` node and specify the path of the placeholder image.
+If you want to use lazy loading, you simply need to add the `lazyLoading` attribute to the root `accordion` node and specify the path of the placeholder image.
 
 *Example:*
 
@@ -416,7 +416,7 @@ If you wan to use lazy loading you simply need to add the `lazyLoading` attribut
 </accordion>
 ```
 
-When using layers, the equivalent for the `class` attribute is the `style` attribute. As noted before, the `as-` and `data-` prefixes are not used anymore and the names of the attributes use a CamelCase notation. It's important to already be familiar with the 'Layers' before learning how to use layers in XML. The available styles and attributes are enumerated below, but check the presentation of the 'Layers' module for a description of these.
+When using layers, the equivalent for the `class` attribute is the `style` attribute. As noted before, the `as-` and `data-` prefixes are not used anymore and the names of the attributes use a CamelCase notation. It's important to already be familiar with the 'Layers' module before learning how to use layers in XML. The available styles and attributes are enumerated below, but check the presentation of the 'Layers' module for a description of these.
 
 ##### Styles #####
 
@@ -460,13 +460,13 @@ $('#example-json').accordionSlider({
 });
 ```
 
-In the accordion's HTML code you will only need to create the main container DIV. The rest will be created by automatically, based on the JSON data.
+In the accordion's HTML code, you will only need to create the main container DIV. The rest will be created automatically, based on the JSON data.
 
 ```
 <div id="example-json" class="accordion-slider"></div>
 ```
 
-The syntax used in JSON is similar to that used in HTML. Some differences would be that the `as-` prefix is not used anymore for classes, the `data-` prefix is not used for attributes and using the dash (-) as a delimiter is replaced with using the CamelCase notation.
+The syntax used in JSON is similar to that used in HTML. Some differences would be that the `as-` prefix is not used anymore for classes, the `data-` prefix is not used for attributes, and using the dash (-) as a delimiter is replaced with using the CamelCase notation.
 
 These are the node names that need to be used:
 
@@ -505,7 +505,7 @@ These are the node names that need to be used:
 }
 ```
 
-If you wan to use lazy loading you simply need to add the `lazyLoading` property to the `accordion` object and specify the path of the placeholder image.
+If you want to use lazy loading, you simply need to add the `lazyLoading` property to the `accordion` object and specify the path of the placeholder image.
 
 *Example:*
 
@@ -520,7 +520,7 @@ If you wan to use lazy loading you simply need to add the `lazyLoading` property
 }
 ```
 
-When using layers, the equivalent for the `class` attribute is the `style` property. As noted before, the `as-` and `data-` prefixes are not used anymore and the names of the properties use a CamelCase notation. It's important to already be familiar with the 'Layers' before learning how to use layers in JSON. The available styles and properties are enumerated below, but check the presentation of the 'Layers' module for a description of these.
+When using layers, the equivalent for the `class` attribute is the `style` property. As noted before, the `as-` and `data-` prefixes are not used anymore and the names of the properties use a CamelCase notation. It's important to already be familiar with the 'Layers' module before learning how to use layers in JSON. The available styles and properties are enumerated below, but check the presentation of the 'Layers' module for a description of these.
 
 ##### Styles #####
 
