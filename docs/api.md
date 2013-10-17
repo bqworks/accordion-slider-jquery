@@ -278,7 +278,7 @@ Sets the JSON source for the accordion. Can be set to a path to a JSON file or t
 
 ## 2. Public methods ##
 
-The public methods below allow you to manipulate the accordion using external controls. There are two ways of calling a public method:
+The public methods below allow you to manipulate the accordion using external controls. There are two ways of calling a public method.
 
 The first way is by calling the `accordionSlider` plugin and passing the name of the method and additional arguments:
 
@@ -292,7 +292,7 @@ The first argument represents the name of the method and the second argument rep
 $('#my-accordion').accordionSlider('nextPanel');
 ```
 
-The second way is by getting a reference to the AccordionSlider instance and call the method on the instance:
+The second way is by getting a reference to the AccordionSlider instance and calling the method on the instance:
 
 ```
 // get a reference to the AccordionSlider instance
@@ -361,19 +361,19 @@ Goes to the previous page.
 
 #### on(eventType, callback) ####
 
-Adds an event listener to the accordion. More details about the use of this method will pe presented in the 'Callbacks' chapter.
+Adds an event listener to the accordion. More details about the use of this method will be presented in the 'Callbacks' chapter.
 
 #### off(eventType) ####
 
-Remove an event listener from the accordion.
+Removes an event listener from the accordion.
 
 #### destroy() ####
 
-Destroys an accordion, by removing all the visual elements and functionality added by the plugin. Basically, it leaves the accordion in the state it was before the plugin was instantiated.
+Destroys an accordion by removing all the visual elements and functionality added by the plugin. Basically, it leaves the accordion in the state it was before the plugin was instantiated.
 
 #### update() ####
 
-This is called by the plugin automatically, when a property is changed. You can call this manually in order to refresh the accordion after changing its HTML, like removing or adding panels.
+This is called by the plugin automatically when a property is changed. You can call this manually in order to refresh the accordion after changing its HTML, like removing or adding panels.
 
 #### removePanels() ####
 
@@ -385,7 +385,7 @@ This is called by the plugin automatically, when the browser window is resized. 
 
 ## 3. Callbacks ##
 
-Callbacks (or events) are used to detect when certain actions take place. The callbacks can be added when the accordion is instantiated or at a later time.
+Callbacks (or events) are used to detect when certain actions take place. The callbacks can be added when the accordion is instantiated, or at a later time.
 
 *Examples:*
 
@@ -407,7 +407,7 @@ $('#my-accordion').on('panelOpen', function(event) {
 })
 ```
 
-As you can notice, the callback functions have an "event" parameter, which contains some information about that event.
+As you can notice, the callback functions have an "event" parameter which contains some information about that event.
 
 The list of available events:
 
@@ -460,7 +460,7 @@ Triggered when the panels are closed. Returned data:
 
 #### pageScroll ####
 
-Triggered when a the accordion scrolls to another page. Returned data:
+Triggered when the accordion scrolls to another page. Returned data:
 
 * index: the index of the current page
 
