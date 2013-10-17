@@ -23,7 +23,7 @@ $('#my-accordion').accordionSlider({
 
 #### width ####
 
-Sets the width of the accordion. Can be set to a fixed value, like 900 (indicating 900 pixels) or to a percentage value, like '100%'. It's important to note that percentage values need to be specified inside quotes. For fixed values, the quotes are not necessary. Also, please note that in order to make the accordion responsive it's not necessary to use percentage values. More about this in the description of the 'responsive' property.
+Sets the width of the accordion. Can be set to a fixed value, like 900 (indicating 900 pixels), or to a percentage value, like '100%'. It's important to note that percentage values need to be specified inside quotes. For fixed values, the quotes are not necessary. Also, please note that, in order to make the accordion responsive, it's not necessary to use percentage values. More about this in the description of the 'responsive' property.
 
 *Default value:* 800
 
@@ -35,15 +35,15 @@ Sets the height of the accordion. The same rules available for the 'width' prope
 
 #### responsive ####
 
-Makes the accordion responsive. The accordion can be responsive even if the 'width' and/or 'height' properties are set to fixed values. In this situation, the 'width' and 'height' will act as the maximum width and maximum height of the accordion.
+Makes the accordion responsive. The accordion can be responsive even if the 'width' and/or 'height' properties are set to fixed values. In this situation, 'width' and 'height' will act as the maximum width and height of the accordion.
 
 *Default value:* true
 
 #### responsiveMode ####
 
-Sets the responsive mode of the accordion. Possible values are 'auto' and 'custom'. 'auto' resizes the accordion and all of its elements (e.g., layers, videos) automatically, while 'custom' only resizes the accordion container and panels, while you are being given flexibility over the way inner elements (e.g., layers, videos) will respond to smaller sizes. For example, you could use CSS media queries to define different text sizes or to hide certain elements when the accordion becomes smaller, ensuring that all content remains readable without having to zoom in.
+Sets the responsive mode of the accordion. Possible values are 'auto' and 'custom'. 'auto' resizes the accordion and all of its elements (e.g., layers, videos) automatically, while 'custom' only resizes the accordion container and panels, and you are given flexibility over the way inner elements (e.g., layers, videos) will respond to smaller sizes. For example, you could use CSS media queries to define different text sizes or to hide certain elements when the accordion becomes smaller, ensuring that all content remains readable without having to zoom in.
 
-It's important to note that if 'auto' responsiveness is used, the 'width' and 'height' need to be set to fixed values, so that the accordion can calculate correctly how much it needs to scale.
+It's important to note that, if 'auto' responsiveness is used, the 'width' and 'height' need to be set to fixed values, so that the accordion can calculate correctly how much it needs to scale.
 
 *Default value:* 'auto'
 
@@ -51,7 +51,7 @@ It's important to note that if 'auto' responsiveness is used, the 'width' and 'h
 
 Sets the aspect ratio of the accordion. The accordion will set its height depending on what value its width has, so that this ratio is maintained. For this reason, the set 'height' might be overridden.
 
-This property can be used only when 'responsiveMode' is set to 'custom'. When it's set to 'auto', the 'aspectRatio' needs to remain to -1.
+This property can be used only when 'responsiveMode' is set to 'custom'. When it's set to 'auto', the 'aspectRatio' needs to remain -1.
 
 *Default value:* -1 (determined by the ratio of the set 'width' and 'height')
 
@@ -68,13 +68,13 @@ Indicates which panel will be opened when the accordion loads (0 for the first p
 *Default value:* -1
 
 #### openedPanelSize ####
-Sets the size (width if the accordion's orientation is horizontal; height if the accordion's orientation is vertical) of the opened panel. Possible values are 'max', which will open the panel to its maximum size, so that all the inner content is visible, a percentage value, like '50%', which indicates the percentage from the total size (width or height, depending on the orientation) of the accordion, or to a fixed value.
+Sets the size (width if the accordion's orientation is horizontal; height if the accordion's orientation is vertical) of the opened panel. Possible values are: 'max', which will open the panel to its maximum size, so that all the inner content is visible, a percentage value, like '50%', which indicates the percentage of the total size (width or height, depending on the orientation) of the accordion, or a fixed value.
 
 *Default value:* 'max'
 
 #### maxOpenedPanelSize ####
 
-Sets the maximum allowed size of the opened panel. This should be used when the 'openedPanelSize' is set to 'max' because sometimes the maximum size of the panel might be to big and we want to set a limit. The property can be set to a percentage (from the total size of the accordion) or to a fixed value.
+Sets the maximum allowed size of the opened panel. This should be used when the 'openedPanelSize' is set to 'max', because sometimes the maximum size of the panel might be too big and we want to set a limit. The property can be set to a percentage (of the total size of the accordion) or to a fixed value.
 
 *Default value:* '80%'
 
@@ -98,7 +98,7 @@ Sets the delay in milliseconds between the movement of the mouse pointer and the
 
 #### panelDistance ####
 
-Sets the distance between consecutive panels. Can be set to a percentage of fixed value.
+Sets the distance between consecutive panels. Can be set to a percentage or fixed value.
 
 *Default value:* 0
 
@@ -168,7 +168,7 @@ Indicates if the panels will have a drop shadow effect.
 
 #### panelOverlap ####
 
-Indicates if the panels will be overlapped. If set to false, the panels will have their width or height set so that they are next to each other but not overlapped.
+Indicates if the panels will be overlapped. If set to false, the panels will have their width or height set so that they are next to each other, but not overlapped.
 
 *Default value:* true
 
@@ -204,13 +204,13 @@ Indicates if the accordion will respond to mouse wheel input.
 
 #### mouseWheelSensitivity ####
 
-Sets how sensitive will the accordion be to mouse wheel input. Lower values indicate stronger sensitivity.
+Sets how sensitive the accordion will be to mouse wheel input. Lower values indicate stronger sensitivity.
 
 *Default value:* 50
 
 #### mouseWheelTarget ####
 
-Sets what elements will be targeted by the mouse wheel input. Can be set to 'panel' or 'page'. Setting it to 'panel' will indicate that the panels will be scrolled while setting it to 'page' indicate that the pages will be scrolled.
+Sets what elements will be targeted by the mouse wheel input. Can be set to 'panel' or 'page'. Setting it to 'panel' will indicate that the panels will be scrolled, while setting it to 'page' indicate that the pages will be scrolled.
 
 *Default value:* 'panel'
 
@@ -240,31 +240,31 @@ Sets how many pixels the distance of the swipe gesture needs to be in order to t
 
 #### openPanelVideoAction ####
 
-Sets what will the video do when the panel is opened. Can be set to: 'playVideo' or 'none'.
+Sets what the video will do when the panel is opened. Can be set to 'playVideo' or 'none'.
 
 *Default value:* 'playVideo'
 
 #### closePanelVideoAction ####
 
-Sets what will the video do when the panel is closed. Can be set to: 'pauseVideo' or 'stopVideo.'
+Sets what the video will do when the panel is closed. Can be set to 'pauseVideo' or 'stopVideo.'
 
 *Default value:* 'pauseVideo'
 
 #### playVideoAction ####
 
-Sets what will the accordion do when a video starts playing. Can be set to 'stopAutoplay' or 'none'.
+Sets what the accordion will do when a video starts playing. Can be set to 'stopAutoplay' or 'none'.
 
 *Default value:* 'stopAutoplay'
 
 #### pauseVideoAction ####
 
-Sets what will the accordion do when a video is paused. Can be set to 'startAutoplay' or 'none'.
+Sets what the accordion will do when a video is paused. Can be set to 'startAutoplay' or 'none'.
 
 *Default value:* 'none'
 
 #### endVideoAction ####
 
-Sets what will the accordion to when a video ends. Can be set to 'startAutoplay', 'nextPanel', 'replayVideo' or 'none'.
+Sets what the accordion will do when a video ends. Can be set to 'startAutoplay', 'nextPanel', 'replayVideo' or 'none'.
 
 *Default value:* 'none'
 
