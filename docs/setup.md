@@ -100,6 +100,7 @@ Please note that all class names are prefixed with `as-` in order to prevent CSS
 ### 4. Instantiating the accordion ###
 
 After including the required files in the header and creating the HTML markup, you will need to instantiate the accordion by adding the following code before the `</head>` tag:
+
 ```
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
@@ -108,4 +109,4 @@ After including the required files in the header and creating the HTML markup, y
 </script>
 ```
 
-If you want to change any of the default settings for the accordion, you can also pass various properties to the accordion here - more about that in the [API](api.md) chapter.
+If you want to change any of the default settings for the accordion, you can also pass various properties to the accordion here - more about that in the [JavaScript API](api.md) chapter.
