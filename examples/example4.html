@@ -81,7 +81,7 @@
 					<p class="link">Source: <a href="http://www.bigbuckbunny.org" target="_blank">bigbuckbunny.org</a></p>
 	        	</div>
 				<div class="as-layer" data-horizontal="245">
-					<video id="video3" class="as-video sublime-video" controls="controls" preload="none" width="500" height="350"
+					<video id="video3" class="as-video sublime" controls="controls" preload="none" width="500" height="350"
 						   poster="http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg">
 						<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4" type='video/mp4'/>
 						<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.ogg" type='video/ogg'/>
@@ -100,10 +100,12 @@
 					<p class="link">Source: <a href="http://www.sintel.org/" target="_blank">sintel.org</a></p>
 	        	</div>
 				<div class="as-layer" data-horizontal="245">
-					<video id="video2" class="as-video videojs" poster="http://bqworks.com/products/assets/videos/sintel/sintel-poster.jpg" width="500" height="350" controls="controls" preload="none">
-						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.mp4" type="video/mp4"/>
-						<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.ogv" type="video/ogg"/>
-					</video>
+					<div class="as-video" data-videojs-id="video2">
+						<video id="video2" class="video-js vjs-default-skin" poster="http://bqworks.com/products/assets/videos/sintel/sintel-poster.jpg" width="500" height="350" controls="controls" preload="none" data-setup="{}">
+							<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.mp4" type="video/mp4"/>
+							<source src="http://bqworks.com/products/assets/videos/sintel/sintel-trailer.ogv" type="video/ogg"/>
+						</video>
+					</div>
 				</div>
 			</div>
 		</div>

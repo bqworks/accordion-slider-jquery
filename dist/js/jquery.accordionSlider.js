@@ -2584,42 +2584,7 @@
 	var SmartVideo = {
 
 		initSmartVideo: function() {
-
 			$.extend(this.settings, this.smartVideoDefaults, this.options);
-
-			// check if the device uses iOS
-			var isIOS = (userAgent.match(/ipad/i) !== null) ||
-						(userAgent.match(/ipod/i) !== null) ||
-						(userAgent.match(/iphone/i) !== null);
-
-			// find all HTML5 videos from the accordion
-			this.$accordion.find('video').each(function() {
-				var video = $(this);
-
-				// recreate the video element for iOS devices (workaround for WebKit bug,
-				// which breaks videos if they are moved inside the DOM)
-				if (isIOS) {
-					var videoParent = video.parent(),
-						videoString = video[0].outerHTML;
-
-					video.remove();
-					videoParent.html(videoString);
-					video = videoParent.find('video');
-					video[0].load();
-				}
-
-				// instantiate VideoJS videos
-				if (typeof videojs !== 'undefined' && video.hasClass('videojs')) {
-					video.attr('id', video.attr('id') + '_' + new Date().valueOf());
-					video.addClass('video-js vjs-default-skin');
-					videojs(video.attr('id'), video.data('video'));
-				}
-
-				// load sublime API
-				if (typeof sublime === 'object') {
-					sublime.load();
-				}
-			});
 
 			this._setupVideos();
 		},
@@ -2632,9 +2597,9 @@
 			this.$accordion.find('.as-video').each(function() {
 				var video = $(this);
 
-				video.smartVideo();
+				video.videoController();
 
-				video.on('play.SmartVideo', function() {
+				video.on('videoPlay.SmartVideo', function() {
 					if (that.settings.playVideoAction == 'stopAutoplay' && typeof that.stopAutoplay !== 'undefined') {
 						that.stopAutoplay();
 						that.settings.autoplay = false;
@@ -2646,7 +2611,7 @@
 						that.settings.videoPlay.call(that, eventObject);
 				});
 
-				video.on('pause.SmartVideo', function() {
+				video.on('videoPause.SmartVideo', function() {
 					if (that.settings.pauseVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
 						that.startAutoplay();
 						that.settings.autoplay = true;
@@ -2658,14 +2623,14 @@
 						that.settings.videoPause.call(that, eventObject);
 				});
 
-				video.on('end.SmartVideo', function() {
+				video.on('videoEnded.SmartVideo', function() {
 					if (that.settings.endVideoAction == 'startAutoplay' && typeof that.startAutoplay !== 'undefined') {
 						that.startAutoplay();
 						that.settings.autoplay = true;
 					} else if (that.settings.endVideoAction == 'nextPanel') {
 						that.nextPanel();
 					} else if (that.settings.endVideoAction == 'replayVideo') {
-						video.smartVideo('replay');
+						video.videoController('replay');
 					}
 
 					var eventObject = {type: 'videoEnd', video: video};
@@ -2683,9 +2648,9 @@
 					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
 
 					if (that.settings.closePanelVideoAction == 'stopVideo')
-						previousVideo.smartVideo('stop');
+						previousVideo.videoController('stop');
 					else if (that.settings.closePanelVideoAction == 'pauseVideo')
-						previousVideo.smartVideo('pause');
+						previousVideo.videoController('pause');
 				}
 
 				// handle the video from the opened panel
@@ -2693,7 +2658,7 @@
 					var currentVideo = that.$panelsContainer.find('.as-panel').eq(event.index).find('.as-video');
 
 					if (that.settings.openPanelVideoAction == 'playVideo')
-						currentVideo.smartVideo('play');
+						currentVideo.videoController('play');
 				}
 			});
 
@@ -2705,9 +2670,9 @@
 					var previousVideo = that.$panelsContainer.find('.as-panel').eq(event.previousIndex).find('.as-video');
 
 					if (that.settings.closePanelVideoAction == 'stopVideo')
-						previousVideo.smartVideo('stop');
+						previousVideo.videoController('stop');
 					else if (that.settings.closePanelVideoAction == 'pauseVideo')
-						previousVideo.smartVideo('pause');
+						previousVideo.videoController('pause');
 				}
 			});
 		},
@@ -2717,7 +2682,7 @@
 				var video = $(this);
 
 				video.off('SmartVideo');
-				$(this).smartVideo('destroy');
+				$(this).videoController('destroy');
 			});
 
 			this.off('panelOpen.SmartVideo.' + NS);
@@ -2741,21 +2706,23 @@
 })(window, jQuery);
 
 /*
-	Smart Video jQuery plugin
+	Video Controller jQuery plugin
 
-	Adds automatic control for several video players and providers
+	Creates a universal controller for multiple video types and providers
 */
-;(function(window, $) {
+;(function($) {
 
 	"use strict";
-	
+
 	// check if an iOS device is used
+	// this information is important because a video can not be
+	// controlled programmatically unless the user has started the video manually
 	var	userAgent = window.navigator.userAgent.toLowerCase(),
 		isIOS = (userAgent.match(/ipad/i) !== null) ||
 				(userAgent.match(/ipod/i) !== null) ||
 				(userAgent.match(/iphone/i) !== null);
 
-	var SmartVideo = function(instance, options) {
+	var VideoController = function(instance, options) {
 		this.$video = $(instance);
 		this.options = options;
 		this.settings = {};
@@ -2764,20 +2731,17 @@
 		this._init();
 	};
 
-	SmartVideo.prototype = {
+	VideoController.prototype = {
 
 		_init: function() {
-			
 			this.settings = $.extend({}, this.defaults, this.options);
 
-			// get the list of players
-			var players = $.SmartVideo.players,
-				that = this;
+			var players = $.VideoController.players,
+				that = this,
+				videoID = this.$video.attr('id');
 
-			if (players.length === 0)
-				return;
-
-			// check if the video element is supported by one of the players
+			// loop through the available video players
+			// and check if the targeted video element is supported by one of the players
 			for (var name in players) {
 				if (typeof players[name] !== 'undefined' && players[name].isType(this.$video)) {
 					this.player = new players[name](this.$video);
@@ -2785,63 +2749,40 @@
 				}
 			}
 
+			// return if the player could not be instantiated
 			if (this.player === null)
 				return;
 
 			// add event listeners
-			this.player.on('videoReady', function() {
-				that.trigger({type: 'ready'});
-				if ($.isFunction(that.settings.ready))
-					that.settings.ready.call(that, {type: 'ready'});
-			});
+			var events = ['ready', 'start', 'play', 'pause', 'ended'];
+			
+			$.each(events, function(index, element) {
+				var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
 
-			this.player.on('videoStart', function() {
-				that.trigger({type: 'start'});
-				if ($.isFunction(that.settings.start))
-					that.settings.start.call(that, {type: 'start'});
-			});
-
-			this.player.on('videoLoad', function() {
-				that.trigger({type: 'loading'});
-				if ($.isFunction(that.settings.loading))
-					that.settings.loading.call(that, {type: 'loading'});
-			});
-
-			this.player.on('videoPlay', function() {
-				that.trigger({type: 'play'});
-				if ($.isFunction(that.settings.play))
-					that.settings.play.call(that, {type: 'play'});
-			});
-
-			this.player.on('videoPause', function() {
-				that.trigger({type: 'pause'});
-				if ($.isFunction(that.settings.pause))
-					that.settings.pause.call(that, {type: 'pause'});
-			});
-
-			this.player.on('videoEnd', function() {
-				that.trigger({type: 'end'});
-				if ($.isFunction(that.settings.end))
-					that.settings.end.call(that, {type: 'end'});
+				that.player.on(element, function() {
+					that.trigger({type: event, video: videoID});
+					if ($.isFunction(that.settings[event]))
+						that.settings[event].call(that, {type: event, video: videoID});
+				});
 			});
 		},
 		
 		play: function() {
-			if (isIOS === true && this.player.isStarted() === false)
+			if (isIOS === true && this.player.isStarted() === false || this.player.getState() === 'playing')
 				return;
 
 			this.player.play();
 		},
 		
 		stop: function() {
-			if (isIOS === true && this.player.isStarted() === false)
+			if (isIOS === true && this.player.isStarted() === false || this.player.getState() === 'stopped')
 				return;
 
 			this.player.stop();
 		},
 		
 		pause: function() {
-			if (isIOS === true && this.player.isStarted() === false)
+			if (isIOS === true && this.player.isStarted() === false || this.player.getState() === 'paused')
 				return;
 
 			this.player.pause();
@@ -2870,25 +2811,23 @@
 			if (this.player.isStarted() === true)
 				this.stop();
 
-			this.player.off('videoReady');
-			this.player.off('videoStart');
-			this.player.off('videoLoad');
-			this.player.off('videoPlay');
-			this.player.off('videoPause');
-			this.player.off('videoEnd');
+			this.player.off('ready');
+			this.player.off('start');
+			this.player.off('play');
+			this.player.off('pause');
+			this.player.off('ended');
 		},
 
 		defaults: {
-			ready: function() {},
-			start: function() {},
-			loading: function() {},
-			play: function() {},
-			pause: function() {},
-			end: function() {}
+			videoReady: function() {},
+			videoStart: function() {},
+			videoPlay: function() {},
+			videoPause: function() {},
+			videoEnded: function() {}
 		}
 	};
 
-	$.SmartVideo = {
+	$.VideoController = {
 		players: {},
 
 		addPlayer: function(name, player) {
@@ -2896,24 +2835,24 @@
 		}
 	};
 
-	$.fn.smartVideo = function(options) {
+	$.fn.videoController = function(options) {
 		var args = Array.prototype.slice.call(arguments, 1);
 
 		return this.each(function() {
-			// instantiate the smart video or call a function on the current instance
-			if (typeof $(this).data('smartVideo') === 'undefined') {
-				var newInstance = new SmartVideo(this, options);
+			// instantiate the video controller or call a function on the current instance
+			if (typeof $(this).data('videoController') === 'undefined') {
+				var newInstance = new VideoController(this, options);
 
 				// store a reference to the instance created
-				$(this).data('smartVideo', newInstance);
+				$(this).data('videoController', newInstance);
 			} else if (typeof options !== 'undefined') {
-				var	currentInstance = $(this).data('smartVideo');
+				var	currentInstance = $(this).data('videoController');
 
 				// check the type of argument passed
 				if (typeof currentInstance[options] === 'function') {
 					currentInstance[options].apply(currentInstance, args);
 				} else {
-					$.error(options + ' does not exist in smartVideo.');
+					$.error(options + ' does not exist in videoController.');
 				}
 			}
 		});
@@ -2928,6 +2867,7 @@
 		this.ready = false;
 		this.started = false;
 		this.state = '';
+		this.events = $({});
 
 		this._init();
 	};
@@ -2958,15 +2898,15 @@
 		},
 
 		on: function(type, callback) {
-			return this.$video.on(type, callback);
+			return this.events.on(type, callback);
 		},
 		
 		off: function(type) {
-			return this.$video.off(type);
+			return this.events.off(type);
 		},
 
 		trigger: function(data) {
-			return this.$video.triggerHandler(data);
+			return this.events.triggerHandler(data);
 		}
 	};
 
@@ -2979,13 +2919,13 @@
 
 	YoutubeVideo.prototype = new Video();
 	YoutubeVideo.prototype.constructor = YoutubeVideo;
-	$.SmartVideo.addPlayer('YoutubeVideo', YoutubeVideo);
+	$.VideoController.addPlayer('YoutubeVideo', YoutubeVideo);
 
 	YoutubeVideo.isType = function(video) {
 		if (video.is('iframe')) {
 			var src = video.attr('src');
 
-			if (src.indexOf('youtube.com') != -1 || src.indexOf('youtu.be') != -1)
+			if (src.indexOf('youtube.com') !== -1 || src.indexOf('youtu.be') !== -1)
 				return true;
 		}
 
@@ -3013,43 +2953,34 @@
 	YoutubeVideo.prototype._setup = function() {
 		var that = this;
 
+		// get reference to the player
 		this.player = new YT.Player(this.$video[0], {
 			events: {
 				'onReady': function() {
 					that.ready = true;
-					that.trigger({type: 'videoReady'});
+					that.trigger({type: 'ready'});
 				},
 				
 				'onStateChange': function(event) {
 					switch (event.data) {
-						case YT.PlayerState.BUFFERING:
-							if (that.started === false) {
-								that.started = true;
-								that.trigger({type: 'videoStart'});
-							}
-
-							that.state = 'load';
-							that.trigger({type: 'videoLoad'});
-							break;
-							
 						case YT.PlayerState.PLAYING:
 							if (that.started === false) {
 								that.started = true;
-								that.trigger({type: 'videoStart'});
+								that.trigger({type: 'start'});
 							}
 
-							that.state = 'play';
-							that.trigger({type: 'videoPlay'});
+							that.state = 'playing';
+							that.trigger({type: 'play'});
 							break;
 						
 						case YT.PlayerState.PAUSED:
-							that.state = 'pause';
-							that.trigger({type: 'videoPause'});
+							that.state = 'paused';
+							that.trigger({type: 'pause'});
 							break;
 						
 						case YT.PlayerState.ENDED:
-							that.state = 'end';
-							that.trigger({type: 'videoEnd'});
+							that.state = 'ended';
+							that.trigger({type: 'ended'});
 							break;
 					}
 				}
@@ -3062,6 +2993,8 @@
 	};
 
 	YoutubeVideo.prototype.pause = function() {
+		// on iOS, simply pausing the video can make other videos unresponsive
+		// so we stop the video instead
 		if (isIOS === true)
 			this.stop();
 		else
@@ -3071,6 +3004,7 @@
 	YoutubeVideo.prototype.stop = function() {
 		this.player.seekTo(1);
 		this.player.stopVideo();
+		this.state = 'stopped';
 	};
 
 	YoutubeVideo.prototype.replay = function() {
@@ -3087,13 +3021,13 @@
 
 	VimeoVideo.prototype = new Video();
 	VimeoVideo.prototype.constructor = VimeoVideo;
-	$.SmartVideo.addPlayer('VimeoVideo', VimeoVideo);
+	$.VideoController.addPlayer('VimeoVideo', VimeoVideo);
 
 	VimeoVideo.isType = function(video) {
 		if (video.is('iframe')) {
 			var src = video.attr('src');
 
-			if (src.indexOf('vimeo.com') != -1)
+			if (src.indexOf('vimeo.com') !== -1)
 				return true;
 		}
 
@@ -3123,40 +3057,31 @@
 	VimeoVideo.prototype._setup = function() {
 		var that = this;
 
+		// get reference to the player
 		this.player = $f(this.$video[0]);
 		
 		this.player.addEvent('ready', function() {
 			that.ready = true;
-			that.trigger({type: 'videoReady'});
-			
-			that.player.addEvent('loadProgress', function() {
-				if (that.started === false) {
-					that.started = true;
-					that.trigger({type: 'videoStart'});
-				}
-
-				that.state = 'load';
-				that.trigger({type: 'videoLoad'});
-			});
+			that.trigger({type: 'ready'});
 			
 			that.player.addEvent('play', function() {
 				if (that.started === false) {
 					that.started = true;
-					that.trigger({type: 'videoStart'});
+					that.trigger({type: 'start'});
 				}
 
-				that.state = 'play';
-				that.trigger({type: 'videoPlay'});
+				that.state = 'playing';
+				that.trigger({type: 'play'});
 			});
 			
 			that.player.addEvent('pause', function() {
-				that.state = 'pause';
-				that.trigger({type: 'videoPause'});
+				that.state = 'paused';
+				that.trigger({type: 'pause'});
 			});
 			
 			that.player.addEvent('finish', function() {
-				that.state = 'end';
-				that.trigger({type: 'videoEnd'});
+				that.state = 'ended';
+				that.trigger({type: 'ended'});
 			});
 		});
 	};
@@ -3172,6 +3097,7 @@
 	VimeoVideo.prototype.stop = function() {
 		this.player.api('seekTo', 0);
 		this.player.api('pause');
+		this.state = 'stopped';
 	};
 
 	VimeoVideo.prototype.replay = function() {
@@ -3188,39 +3114,40 @@
 
 	HTML5Video.prototype = new Video();
 	HTML5Video.prototype.constructor = HTML5Video;
-	$.SmartVideo.addPlayer('HTML5Video', HTML5Video);
+	$.VideoController.addPlayer('HTML5Video', HTML5Video);
 
 	HTML5Video.isType = function(video) {
-		if (video.is('video') && video.hasClass('video-js') === false && video.hasClass('sublime-video') === false)
+		if (video.is('video') && video.hasClass('video-js') === false && video.hasClass('sublime') === false)
 			return true;
 
 		return false;
 	};
 
 	HTML5Video.prototype._init = function() {
+		var that = this;
+
+		// get reference to the player
 		this.player = this.$video[0];
 		this.ready = true;
-		
-		var that = this;
 
 		this.player.addEventListener('play', function() {
 			if (that.started === false) {
 				that.started = true;
-				that.trigger({type: 'videoStart'});
+				that.trigger({type: 'start'});
 			}
 
-			that.state = 'play';
-			that.trigger({type: 'videoPlay'});
+			that.state = 'playing';
+			that.trigger({type: 'play'});
 		});
 		
 		this.player.addEventListener('pause', function() {
-			that.state = 'pause';
-			that.trigger({type: 'videoPause'});
+			that.state = 'paused';
+			that.trigger({type: 'pause'});
 		});
 		
 		this.player.addEventListener('ended', function() {
-			that.state = 'end';
-			that.trigger({type: 'videoEnd'});
+			that.state = 'ended';
+			that.trigger({type: 'ended'});
 		});
 	};
 
@@ -3235,6 +3162,7 @@
 	HTML5Video.prototype.stop = function() {
 		this.player.currentTime = 0;
 		this.player.pause();
+		this.state = 'stopped';
 	};
 
 	HTML5Video.prototype.replay = function() {
@@ -3251,43 +3179,43 @@
 
 	VideoJSVideo.prototype = new Video();
 	VideoJSVideo.prototype.constructor = VideoJSVideo;
-	$.SmartVideo.addPlayer('VideoJSVideo', VideoJSVideo);
+	$.VideoController.addPlayer('VideoJSVideo', VideoJSVideo);
 
 	VideoJSVideo.isType = function(video) {
-		if (video.hasClass('videojs'))
+		if ((typeof video.attr('data-videojs-id') !== 'undefined' || video.hasClass('video-js')) && typeof videojs !== 'undefined')
 			return true;
 
 		return false;
 	};
 
 	VideoJSVideo.prototype._init = function() {
-		var that = this;
+		var that = this,
+			videoID = this.$video.hasClass('video-js') ? this.$video.attr('id') : this.$video.attr('data-videojs-id');
+		
+		this.player = videojs(videoID);
 
-		if (typeof videojs === 'undefined')
-			return;
-
-		videojs(this.$video.attr('id')).ready(function() {
-			that.player = this;
+		this.player.ready(function() {
 			that.ready = true;
+			that.trigger({type: 'ready'});
 
 			that.player.on('play', function() {
 				if (that.started === false) {
 					that.started = true;
-					that.trigger({type: 'videoStart'});
+					that.trigger({type: 'start'});
 				}
 
-				that.state = 'play';
-				that.trigger({type: 'videoPlay'});
+				that.state = 'playing';
+				that.trigger({type: 'play'});
 			});
 			
 			that.player.on('pause', function() {
-				that.state = 'pause';
-				that.trigger({type: 'videoPause'});
+				that.state = 'paused';
+				that.trigger({type: 'pause'});
 			});
 			
 			that.player.on('ended', function() {
-				that.state = 'end';
-				that.trigger({type: 'videoEnd'});
+				that.state = 'ended';
+				that.trigger({type: 'ended'});
 			});
 		});
 	};
@@ -3303,6 +3231,7 @@
 	VideoJSVideo.prototype.stop = function() {
 		this.player.currentTime(0);
 		this.player.pause();
+		this.state = 'stopped';
 	};
 
 	VideoJSVideo.prototype.replay = function() {
@@ -3319,10 +3248,10 @@
 
 	SublimeVideo.prototype = new Video();
 	SublimeVideo.prototype.constructor = SublimeVideo;
-	$.SmartVideo.addPlayer('SublimeVideo', SublimeVideo);
+	$.VideoController.addPlayer('SublimeVideo', SublimeVideo);
 
 	SublimeVideo.isType = function(video) {
-		if (video.hasClass('sublime-video'))
+		if (video.hasClass('sublime') && typeof sublime !== 'undefined')
 			return true;
 
 		return false;
@@ -3331,41 +3260,36 @@
 	SublimeVideo.prototype._init = function() {
 		var that = this;
 
-		if (typeof sublime === 'undefined')
-			return;
-
 		sublime.ready(function() {
-			that.ready = true;
-
-			// prepare the video
-			sublime.prepare(that.$video.attr('id'));
-
-			// get a reference to the player object
+			// get a reference to the player
 			that.player = sublime.player(that.$video.attr('id'));
+
+			that.ready = true;
+			that.trigger({type: 'ready'});
 
 			that.player.on('play', function() {
 				if (that.started === false) {
 					that.started = true;
-					that.trigger({type: 'videoStart'});
+					that.trigger({type: 'start'});
 				}
 
-				that.state = 'play';
-				that.trigger({type: 'videoPlay'});
+				that.state = 'playing';
+				that.trigger({type: 'play'});
 			});
 
 			that.player.on('pause', function() {
-				that.state = 'pause';
-				that.trigger({type: 'videoPause'});
+				that.state = 'paused';
+				that.trigger({type: 'pause'});
 			});
 
 			that.player.on('stop', function() {
-				that.state = 'stop';
-				that.trigger({type: 'videoStop'});
+				that.state = 'stopped';
+				that.trigger({type: 'stop'});
 			});
 
 			that.player.on('end', function() {
-				that.state = 'end';
-				that.trigger({type: 'videoEnd'});
+				that.state = 'ended';
+				that.trigger({type: 'ended'});
 			});
 		});
 	};
@@ -3396,10 +3320,11 @@
 
 	JWPlayerVideo.prototype = new Video();
 	JWPlayerVideo.prototype.constructor = JWPlayerVideo;
-	$.SmartVideo.addPlayer('JWPlayerVideo', JWPlayerVideo);
+	$.VideoController.addPlayer('JWPlayerVideo', JWPlayerVideo);
 
 	JWPlayerVideo.isType = function(video) {
-		if (video.hasClass('jwplayer'))
+		if ((typeof video.attr('data-jwplayer-id') !== 'undefined' || video.hasClass('jwplayer') || video.find("object[data*='jwplayer']").length !== 0) &&
+			typeof jwplayer !== 'undefined')
 			return true;
 
 		return false;
@@ -3407,40 +3332,41 @@
 
 	JWPlayerVideo.prototype._init = function() {
 		var that = this,
-			videoID = this.$video.find('object').length ? this.$video.find('object').attr('id') : this.$video.attr('id');
+			videoID;
 
+		if (this.$video.hasClass('jwplayer'))
+			videoID = this.$video.attr('id');
+		else if (typeof this.$video.attr('data-jwplayer-id') !== 'undefined')
+			videoID = this.$video.attr('data-jwplayer-id');
+		else if (this.$video.find("object[data*='jwplayer']").length !== 0)
+			videoID = this.$video.find('object').attr('id');
+
+		// get reference to the player
 		this.player = jwplayer(videoID);
 
-		this.ready = true;
+		this.player.onReady(function() {
+			that.ready = true;
+			that.trigger({type: 'ready'});
 		
-		this.player.onBuffer(function() {
-			if (that.started === false) {
-				that.started = true;
-				that.trigger({type: 'videoStart'});
-			}
+			that.player.onPlay(function() {
+				if (that.started === false) {
+					that.started = true;
+					that.trigger({type: 'start'});
+				}
 
-			that.state = 'load';
-			that.trigger({type: 'videoLoad'});
-		});
-		
-		this.player.onPlay(function() {
-			if (that.started === false) {
-				that.started = true;
-				that.trigger({type: 'videoStart'});
-			}
+				that.state = 'playing';
+				that.trigger({type: 'play'});
+			});
 
-			that.state = 'play';
-			that.trigger({type: 'videoPlay'});
-		});
-
-		this.player.onPause(function() {
-			that.state = 'pause';
-			that.trigger({type: 'videoPause'});
-		});
-		
-		this.player.onComplete(function() {
-			that.state = 'end';
-			that.trigger({type: 'videoEnd'});
+			that.player.onPause(function() {
+				that.state = 'paused';
+				that.trigger({type: 'pause'});
+			});
+			
+			that.player.onComplete(function() {
+				that.state = 'ended';
+				that.trigger({type: 'ended'});
+			});
 		});
 	};
 
@@ -3453,8 +3379,8 @@
 	};
 
 	JWPlayerVideo.prototype.stop = function() {
-		this.player.seek(0);
-		this.player.pause(true);
+		this.player.stop();
+		this.state = 'stopped';
 	};
 
 	JWPlayerVideo.prototype.replay = function() {
@@ -3462,7 +3388,7 @@
 		this.player.play(true);
 	};
 
-})(window, jQuery);
+})(jQuery);
 
 /*
 	Swap Background module for Accordion Slider
