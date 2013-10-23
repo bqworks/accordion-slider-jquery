@@ -310,27 +310,30 @@ Simple HTML5 videos don't need any preparations other than having the `as-video`
 
 ##### Video.js #####
 
-Each Video.js video must have a unique 'id' attribute. Another requirement is to not pass the video the `data-setup` attribute as the VideoJS documentation indicates. Instead, you can use the `data-video` attribute to pass additional options. Also, instead of adding the `video-js` and `vjs-default-skin` class names, you only need to add `videojs`.
+Each Video.js video must have a unique 'id' attribute. Also, because the Video.js library changes the HTML markup of the video, we'll create a container element and add the `as-video` class to that element instead. Also, the container element must have the `data-video-id` attribute, which is used to specify the 'id' attribute of the video.
 
 *Example:*
 
 ```
-<video id="video1" class="as-video videojs" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none">
-	<source src="path/to/video.mp4" type="video/mp4"/>
-	<source src="path/to/video.ogv" type="video/ogg"/>
-</video>
+<div class="as-video" data-videojs-id="video1">
+	<video id="video1" class="as-video video-js vjs-default-skin" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none"
+			data-setup="{}">
+		<source src="path/to/video.mp4" type="video/mp4"/>
+		<source src="path/to/video.ogv" type="video/ogg"/>
+	</video>
+</div>
 ```
 
 Please note that, in order to use Video.js, you need to load the Video.js JavaScript and CSS files in your page. More information about how to use Video.js, in general, can be found on the [official Video.js page](http://www.videojs.com/). 
 
 ##### SublimeVideo #####
 
-Each SublimeVideo instance must have a unique 'id' attribute. Also, instead of adding the `sublime` class, as the SublimeVideo documentation indicates, add the `sublime-video` class.
+Each SublimeVideo instance must have a unique 'id' attribute.
 
 *Example:*
 
 ```
-<video id="video2" class="as-video sublime-video" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none">
+<video id="video2" class="as-video sublime" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none">
 	<source src="path/to/video.mp4" type="video/mp4"/>
 	<source src="path/to/video.ogv" type="video/ogg"/>
 </video>
