@@ -2895,7 +2895,7 @@
 			this.players[name] = player;
 		}
 	};
-	
+
 	$.fn.smartVideo = function(options) {
 		var args = Array.prototype.slice.call(arguments, 1);
 
@@ -3479,6 +3479,8 @@
 	var SwapBackgroundHelper = {
 		cssTransitions: null,
 
+		cssTransitionEndEvents: 'transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd',
+
 		checkCSSTransitions: function() {
 			if (this.cssTransitions !== null)
 				return this.cssTransitions;
@@ -3560,8 +3562,8 @@
 
 			if (SwapBackgroundHelper.checkCSSTransitions() === true) {
 				// remove the transition property after the animation completes
-				target.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
-					target.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
+				target.off(SwapBackgroundHelper.cssTransitionEndEvents).on(SwapBackgroundHelper.cssTransitionEndEvents, function() {
+					target.off(SwapBackgroundHelper.cssTransitionEndEvents);
 					target.css({'transition': ''});
 				});
 
@@ -3578,8 +3580,8 @@
 
 			if (SwapBackgroundHelper.checkCSSTransitions() === true) {
 				// remove the transition property and make the image invisible after the animation completes
-				target.on('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd', function() {
-					target.off('transitionend webkitTransitionEnd oTransitionEnd msTransitionEnd');
+				target.off(SwapBackgroundHelper.cssTransitionEndEvents).on(SwapBackgroundHelper.cssTransitionEndEvents, function() {
+					target.off(SwapBackgroundHelper.cssTransitionEndEvents);
 					target.css({'visibility': 'hidden', 'transition': ''});
 				});
 
