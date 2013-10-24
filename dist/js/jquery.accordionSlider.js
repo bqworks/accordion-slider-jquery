@@ -1920,9 +1920,12 @@
 		initKeyboard: function() {
 			var that = this,
 				hasFocus = false;
-			
+
 			$.extend(this.settings, this.keyboardDefaults, this.options);
 
+			if (this.settings.keyboard === false)
+				return;
+			
 			this.$accordion.on('focus.Keyboard.' + NS, function() {
 				hasFocus = true;
 			});
@@ -1952,6 +1955,7 @@
 		},
 
 		keyboardDefaults: {
+			keyboard: true,
 			keyboardOnlyOnFocus: false
 		}
 	};
