@@ -43,6 +43,7 @@
 							500: {orientation: 'vertical', visiblePanels: 3},
 							1200: {visiblePanels: -1}
 						},
+						//keyboardOnlyOnFocus: true
 						// breakpointReach: function(obj) {console.log(obj)},
 						// XMLSource: 'accordion.xml'
 						// panelOpenComplete: function(obj) {console.log(obj)},
@@ -104,15 +105,19 @@
 </head>
 
 <body>
+	
+	<a href="#" onclick="onButton1Click();return false;">Button 1</a>
+	    <a href="#" onclick="onButton2Click();return false;">Button 2</a>
+	    <a href="#" onclick="onButton3Click();return false;">Button 3</a>
 
-	<div id="my-accordion" class="accordion-slider">
+	<div id="my-accordion" class="accordion-slider" tabindex="0">
 		<div class="as-panels">
 			<div class="as-panel" id="first">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/1.jpg"/>
 				</a>
 
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background-opened" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/9.jpg"/>
 				</a>
 
@@ -152,103 +157,103 @@
 			</div>
 
 	        <div class="as-panel" id="third">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/3.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 			</div>
 
 	        <div class="as-panel" id="fourth">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/4.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="#">
+				<a href="#" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/> 
 				</a>
 			</div>
 
 	        <div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/8.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/5.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/6.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
 
 			<div class="as-panel">
-				<a href="http://bqworks.com">
+				<a href="http://bqworks.com" tabindex="-1">
 					<img class="as-background" src="../src/css/images/blank.gif" data-src="http://bqworks.com/products/grid-accordion/images/7.jpg" data-retina="http://bqworks.com/products/grid-accordion/images/15.jpg"/>
 				</a>
 			</div>
@@ -262,6 +267,6 @@
 	    <a href="#" onclick="onButton4Click();return false;">Button 4</a>
 	    <a href="#" onclick="onButton5Click();return false;">Button 5</a>
 	    <a href="#" onclick="onButton6Click();return false;">Button 6</a>
-	<div>
+	</div>
 </body>
 </html>
