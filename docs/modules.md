@@ -24,7 +24,21 @@ Adds autoplay functionality. In the [Javascript API](api.md) chapter, you can se
 
 Enables the accordion to respond to mouse wheel input.
 
-### 4. Layers ###
+### 4. Keyboard ###
+
+Adds keyboard navigation support. The next panel can be opened by pressing the right arrow key and the previous panel can be opened by pressing the left arrow key. Also, the Enter key will open the link attached to the background or opened background images.
+
+By default, the accordion will respond to keyboard input all the time, not only when the accordion has focus. If you would like it to respond only when the accordion is in focus, you need to add the `tabindex=0` attribute to the main accordion `div` container:
+
+```
+<div id="my-accordion" class="accordion-slider" tabindex="0">
+	...
+</div>
+```
+
+Also, you can add the `tabindex=-1` attribute to all anchor elements that are inside the accordion, in order to not allow these elements to get focus.
+
+### 5. Layers ###
 
 Adds support for layers, which are blocks of text or HTML content that can easily be positioned, sized or animated.
 
@@ -154,7 +168,7 @@ The layers are animated using CSS3 transitions in most browsers. In IE9 and IE8 
 
 This module is showcased in example1.html, example3.html and example4.html.
 
-### 5. Lazy Loading ###
+### 6. Lazy Loading ###
 
 Enables the accordion to load images only when they are in view. It makes sense to use it when there are multiple pages in the accordion, so that images from other pages are not loaded until the user navigates to that page.
 
@@ -180,7 +194,7 @@ The `src` attribute of the image will point to a placeholder image, and the actu
 
 This module is showcased in example1.html and example3.html.
 
-### 6. Retina ###
+### 7. Retina ###
 
 Allows you to specify an alternative image for screens with high PPI (pixels per inch), like the 'Retina' screens from Apple devices. Please note that this module will work for any screen that has high PPI, not only for the 'Retina' screens.
 
@@ -208,7 +222,7 @@ As you can see, it's possible to use lazy loading and high resolution images at 
 
 This module is showcased in example1.html, example2.html and example3.html.
 
-### 7. Deep Linking ###
+### 8. Deep Linking ###
 
 Provides the possibility to link to a specific panel in the accordion. You can use this to have the accordion opened at a specific panel when the page loads or to load a specific panel later at a later time.
 
@@ -238,7 +252,7 @@ In order to open the second panel, you can use either `http://domain.com/page#my
 
 This module is showcased in example4.html.
 
-### 8. Swap Background ###
+### 9. Swap Background ###
 
 Allows you to set an alternative background image that will appear when the panel is opened. The alternative image must be added in a separate `img` element and it must be given the `as-background-opened` class.
 
@@ -267,7 +281,7 @@ Please note that the size of the 'opened' image should be equal or bigger than t
 
 This module is showcased in example2.html.
 
-### 9. Smart Video ###
+### 10. Smart Video ###
 
 Provides automatic control of the videos loaded inside the panels. For example, the video will pause automatically when the panel closes, or the autoplay, if enabled, will stop when a video starts playing. Inside the accordion, videos can be added in the main panel container or inside layers. 
 
@@ -353,7 +367,7 @@ Please note that, in order to use SublimeVideo, you will also need to load a scr
 
 This module is showcased in example4.html.
 
-### 10. XML ###
+### 11. XML ###
 
 Allows you to use an XML file or XML string as a source for the accordion's content. The path of the XML file or the XML string must be passed to the 'XMLSource' property.
 
@@ -394,17 +408,17 @@ These are the node names that need to be used:
 	<panel>
 		<background>path/to/image1.jpg</background>
 		<backgroundRetina>path/to/image1@2x.jpg</backgroundRetina>
-		<backgroundOpened>path/to/alt_image1.jpg</background>
-		<backgroundOpenedRetina>path/to/alt_image1@2x.jpg</backgroundRetina>
+		<backgroundOpened>path/to/alt_image1.jpg</backgroundOpened>
+		<backgroundOpenedRetina>path/to/alt_image1@2x.jpg</backgroundOpenedRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 	</panel>
 
     <panel>
     	<background>path/to/image2.jpg</background>
 		<backgroundRetina>path/to/image2@2x.jpg</backgroundRetina>
-		<backgroundOpened>path/to/alt_image2.jpg</background>
-		<backgroundOpenedRetina>path/to/alt_image2@2x.jpg</backgroundRetina>
-		<backgroundOpenedLink>http://bqworks.com/</backgroundLink>
+		<backgroundOpened>path/to/alt_image2.jpg</backgroundOpened>
+		<backgroundOpenedRetina>path/to/alt_image2@2x.jpg</backgroundOpenedRetina>
+		<backgroundOpenedLink>http://bqworks.com/</backgroundOpenedLink>
 	</panel>
 </accordion>
 ```
@@ -449,7 +463,7 @@ When using layers, the equivalent for the `class` attribute is the `style` attri
 
 This module is showcased in example_xml.html, which is the XML version of example1.html. Please check the XML file created for this example, accordion.xml, to see how layers can be created in XML.
 
-### 11. JSON ###
+### 12. JSON ###
 
 Allows you to use a JSON file or JSON string as a source for the accordion's content. The path of the JSON file or the JSON string must be passed to the 'JSONSource' property.
 

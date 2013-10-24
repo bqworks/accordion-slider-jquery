@@ -6,6 +6,12 @@ When a new version is available, you can download it for free from your CodeCany
 
 ## Changelog ##
 
+**v. 2.1**
+
+* added 'Keyboard' module
+* fixed a bug in the 'SwapBackground' module
+* optimized video integration
+
 **v. 2.0**
 
 * changed the plugin name from 'Classic Accordion' to 'Accordion Slider'

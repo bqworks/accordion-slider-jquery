@@ -214,6 +214,18 @@ Sets what elements will be targeted by the mouse wheel input. Can be set to 'pan
 
 *Default value:* 'panel'
 
+#### keyboard ####
+
+Indicates if the accordion will respond to keyboard input.
+
+*Default value:* true
+
+#### keyboardOnlyOnFocus ####
+
+Indicates if the accordion will respond to keyboard input only if the accordion has focus.
+
+*Default value:* false
+
 #### swapBackgroundDuration ####
 
 Sets the duration, in milliseconds, of the transition effect.
