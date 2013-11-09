@@ -528,22 +528,19 @@
 
 			this.$panelsContainer.css(this.sizeProperty, this.totalPanelsSize);
 
-			// reset the accordion's size so that the visible panels fit exactly inside if their size and position are rounded
-			var roundedSize = this.closedPanelSize * this.getVisiblePanels() + this.computedPanelDistance * (this.getVisiblePanels() - 1);
+			// recalculate the totalSize due to the fact that rounded sizes can cause incorrect positioning
+			// since the actual size of all panels from a page might be smaller than the whole width of the accordion
+			this.totalSize = this.closedPanelSize * this.getVisiblePanels() + this.computedPanelDistance * (this.getVisiblePanels() - 1);
 
 			if (this.settings.responsiveMode === 'custom' || this.settings.responsive === false) {
-				this.$accordion.css(this.sizeProperty, roundedSize);
+				this.$accordion.css(this.sizeProperty, this.totalSize);
 			} else {
-				this.$accordion.css(this.sizeProperty, roundedSize * this.autoResponsiveRatio);
-				this.$maskContainer.css(this.sizeProperty, roundedSize);
+				this.$accordion.css(this.sizeProperty, this.totalSize * this.autoResponsiveRatio);
+				this.$maskContainer.css(this.sizeProperty, this.totalSize);
 			}
 
 			// if there are multiple pages, set the correct position of the panels' container
 			if (this.settings.visiblePanels !== -1) {
-				// recalculate the totalSize due to the fact that rounded sizes can cause incorrect positioning
-				// since the actual size of all panels from a page might be smaller than the whole width of the accordion
-				this.totalSize = this.closedPanelSize * this.settings.visiblePanels + this.computedPanelDistance * (this.settings.visiblePanels - 1);
-				
 				var cssObj = {},
 					targetPosition = - (this.totalSize + this.computedPanelDistance) * this.currentPage;
 				
