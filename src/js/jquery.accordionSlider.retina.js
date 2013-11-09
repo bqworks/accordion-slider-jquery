@@ -23,18 +23,7 @@
 			if (typeof this._loadImage !== 'undefined') {
 				this._loadImage = this._loadRetinaImage;
 			} else {
-				$.each(this.panels, function(index, element) {
-					var $panel = element.$panel;
-
-					if (typeof $panel.attr('data-loaded') === 'undefined') {
-						$panel.attr('data-loaded', true);
-
-						$panel.find('img').each(function() {
-							var image = $(this);
-							that._loadRetinaImage(image, element);
-						});
-					}
-				});
+				this.on('update.Retina.' + NS, $.proxy(this._checkRetinaImages, this));
 			}
 		},
 
@@ -46,6 +35,25 @@
 				return true;
 
 			return false;
+		},
+
+		_checkRetinaImages: function() {
+			var that = this;
+
+			this.off('update.Retina.' + NS);
+			
+			$.each(this.panels, function(index, element) {
+				var $panel = element.$panel;
+
+				if (typeof $panel.attr('data-loaded') === 'undefined') {
+					$panel.attr('data-loaded', true);
+
+					$panel.find('img').each(function() {
+						var image = $(this);
+						that._loadRetinaImage(image, element);
+					});
+				}
+			});
 		},
 
 		_loadRetinaImage: function(image, panel) {
