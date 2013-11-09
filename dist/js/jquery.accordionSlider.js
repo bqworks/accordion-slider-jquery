@@ -2440,6 +2440,8 @@
 
 		mouseWheelEventType: '',
 
+		allowMouseWheelScroll: true,
+
 		initMouseWheel: function() {
 			var that = this;
 
@@ -2474,9 +2476,13 @@
 				if (typeof eventObject.deltaY !== 'undefined')
 					delta = eventObject.deltaY * -1;
 
-				// scroll the accordion as indicated by the mouse wheel input
-				// but don't allow the scroll if another scroll is in progress
-				if (that.isPageScrolling === false) {
+				if (that.allowMouseWheelScroll === true && Math.abs(delta) >= that.settings.mouseWheelSensitivity) {
+					that.allowMouseWheelScroll = false;
+
+					setTimeout(function() {
+						that.allowMouseWheelScroll = true;
+					}, 500);
+
 					if (delta <= -that.settings.mouseWheelSensitivity)
 						if (that.settings.mouseWheelTarget === 'page')
 							that.nextPage();
@@ -2497,7 +2503,7 @@
 
 		mouseWheelDefaults: {
 			mouseWheel: true,
-			mouseWheelSensitivity: 50,
+			mouseWheelSensitivity: 10,
 			mouseWheelTarget: 'panel'
 		}
 	};
