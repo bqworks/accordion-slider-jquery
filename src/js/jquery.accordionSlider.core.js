@@ -552,7 +552,9 @@
 			}
 
 			// calculate missing panels for the last page of panels
-			var missingPanels = (this.currentPage === this.getTotalPages() - 1) && (this.getTotalPanels() % this.settings.visiblePanels) !== 0 ? this.settings.visiblePanels - this.getTotalPanels() % this.settings.visiblePanels : 0;
+			var missingPanels = (this.currentPage === this.getTotalPages() - 1) && (this.getTotalPanels() % this.settings.visiblePanels) !== 0 ?
+								this.settings.visiblePanels - this.getTotalPanels() % this.settings.visiblePanels :
+								0;
 
 			// set the position and size of each panel
 			$.each(this.panels, function(index, element) {
@@ -565,7 +567,9 @@
 					position = index * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
 				} else {
 					if (that._getPageOfPanel(index) === that.currentPage) {
-						position = that.currentPage * (that.totalSize + that.computedPanelDistance) + (index + missingPanels - that.currentPage * that.settings.visiblePanels) * (that.collapsedPanelSize + that.computedPanelDistance) + (index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
+						position = that.currentPage * (that.totalSize + that.computedPanelDistance) +
+									(index + missingPanels - that.currentPage * that.settings.visiblePanels) * (that.collapsedPanelSize + that.computedPanelDistance) +
+									(index > that.currentIndex ? that.computedOpenedPanelSize - that.collapsedPanelSize : 0);
 
 						if (that.currentPage === that.getTotalPages() - 1 && missingPanels !== 0)
 							position -= (that.getTotalPages() - that.getTotalPanels() / that.settings.visiblePanels) * (that.totalSize + that.computedPanelDistance);
@@ -578,7 +582,9 @@
 				
 				// get the size of the panel based on the state of the panel (opened, closed or collapsed)
 				if (that.isOverlapping === false) {
-					var size = (that.currentIndex === -1 || (that.settings.visiblePanels !== -1 && that._getPageOfPanel(index) !== that.currentPage)) ? (that.closedPanelSize) : (index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
+					var size = (that.currentIndex === -1 || (that.settings.visiblePanels !== -1 && that._getPageOfPanel(index) !== that.currentPage)) ?
+								(that.closedPanelSize) :
+								(index === that.currentIndex ? that.computedOpenedPanelSize : that.collapsedPanelSize);
 					element.setSize(size);
 				}
 			});
@@ -875,7 +881,9 @@
 				var panel = this.getPanelAt(i);
 				
 				startPosition[i] = panel.getPosition();
-				targetPosition[i] = this.currentPage * (this.totalSize + this.computedPanelDistance) + counter * (this.collapsedPanelSize + this.computedPanelDistance) + (i > this.currentIndex ? this.computedOpenedPanelSize - this.collapsedPanelSize : 0);
+				targetPosition[i] = this.currentPage * (this.totalSize + this.computedPanelDistance) +
+									counter * (this.collapsedPanelSize + this.computedPanelDistance) +
+									(i > this.currentIndex ? this.computedOpenedPanelSize - this.collapsedPanelSize : 0);
 
 				// the last page might contain less panels than the set number of visible panels.
 				// in this situation, the last page will contain some panels from the previous page
