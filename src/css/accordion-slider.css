@@ -55,6 +55,8 @@
 .accordion-slider .as-background,
 .accordion-slider .as-background-opened {
 	border: none;
+	max-width: none;
+	max-height: none;
 }
 
 .accordion-slider.as-horizontal .as-background,
