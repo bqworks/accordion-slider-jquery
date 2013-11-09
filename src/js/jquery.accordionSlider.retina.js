@@ -41,7 +41,7 @@
 			var that = this;
 
 			this.off('update.Retina.' + NS);
-			
+
 			$.each(this.panels, function(index, element) {
 				var $panel = element.$panel;
 
@@ -103,13 +103,6 @@
 
 				// assign the source of the image
 				newImage.attr('src', newImagePath);
-
-				// get the size of the panel, after the new image was added, and 
-				// if there aren't loading images, trigger the 'imagesComplete' event
-				var newSize = panel.getContentSize();
-				if (newSize !== 'loading') {
-					panel.trigger({type: 'imagesComplete.' + NS, index: panel.getIndex(), contentSize: newSize});
-				}
 			}
 		},
 

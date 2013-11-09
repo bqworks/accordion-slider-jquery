@@ -1263,6 +1263,9 @@
 		// set a namespace for the panel
 		this.panelNS =  'AccordionSliderPanel' + index + '.' + NS;
 
+		this.isLoading = false;
+		this.isLoaded = false;
+
 		// set the index of the panel
 		this.setIndex(index);
 
@@ -1395,8 +1398,9 @@
 				that = this;
 
 			// check if there are loading images
-			if (this.checkImagesComplete() === 'loading')
-				return 'loading';
+			if (this.isLoaded === false)
+				if (this.checkImagesComplete() === 'loading')
+					return 'loading';
 
 			if (this.settings.panelOverlap === false || parseInt(this.settings.panelDistance, 10) > 0) {
 				// get the current size of the inner content and then temporarily set the panel to a small size
@@ -1426,6 +1430,9 @@
 			Check the status of all images from the panel
 		*/
 		checkImagesComplete: function() {
+			if (this.isLoading === true)
+				return 'loading';
+
 			var that = this,
 				status = 'complete';
 
@@ -1433,27 +1440,33 @@
 			this.$panel.find('img').each(function(index) {
 				var image = $(this)[0];
 
-				if (image.complete === false)
+				if (image.complete === false || typeof $(this).attr('data-src') !== 'undefined')
 					status = 'loading';
 			});
 
 			// continue checking until all images have loaded
 			if (status === 'loading') {
+				this.isLoading = true;
+
 				var checkImage = setInterval(function() {
-					var isLoaded = true;
+					var loaded = true;
 
 					that.$panel.find('img').each(function(index) {
 						var image = $(this)[0];
 
-						if (image.complete === false)
-							isLoaded = false;
+						if (image.complete === false || typeof $(this).attr('data-src') !== 'undefined')
+							loaded = false;
 					});
 
-					if (isLoaded === true) {
+					if (loaded === true) {
+						that.isLoading = false;
+						that.isLoaded = true;
 						clearInterval(checkImage);
 						that.trigger({type: 'imagesComplete.' + NS, index: that.index, contentSize: that.getContentSize()});
 					}
 				}, 100);
+			} else {
+				this.isLoaded = true;
 			}
 
 			return status;
