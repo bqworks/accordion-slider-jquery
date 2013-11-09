@@ -467,6 +467,23 @@
 			else
 				this.$accordion.find('img.as-background, img.as-background-opened').css('width', this.$panelsContainer.innerWidth());
 
+			// set the initial computedPanelDistance to the value defined in the options
+			this.computedPanelDistance = this.settings.panelDistance;
+
+			// parse computedPanelDistance and set it to a pixel value
+			if (typeof this.computedPanelDistance === 'string') {
+				if (this.computedPanelDistance.indexOf('%') !== -1) {
+					this.computedPanelDistance = this.totalSize * (parseInt(this.computedPanelDistance, 10)/ 100);
+				} else if (this.computedPanelDistance.indexOf('px') !== -1) {
+					this.computedPanelDistance = parseInt(this.computedPanelDistance, 10);
+				}
+			}
+
+			// set the size, in pixels, of the closed panels
+			this.closedPanelSize = (this.totalSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / this.getVisiblePanels();
+			// round the value
+			this.closedPanelSize = Math.floor(this.closedPanelSize);
+
 			// set the initial computedOpenedPanelSize to the value defined in the options
 			this.computedOpenedPanelSize = this.settings.openedPanelSize;
 
@@ -491,37 +508,18 @@
 					this.computedOpenedPanelSize = this.totalSize * (parseInt(this.computedOpenedPanelSize, 10)/ 100);
 				} else if (this.computedOpenedPanelSize.indexOf('px') !== -1) {
 					this.computedOpenedPanelSize = parseInt(this.computedOpenedPanelSize, 10);
-				} else if (this.computedOpenedPanelSize === 'max') {
-					this.computedOpenedPanelSize = this.currentIndex === -1 ? this.totalSize * 0.5 : this.getPanelAt(this.currentIndex).getContentSize();
-					
-					if (this.computedOpenedPanelSize === 'loading' || this.computedOpenedPanelSize > this.maxComputedOpenedPanelSize)
-						this.computedOpenedPanelSize = this.maxComputedOpenedPanelSize;
-				}
-			}
-
-
-			// set the initial computedPanelDistance to the value defined in the options
-			this.computedPanelDistance = this.settings.panelDistance;
-
-			// parse computedPanelDistance and set it to a pixel value
-			if (typeof this.computedPanelDistance === 'string') {
-				if (this.computedPanelDistance.indexOf('%') !== -1) {
-					this.computedPanelDistance = this.totalSize * (parseInt(this.computedPanelDistance, 10)/ 100);
-				} else if (this.computedPanelDistance.indexOf('px') !== -1) {
-					this.computedPanelDistance = parseInt(this.computedPanelDistance, 10);
+				} else if (this.computedOpenedPanelSize === 'max' && this.currentIndex !== -1) {
+					var contentSize = this.getPanelAt(this.currentIndex).getContentSize();
+					this.computedOpenedPanelSize = contentSize === 'loading' ? this.closedPanelSize : Math.min(contentSize, this.maxComputedOpenedPanelSize);
 				}
 			}
 
 			// set the size, in pixels, of the collapsed panels
 			this.collapsedPanelSize = (this.totalSize - this.computedOpenedPanelSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / (this.getVisiblePanels() - 1);
 
-			// set the size, in pixels, of the closed panels
-			this.closedPanelSize = (this.totalSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / this.getVisiblePanels();
-
 			// round the values
 			this.computedOpenedPanelSize = Math.floor(this.computedOpenedPanelSize);
 			this.collapsedPanelSize = Math.floor(this.collapsedPanelSize);
-			this.closedPanelSize = Math.floor(this.closedPanelSize);
 
 			// get the total size of the panels' container
 			this.totalPanelsSize = this.closedPanelSize * this.getTotalPanels() + this.computedPanelDistance * (this.getTotalPanels() - 1);
@@ -868,10 +866,8 @@
 			// check if the panel needs to open to its maximum size and recalculate
 			// the size of the opened panel and the size of the collapsed panel
 			if (this.settings.openedPanelSize === 'max') {
-				this.computedOpenedPanelSize = this.getPanelAt(this.currentIndex).getContentSize();
-
-				if (this.computedOpenedPanelSize > this.maxComputedOpenedPanelSize)
-					this.computedOpenedPanelSize = this.maxComputedOpenedPanelSize;
+				var contentSize = this.getPanelAt(this.currentIndex).getContentSize();
+				this.computedOpenedPanelSize = contentSize === 'loading' ? this.closedPanelSize : Math.min(contentSize, this.maxComputedOpenedPanelSize);
 
 				this.collapsedPanelSize = (this.totalSize - this.computedOpenedPanelSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / (this.getVisiblePanels() - 1);
 			}
