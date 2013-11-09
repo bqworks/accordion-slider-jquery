@@ -8,7 +8,7 @@ The jquery.accordionSlider.js file (and its minified version, jquery.accordionSl
 
 ## Building a custom file ##
 
-You can find all the modules, in separate files, in the 'src/js' folder. What you need to do is copy the code from those files in a separate file, starting with the jquery.advancedSlider.core.js file. It's important that the jquery.advancedSlider.core.js code is the first block of code in your script. The order of the optional modules is not important. After you have created your script, you can obtain a minified version by using Google's [Closure Compiler](http://closure-compiler.appspot.com/home).
+You can find all the modules, in separate files, in the 'src/js' folder. What you need to do is copy the code from those files in a separate file, starting with the jquery.accordionSlider.core.js file. It's important that the jquery.accordionSlider.core.js code is the first block of code in your script. The order of the optional modules is not important. After you have created your script, you can obtain a minified version by using Google's [Closure Compiler](http://closure-compiler.appspot.com/home).
 
 ## Modules presentation ##
 
