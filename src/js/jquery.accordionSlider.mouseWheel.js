@@ -1,7 +1,7 @@
 /*
 	MouseWheel module for Accordion Slider
 
-	Adds mousewheel support for scrolling through pages or individual panels
+	Adds mouse wheel support for scrolling through pages or individual panels
 */
 ;(function(window, $) {
 

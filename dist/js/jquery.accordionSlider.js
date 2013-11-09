@@ -1258,7 +1258,7 @@
 		// set the index of the panel
 		this.setIndex(index);
 
-		// init the panel
+		// initialize the panel
 		this._init();
 	};
 
@@ -1290,7 +1290,7 @@
 			// set position and size properties
 			this.update();
 
-			// init panel modules
+			// initialize panel modules
 			var modules = $.AccordionSlider.modules.panel;
 
 			if (typeof modules !== 'undefined')
@@ -2428,7 +2428,7 @@
 /*
 	MouseWheel module for Accordion Slider
 
-	Adds mousewheel support for scrolling through pages or individual panels
+	Adds mouse wheel support for scrolling through pages or individual panels
 */
 ;(function(window, $) {
 
