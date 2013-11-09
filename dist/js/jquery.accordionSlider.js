@@ -57,10 +57,10 @@
 		// the size of the panels' container
 		this.totalPanelsSize = 0;
 
-		// the actual size, in pixels, of the opened panel
+		// the computed size, in pixels, of the opened panel
 		this.computedOpenedPanelSize = 0;
 
-		// the actual maximum allowed size, in pixels, of the opened panel
+		// the computed maximum allowed size, in pixels, of the opened panel
 		this.maxComputedOpenedPanelSize = 0;
 
 		// the size, in pixels, of the collapsed panels
@@ -110,7 +110,7 @@
 		// and also based on the computed distance between panels
 		this.isOverlapping = false;
 
-		// init the accordion
+		// initialize the accordion
 		this._init();
 	};
 
@@ -125,7 +125,7 @@
 			this.settings = $.extend({}, this.defaults, this.options);
 
 			// get reference to the panels' container and 
-			// create additional mask container, which will mask the panels'container
+			// create additional mask container, which will mask the panels' container
 			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
 			this.$panelsContainer = this.$accordion.find('.as-panels').appendTo(this.$maskContainer);
 
@@ -133,7 +133,7 @@
 			if (this.$panelsContainer.length === 0)
 				this.$panelsContainer = $('<div class="as-panels"></div>').appendTo(this.$maskContainer);
 
-			// init accordion modules
+			// initialize accordion modules
 			var modules = $.AccordionSlider.modules.accordion;
 
 			if (typeof modules !== 'undefined')
