@@ -859,7 +859,7 @@
 				lastPanel = this._getLastPanelFromPage(),
 				counter = 0;
 
-			this.$accordion.find('.as-opened').removeClass('as-opened');
+			this.$accordion.find('.as-panel.as-opened').removeClass('as-opened');
 			this.$accordion.find('.as-panel').eq(this.currentIndex).addClass('as-opened');
 
 			// check if the panel needs to open to its maximum size and recalculate
