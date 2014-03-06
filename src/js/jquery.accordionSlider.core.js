@@ -437,13 +437,7 @@
 			if (this.settings.aspectRatio !== -1)
 				this.$accordion.css('height', this.$accordion.innerWidth() / this.settings.aspectRatio);
 
-			// get the total size, in pixels, of the accordion
-			if (this.settings.responsiveMode === 'custom' && this.settings.responsive === true) {
-				// clear previous styling
-				this.$maskContainer.attr('style', '');
-
-				this.totalSize = this.settings.orientation === "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
-			} else if (this.settings.responsiveMode === 'auto' && this.settings.responsive === true) {
+			if (this.settings.responsive === true && this.settings.responsiveMode === 'auto') {
 				// get the accordion's size ratio based on the set size and the actual size
 				this.autoResponsiveRatio = this.$accordion.innerWidth() / this.settings.width;
 
@@ -456,6 +450,11 @@
 				});
 				
 				this.totalSize = this.settings.orientation === "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
+			} else {
+				// clear previous styling
+				this.$maskContainer.attr('style', '');
+
+				this.totalSize = this.settings.orientation === "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 			}
 
 			// set the size of the background images explicitly because of a bug?
@@ -481,6 +480,7 @@
 
 			// set the size, in pixels, of the closed panels
 			this.closedPanelSize = (this.totalSize - (this.getVisiblePanels() - 1) * this.computedPanelDistance) / this.getVisiblePanels();
+
 			// round the value
 			this.closedPanelSize = Math.floor(this.closedPanelSize);
 
