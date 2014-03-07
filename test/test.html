@@ -20,8 +20,11 @@
 			responsive: true,
 			responsiveMode: 'auto',
 			visiblePanels: -1,
-			openPanelOn: 'click',
+			//openPanelOn: 'click',
 			autoplay: false,
+			shadow: false,
+			panelDistance: 10,
+			closePanelsOnMouseOut: false,
 			breakpoints: {
 				960: {
 					visiblePanels: 5
@@ -42,7 +45,9 @@
 
 			<!-- Panel 1 -->
 			<div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image1.jpg" data-retina="http://bqworks.com/accordion-slider/images/image1@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image1.jpg" data-retina="http://bqworks.com/accordion-slider/images/image1@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter" 
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -76,7 +81,7 @@
 				</div>
 
 				<div class="as-layer" 
-					data-position="bottomLeft" data-horizontal="20" data-vertical="20" data-width="100%">
+					data-position="bottomLeft" data-horizontal="10%" data-vertical="20" data-width="80%">
 					
 					<p class="as-layer as-opened as-white as-padding"
 						data-position="bottomLeft"
@@ -243,7 +248,7 @@
 				</div>
 				
 				<div class="as-layer" 
-					data-position="bottomLeft" data-horizontal="30" data-vertical="30" data-width="100%" data-height="50%">
+					data-position="bottomLeft" data-horizontal="20%" data-vertical="30" data-width="80%" data-height="50%">
 					
 					<h3 class="as-layer as-opened as-white as-padding"
 						data-show-transition="left" data-hide-transition="right">
@@ -313,7 +318,7 @@
 				</div>
 				
 				<div class="as-layer" 
-					data-horizontal="30" data-vertical="30" data-width="100%">
+					data-horizontal="20%" data-vertical="30" data-width="80%">
 					
 					<p class="as-layer as-opened as-black as-padding"
 						data-show-transition="left" data-hide-transition="down" data-show-delay="400" data-hide-delay="200">

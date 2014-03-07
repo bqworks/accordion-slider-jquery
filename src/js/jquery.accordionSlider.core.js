@@ -1393,36 +1393,13 @@
 			Get the real size of the panel's content
 		*/
 		getContentSize: function() {
-			var size,
-				that = this;
-
 			// check if there are loading images
 			if (this.isLoaded === false)
 				if (this.checkImagesComplete() === 'loading')
 					return 'loading';
 
-			if (this.settings.panelOverlap === false || parseInt(this.settings.panelDistance, 10) > 0) {
-				// get the current size of the inner content and then temporarily set the panel to a small size
-				// in order to accurately calculate the size of the inner content
-				var currentSize = this.$panel.css(this.sizeProperty);
-				this.$panel.css(this.sizeProperty, 10);
-				size = this.sizeProperty === 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
-				this.$panel.css(this.sizeProperty, currentSize);
-			} else {
-				// workaround for when scrollWidth and scrollHeight return incorrect values
-				// this happens in some browsers (Firefox and Opera a.t.m.) unless there is a set width and height for the element
-				if (this.sizeProperty === 'width') {
-					this.$panel.css({'width': '100px', 'overflow': 'hidden'});
-					size = this.$panel[0].scrollWidth;
-					this.$panel.css({'width': '', 'overflow': ''});
-				} else {
-					this.$panel.css({'height': '100px', 'overflow': 'hidden'});
-					size = this.$panel[0].scrollHeight;
-					this.$panel.css({'height': '', 'overflow': ''});
-				}
-			}
-
-			return size;
+			
+			return this.sizeProperty === 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
 		},
 
 		/*
