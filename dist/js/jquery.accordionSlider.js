@@ -3739,7 +3739,7 @@ JWPlayerVideo.prototype.replay = function() {
 
 		_onTouchStart: function(event) {
 			// disable dragging if the element is set to allow selections
-			if ($(event.target).closest('.selectable').length >= 1 || (this.isTouchSupport === false && this.getTotalPages() === 1))
+			if ($(event.target).closest('.as-selectable').length >= 1 || (this.isTouchSupport === false && this.getTotalPages() === 1))
 				return;
 
 			// prevent default behavior only for mouse events
