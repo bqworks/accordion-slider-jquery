@@ -17,11 +17,16 @@
 		$('#example').accordionSlider({
 			width: 960,
 			height: 400,
-			responsive: false,
+			responsive: true,
 			responsiveMode: 'auto',
-			visiblePanels: 5,
+			visiblePanels: -1,
 			openPanelOn: 'click',
-			autoplay: false
+			autoplay: false,
+			breakpoints: {
+				960: {
+					visiblePanels: 5
+				}
+			}
 		});
 	});
 </script>
@@ -345,6 +350,7 @@
 			</div>
 		</div>
     </div>
+    <div>test test test test test test</div>
 
     <!-- End of Accordion Slider -->
 

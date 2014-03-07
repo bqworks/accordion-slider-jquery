@@ -271,10 +271,10 @@
 			// if there is distance between the panels, the panels can't overlap
 			if (this.settings.panelDistance > 0 || this.settings.panelOverlap === false) {
 				this.isOverlapping = false;
-				this.$accordion.removeClass('overlap');
+				this.$accordion.removeClass('as-overlap');
 			} else if (this.settings.panelOverlap === true) {
 				this.isOverlapping = true;
-				this.$accordion.addClass('overlap');
+				this.$accordion.addClass('as-overlap');
 			}
 
 			// clear inline size of the background images because the orientation might have changes
@@ -1161,7 +1161,8 @@
 				paginationButtons.remove();
 				paginationButtons.off('click.' + NS, '.as-pagination-button');
 				this.off('pageScroll.' + NS);
-			
+				
+				this.$accordion.removeClass('as-has-buttons');
 			// if there are pages and the buttons were not created yet, create them now
 			} else if (totalPages > 1 && paginationButtons.length === 0) {
 				// create the buttons' container
@@ -1185,6 +1186,8 @@
 					paginationButtons.find('.as-selected').removeClass('as-selected');
 					paginationButtons.find('.as-pagination-button').eq(event.index).addClass('as-selected');
 				});
+
+				this.$accordion.addClass('as-has-buttons');
 
 			// update the buttons if they already exist but their number differs from
 			// the number of existing pages

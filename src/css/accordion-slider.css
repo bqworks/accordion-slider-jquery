@@ -32,7 +32,7 @@
 	overflow: hidden;
 }
 
-.accordion-slider.overlap .as-panel {
+.accordion-slider.as-overlap .as-panel {
 	overflow: visible;
 }
 
@@ -132,10 +132,29 @@
 	background-color: #000;
 }
 
+.accordion-slider.as-has-buttons {
+	margin-bottom: 32px;
+}
+
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
 	.accordion-slider .as-pagination-button {
 		width: 14px;
 		height: 14px;
+	}
+
+	.accordion-slider.as-has-buttons {
+		margin-bottom: 36px;
+	}
+}
+
+@media only screen and (min-device-width: 568px) and (max-device-width: 768px) {
+	.accordion-slider .as-pagination-button {
+		width: 16px;
+		height: 16px;
+	}
+
+	.accordion-slider.as-has-buttons {
+		margin-bottom: 38px;
 	}
 }
 
@@ -143,6 +162,10 @@
 	.accordion-slider .as-pagination-button {
 		width: 18px;
 		height: 18px;
+	}
+
+	.accordion-slider.as-has-buttons {
+		margin-bottom: 40px;
 	}
 }
 
