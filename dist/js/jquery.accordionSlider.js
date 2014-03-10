@@ -381,6 +381,9 @@
 
 			// listen for 'panelClick' events
 			panel.on('panelClick.' + NS, function(event) {
+				if (that.$accordion.hasClass('as-swiping'))
+					return;
+				
 				if (that.settings.openPanelOn === 'click') {
 					// open the panel if it's not already opened
 					// and close the panels if the clicked panel is opened
@@ -3761,9 +3764,11 @@ JWPlayerVideo.prototype.replay = function() {
 			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
 
 			// disable click events on links
-			$(event.target).parents('.as-panel').find('a').addClass('as-swiping').one('click.TouchSwipe', function(event) {
+			$(event.target).parents('.as-panel').find('a').one('click.TouchSwipe', function(event) {
 				event.preventDefault();
 			});
+
+			this.$accordion.addClass('as-swiping');
 		},
 
 		_onTouchMove: function(event) {
@@ -3801,7 +3806,8 @@ JWPlayerVideo.prototype.replay = function() {
 
 		_onTouchEnd: function(event) {
 			// remove the move and end listeners
-			var moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove',
+			var that = this,
+				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove',
 				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
 
 			this.$panelsContainer.off(moveEvent + '.' + NS);
@@ -3818,7 +3824,8 @@ JWPlayerVideo.prototype.replay = function() {
 					this.openPanel(index);
 				} else {
 					// re-enable click events on links
-					$(event.target).parents('.as-panel').find('a').removeClass('as-swiping').off('click.TouchSwipe');
+					$(event.target).parents('.as-panel').find('a').off('click.TouchSwipe');
+					this.$accordion.removeClass('as-swiping');
 				}
 
 				return;
@@ -3826,18 +3833,23 @@ JWPlayerVideo.prototype.replay = function() {
 
 			// return if there was no movement and re-enable click events on links
 			if (this.isTouchMoving === false) {
-				$(event.target).parents('.as-panel').find('a').removeClass('as-swiping').off('click.TouchSwipe');
+				$(event.target).parents('.as-panel').find('a').off('click.TouchSwipe');
+				this.$accordion.removeClass('as-swiping');
 				return;
 			}
 
 			this.isTouchMoving = false;
+
+			$(event.target).parents('.as-panel').one('click', function(event) {
+				event.preventDefault();
+			});
 
 			// remove the 'as-swiping' class but with a delay
 			// because there might be other event listeners that check
 			// the existence of this class, and this class should still be 
 			// applied for those listeners, since there was a swipe event
 			setTimeout(function() {
-				$(event.target).parents('.as-panel').find('a').removeClass('as-swiping');
+				that.$accordion.removeClass('as-swiping');
 			}, 1);
 
 			var noScrollAnimObj = {};

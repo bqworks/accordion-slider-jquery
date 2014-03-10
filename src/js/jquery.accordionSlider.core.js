@@ -381,6 +381,9 @@
 
 			// listen for 'panelClick' events
 			panel.on('panelClick.' + NS, function(event) {
+				if (that.$accordion.hasClass('as-swiping'))
+					return;
+				
 				if (that.settings.openPanelOn === 'click') {
 					// open the panel if it's not already opened
 					// and close the panels if the clicked panel is opened
