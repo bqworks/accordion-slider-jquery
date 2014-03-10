@@ -1,3 +1,10 @@
+/*!
+* Accordion Slider - v2.3.0
+* Homepage: http://bqworks.com/accordion-slider/
+* Author: bqworks
+* Author URL: http://bqworks.com/
+* Date: 2014-03-10
+*/
 ;(function(window, $) {
 
 	"use strict";
