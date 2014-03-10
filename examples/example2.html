@@ -38,7 +38,7 @@
 			// by checking if the link has the 'as-swiping' class attached.
 			// if the accordion is not being swiped, open the lightbox programmatically,
 			// at the correct index
-			if ($(this).hasClass('as-swiping') === false)
+			if ($('#example2').hasClass('as-swiping') === false)
 				$.fancybox.open($('#example2 .as-panel > a'), {index:$(this).parent().index()});
 		});
 	});
