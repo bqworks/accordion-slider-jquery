@@ -52,11 +52,14 @@
 	box-shadow: -5px 0px 40px 1px #000;
 }
 
+.accordion-slider img {
+	max-width: none;
+	max-height: none;
+}
+
 .as-background,
 .as-background-opened {
 	border: none;
-	max-width: none;
-	max-height: none;
 }
 
 .as-horizontal .as-background,

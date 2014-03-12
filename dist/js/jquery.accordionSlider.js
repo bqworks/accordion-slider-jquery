@@ -3,7 +3,7 @@
 * Homepage: http://bqworks.com/accordion-slider/
 * Author: bqworks
 * Author URL: http://bqworks.com/
-* Date: 2014-03-10
+* Date: 2014-03-12
 */
 ;(function(window, $) {
 
