@@ -52,7 +52,12 @@
 	box-shadow: -5px 0px 40px 1px #000;
 }
 
-.accordion-slider img {
+.accordion-slider img,
+.accordion-slider iframe,
+.accordion-slider object,
+.accordion-slider video,
+.accordion-slider embed,
+.accordion-slider canvas {
 	max-width: none;
 	max-height: none;
 }
