@@ -3,7 +3,7 @@
 * Homepage: http://bqworks.com/accordion-slider/
 * Author: bqworks
 * Author URL: http://bqworks.com/
-* Date: 2014-03-12
+* Date: 2014-03-13
 */
 ;(function(window, $) {
 
@@ -1424,8 +1424,13 @@
 				if (this.checkImagesComplete() === 'loading')
 					return 'loading';
 
+			this.$panel.find( '.as-opened' ).css( 'display', 'none' );
+
+			var size = this.sizeProperty === 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
 			
-			return this.sizeProperty === 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
+			this.$panel.find( '.as-opened' ).css( 'display', '' );
+
+			return size;
 		},
 
 		/*

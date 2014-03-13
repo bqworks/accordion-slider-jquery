@@ -1417,8 +1417,13 @@
 				if (this.checkImagesComplete() === 'loading')
 					return 'loading';
 
+			this.$panel.find( '.as-opened' ).css( 'display', 'none' );
+
+			var size = this.sizeProperty === 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
 			
-			return this.sizeProperty === 'width' ? this.$panel[0].scrollWidth : this.$panel[0].scrollHeight;
+			this.$panel.find( '.as-opened' ).css( 'display', '' );
+
+			return size;
 		},
 
 		/*
