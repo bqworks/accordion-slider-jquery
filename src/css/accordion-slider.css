@@ -52,7 +52,8 @@
 	box-shadow: -5px 0px 40px 1px #000;
 }
 
-.accordion-slider img,
+.accordion-slider .as-background,
+.accordion-slider .as-background-opened,
 .accordion-slider iframe,
 .accordion-slider object,
 .accordion-slider video,
