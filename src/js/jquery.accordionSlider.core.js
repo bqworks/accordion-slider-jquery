@@ -124,6 +124,8 @@
 
 			this.settings = $.extend({}, this.defaults, this.options);
 
+			this.$accordion.removeClass('as-no-js');
+
 			// get reference to the panels' container and 
 			// create additional mask container, which will mask the panels' container
 			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
