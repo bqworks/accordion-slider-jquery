@@ -181,6 +181,7 @@
 
 .as-no-js {
 	overflow: hidden;
+	max-width: 100%;
 }
 
 .accordion-slider p.as-layer {
