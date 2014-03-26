@@ -225,10 +225,11 @@
 
 .accordion-slider .as-background,
 .accordion-slider .as-background-opened {
-	transition: none !important;
-	-moz-transition: none !important;
-	-webkit-transition: none !important;
-	-o-transition: none !important;
+	border: none !important;
+	border-radius: none !important;
+	-webkit-box-shadow: none !important;
+	-mox-box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 .accordion-slider a {
