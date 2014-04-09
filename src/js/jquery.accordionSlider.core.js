@@ -460,8 +460,12 @@
 				this.$maskContainer.css({
 					width: this.settings.width,
 					height: this.settings.height,
-					transform: 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
-					transformOrigin: 'top left'
+					'-webkit-transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
+					'-ms-transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
+					'transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
+					'-webkit-transform-origin': 'top left',
+					'-ms-transform-origin': 'top left',
+					'transform-origin': 'top left'
 				});
 				
 				this.totalSize = this.settings.orientation === "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
