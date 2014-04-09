@@ -8,7 +8,7 @@
 
 <link rel="stylesheet" type="text/css" href="../dist/css/accordion-slider.min.css" media="screen"/>
 
-<script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../libs/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src="../dist/js/jquery.accordionSlider.min.js"></script>
 
 <script type="text/javascript">
@@ -17,19 +17,10 @@
 		$('#example').accordionSlider({
 			width: 960,
 			height: 400,
-			responsive: true,
 			responsiveMode: 'auto',
-			visiblePanels: 4,
-			//openPanelOn: 'click',
-			autoplay: false,
-			shadow: false,
-			//panelDistance: 10,
+			visiblePanels: 5,
 			closePanelsOnMouseOut: false,
-			breakpoints: {
-				960: {
-					visiblePanels: 5
-				}
-			}
+			autoplay: false
 		});
 	});
 </script>
@@ -45,7 +36,7 @@
 
 			<!-- Panel 1 -->
 			<div class="as-panel">
-				<a href="#">
+				<a href="http://bqworks.com">
 					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image1.jpg" data-retina="http://bqworks.com/accordion-slider/images/image1@2x.jpg"/>
 				</a>
 
@@ -60,7 +51,7 @@
 					Lorem ipsum dolor sit amet
 				</h3>
 				<p class="as-layer as-opened as-white as-padding hide-medium-screen" 
-					data-horizontal="70%" data-vertical="22%" data-width="50%"
+					data-horizontal="40" data-vertical="22%" 
 					data-show-transition="left" data-show-delay="200" data-hide-transition="left" data-hide-delay="200">
 					consectetur adipisicing elit
 				</p>
@@ -73,7 +64,7 @@
 
 	        <!-- Panel 2 -->
 	        <div class="as-panel">
-	        	<a href="http://bqworks.com">
+				<a href="http://bqworks.com">
 					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image2.jpg" data-retina="http://bqworks.com/accordion-slider/images/image2@2x.jpg"/>
 				</a>
 
@@ -83,7 +74,7 @@
 				</div>
 
 				<div class="as-layer" 
-					data-position="bottomLeft" data-horizontal="10%" data-vertical="20" data-width="80%">
+					data-position="bottomLeft" data-horizontal="20" data-vertical="20" data-width="100%">
 					
 					<p class="as-layer as-opened as-white as-padding"
 						data-position="bottomLeft"
@@ -107,7 +98,7 @@
 
 	        <!-- Panel 3 -->
 	        <div class="as-panel">
-	        	<a href="http://bqworks.com">
+				<a href="http://bqworks.com">
 					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image3.jpg" data-retina="http://bqworks.com/accordion-slider/images/image3@2x.jpg"/>
 				</a>
 
@@ -130,7 +121,7 @@
 
 	        <!-- Panel 4 -->
 	        <div class="as-panel">
-	        	<a href="http://bqworks.com">
+				<a href="http://bqworks.com">
 					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image4.jpg" data-retina="http://bqworks.com/accordion-slider/images/image4@2x.jpg"/>
 				</a>
 
@@ -148,7 +139,9 @@
 
 	        <!-- Panel 5 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image5.jpg" data-retina="http://bqworks.com/accordion-slider/images/image5@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image5.jpg" data-retina="http://bqworks.com/accordion-slider/images/image5@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -164,7 +157,9 @@
 
 	        <!-- Panel 6 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image6.jpg" data-retina="http://bqworks.com/accordion-slider/images/image6@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image6.jpg" data-retina="http://bqworks.com/accordion-slider/images/image6@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -179,7 +174,9 @@
 
 	        <!-- Panel 7 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image7.jpg" data-retina="http://bqworks.com/accordion-slider/images/image7@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image7.jpg" data-retina="http://bqworks.com/accordion-slider/images/image7@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -195,7 +192,9 @@
 
 	        <!-- Panel 8 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image8.jpg" data-retina="http://bqworks.com/accordion-slider/images/image8@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image8.jpg" data-retina="http://bqworks.com/accordion-slider/images/image8@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -221,7 +220,9 @@
 
 			<!-- Panel 9 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image9.jpg" data-retina="http://bqworks.com/accordion-slider/images/image9@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image9.jpg" data-retina="http://bqworks.com/accordion-slider/images/image9@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -246,7 +247,9 @@
 
 	        <!-- Panel 10 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image10.jpg" data-retina="http://bqworks.com/accordion-slider/images/image10@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image10.jpg" data-retina="http://bqworks.com/accordion-slider/images/image10@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -254,7 +257,7 @@
 				</div>
 				
 				<div class="as-layer" 
-					data-position="bottomLeft" data-horizontal="20%" data-vertical="30" data-width="80%" data-height="50%">
+					data-position="bottomLeft" data-horizontal="30" data-vertical="30" data-width="70%" data-height="50%">
 					
 					<h3 class="as-layer as-opened as-white as-padding"
 						data-show-transition="left" data-hide-transition="right">
@@ -275,7 +278,9 @@
 
 	        <!-- Panel 11 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image11.jpg" data-retina="http://bqworks.com/accordion-slider/images/image11@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image11.jpg" data-retina="http://bqworks.com/accordion-slider/images/image11@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -291,7 +296,9 @@
 
 	        <!-- Panel 12 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image12.jpg" data-retina="http://bqworks.com/accordion-slider/images/image12@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image12.jpg" data-retina="http://bqworks.com/accordion-slider/images/image12@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -316,7 +323,9 @@
 
 			<!-- Panel 13 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image13.jpg" data-retina="http://bqworks.com/accordion-slider/images/image13@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image13.jpg" data-retina="http://bqworks.com/accordion-slider/images/image13@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -324,7 +333,7 @@
 				</div>
 				
 				<div class="as-layer" 
-					data-horizontal="20%" data-vertical="30" data-width="80%">
+					data-horizontal="30" data-vertical="30" data-width="100%">
 					
 					<p class="as-layer as-opened as-black as-padding"
 						data-show-transition="left" data-hide-transition="down" data-show-delay="400" data-hide-delay="200">
@@ -347,7 +356,9 @@
 
 	        <!-- Panel 14 -->
 	        <div class="as-panel">
-				<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image14.jpg" data-retina="http://bqworks.com/accordion-slider/images/image14@2x.jpg"/>
+				<a href="http://bqworks.com">
+					<img class="as-background" src="../dist/css/images/blank.gif" data-src="http://bqworks.com/accordion-slider/images/image14.jpg" data-retina="http://bqworks.com/accordion-slider/images/image14@2x.jpg"/>
+				</a>
 
 				<div class="as-layer as-closed as-white panel-counter"
 					 data-position="bottomLeft" data-horizontal="8" data-vertical="8">
@@ -361,7 +372,6 @@
 			</div>
 		</div>
     </div>
-    <div>test test test test test test</div>
 
     <!-- End of Accordion Slider -->
 
