@@ -987,6 +987,9 @@
 				this.$accordion.addClass('as-closed');
 			}
 
+			// remove the "opened" class from the previously opened panel
+			this.$accordion.find('.as-panel.as-opened').removeClass('as-opened');
+
 			clearTimeout(this.mouseDelayTimer);
 
 			var that = this,
