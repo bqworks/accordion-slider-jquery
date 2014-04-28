@@ -151,7 +151,10 @@
 			// set a panel to be opened from the start
 			this.currentIndex = this.settings.startPanel;
 
-			if (this.currentIndex !== -1)
+
+			if (this.currentIndex === -1)
+				this.$accordion.addClass('as-closed');
+			else
 				this.$accordion.addClass('as-opened');
 
 			// if a panels was not set to be opened but a page was specified,
