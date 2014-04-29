@@ -6,6 +6,31 @@ When a new version is available, you can download it for free from your CodeCany
 
 ## Changelog ##
 
+**v. 2.4**
+
+* fixed background image swap when startPanel is used
+* added the 'as-closed' class by default when the accordion is initially closed
+* fixed the 'as-opened' class removal from the last opened panel
+* added 0 margin and padding to background images to prevent unwanted styling
+
+**v. 2.3**
+
+* fixed non-responsive mode
+* fixed link support when 'openPanelOn' is set to 'click'
+* fixed touch-swipe support when 'openPanelOn' is set to 'click'
+* added 'never' option for 'openPanelOn'
+* added bottom margin to accordion when buttons are present
+* simplified selectors in the CSS code
+* improved support for inner HTML content
+* added support for no-js class
+* added preset font sizes for layers
+* added CSS code that prevents unwanted CSS inheritance
+
+**v. 2.2**
+
+* added 'keyboardTarget' property
+* made multiple important improvements and fixes
+
 **v. 2.1**
 
 * added 'Keyboard' module
@@ -17,5 +42,3 @@ When a new version is available, you can download it for free from your CodeCany
 * changed the plugin name from 'Classic Accordion' to 'Accordion Slider'
 * rewritten the entire code and implemented modular architecture
 * added many new features
-
-_Note:_ As of version 2.0, the name of the plugin was changed from 'Classic Accordion' to 'Accordion Slider'. The plugin was completely revamped, so the name was changed in order to be more representative for the functionality that the plugin provides now. Also, because the changes are significant, it is not backwards compatible with versions older than 2.0.
