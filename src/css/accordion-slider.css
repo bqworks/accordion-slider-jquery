@@ -247,7 +247,11 @@
 }
 
 .accordion-slider .as-background,
-.accordion-slider .as-background-opened,
+.accordion-slider .as-background-opened {
+	max-width: none !important;
+	max-height: none !important;
+}
+
 .accordion-slider iframe,
 .accordion-slider object,
 .accordion-slider video,
