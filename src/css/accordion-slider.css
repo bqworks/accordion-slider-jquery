@@ -225,6 +225,8 @@
 
 .accordion-slider .as-background,
 .accordion-slider .as-background-opened {
+	max-width: none !important;
+	max-height: none !important;
 	border: none !important;
 	border-radius: 0 !important;
 	margin: 0 !important;
@@ -244,12 +246,6 @@
 	-moz-transition: none !important;
 	-webkit-transition: none !important;
 	-o-transition: none !important;
-}
-
-.accordion-slider .as-background,
-.accordion-slider .as-background-opened {
-	max-width: none !important;
-	max-height: none !important;
 }
 
 .accordion-slider iframe,
