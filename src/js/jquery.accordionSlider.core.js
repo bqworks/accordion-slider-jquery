@@ -131,6 +131,13 @@
 			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
 			this.$panelsContainer = this.$accordion.find('.as-panels').appendTo(this.$maskContainer);
 
+			if (this.settings.shuffle === true) {
+				var shuffledPanels = this.$panelsContainer.find('.as-panel').sort(function() {
+					return 0.5 - Math.random();
+				});
+				this.$panelsContainer.empty().append(shuffledPanels);
+			}
+
 			// create the 'as-panels' element if it wasn't created manually
 			if (this.$panelsContainer.length === 0)
 				this.$panelsContainer = $('<div class="as-panels"></div>').appendTo(this.$maskContainer);
@@ -1273,6 +1280,7 @@
 			visiblePanels: -1,
 			startPage: 0,
 			shadow: true,
+			shuffle: false,
 			panelOverlap: true,
 			init: function() {},
 			update: function() {},
