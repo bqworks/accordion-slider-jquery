@@ -172,6 +172,12 @@ Indicates if the panels will be overlapped. If set to false, the panels will hav
 
 *Default value:* true
 
+#### shuffle ####
+
+Indicates if the panels will be shuffled/randomized.
+
+*Default value:* false
+
 #### autoplay ####
 
 Indicates if the autoplay will be enabled.
