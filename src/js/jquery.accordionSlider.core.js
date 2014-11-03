@@ -267,33 +267,6 @@
 				this.sizeProperty = 'height';
 			}
 
-			// reset the panels' container position
-			this.$panelsContainer.attr('style', '');
-
-			// prepare the accordion for responsiveness
-			if (this.settings.responsive === true) {
-				// if the accordion is responsive set the width to 100% and use
-				// the specified width and height as a max-width and max-height
-				this.$accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
-
-				// if an aspect ratio was not specified, set the aspect ratio
-				// based on the specified width and height
-				if (this.settings.aspectRatio === -1)
-					this.settings.aspectRatio = this.settings.width / this.settings.height;
-
-				// resize the accordion when the browser resizes
-				$(window).off('resize.' + this.uniqueId + '.' + NS);
-				$(window).on('resize.' + this.uniqueId + '.' + NS, function() {
-					// resize the accordion when the browser resizes
-					if (that.$accordion.is(':visible')) {
-						that.resize();
-					}
-				});
-			} else {
-				this.$accordion.css({width: this.settings.width, height: this.settings.height, maxWidth: '', maxHeight: ''});
-				this.$maskContainer.attr('style', '');
-			}
-
 			// if the number of visible panels has change, update the current page to reflect
 			// the same relative position of the panels
 			if (this.settings.visiblePanels === -1) {
@@ -325,15 +298,27 @@
 			// create or update the pagination buttons
 			this._updatePaginationButtons();
 
-			// set the size of the accordion
-			this.resize();
-
 			// create or remove the shadow
 			if (this.settings.shadow === true) {
 				this.$accordion.find('.as-panel').addClass('as-shadow');
 			} else if (this.settings.shadow === false) {
 				this.$accordion.find('.as-shadow').removeClass('as-shadow');
 			}
+
+			// set the size of the accordion
+			this.resize();
+
+			// reset the panels' container position
+			this.$panelsContainer.attr('style', '');
+
+			// resize the accordion when the browser resizes
+			$(window).off('resize.' + this.uniqueId + '.' + NS);
+			$(window).on('resize.' + this.uniqueId + '.' + NS, function() {
+				// resize the accordion when the browser resizes
+				if (that.$accordion.is(':visible')) {
+					that.resize();
+				}
+			});
 
 			// fire the update event
 			var eventObject = {type: 'update'};
@@ -483,50 +468,57 @@
 		resize: function() {
 			var that = this;
 
-			// reset the accordion to 100% before calculating the size of the other elements
-			if (this.settings.responsive === true)
-				this.$accordion.css({width: '100%'});
+			this.$maskContainer.attr('style', '');
 
-			// set the height of the accordion based on the aspect ratio
-			if (this.settings.aspectRatio !== -1)
+			// prepare the accordion for responsiveness
+			if (this.settings.responsive === true) {
+				// if the accordion is responsive set the width to 100% and use
+				// the specified width and height as a max-width and max-height
+				this.$accordion.css({width: '100%', height: this.settings.height, maxWidth: this.settings.width, maxHeight: this.settings.height});
+
+				// if an aspect ratio was not specified, set the aspect ratio
+				// based on the specified width and height
+				if (this.settings.aspectRatio === -1)
+					this.settings.aspectRatio = this.settings.width / this.settings.height;
+
 				this.$accordion.css('height', this.$accordion.innerWidth() / this.settings.aspectRatio);
 
-			if (this.settings.responsive === true && this.settings.responsiveMode === 'auto') {
-				// get the accordion's size ratio based on the set size and the actual size
-				this.autoResponsiveRatio = this.$accordion.innerWidth() / this.settings.width;
+				if (this.settings.responsiveMode === 'auto') {
+					// get the accordion's size ratio based on the set size and the actual size
+					this.autoResponsiveRatio = this.$accordion.innerWidth() / this.settings.width;
 
-				this.$maskContainer.css({
-					width: this.settings.width,
-					height: this.settings.height
-				});
-
-				// scale the mask container based on the current ratio
-				if ( this.autoResponsiveRatio < 1 ) {
 					this.$maskContainer.css({
-						'-webkit-transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
-						'-ms-transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
-						'transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
-						'-webkit-transform-origin': 'top left',
-						'-ms-transform-origin': 'top left',
-						'transform-origin': 'top left'
+						width: this.settings.width,
+						height: this.settings.height
 					});
+
+					// scale the mask container based on the current ratio
+					if ( this.autoResponsiveRatio < 1 ) {
+						this.$maskContainer.css({
+							'-webkit-transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
+							'-ms-transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
+							'transform': 'scaleX(' + this.autoResponsiveRatio + ') scaleY(' + this.autoResponsiveRatio + ')',
+							'-webkit-transform-origin': 'top left',
+							'-ms-transform-origin': 'top left',
+							'transform-origin': 'top left'
+						});
+					} else {
+						this.$maskContainer.css({
+							'-webkit-transform': '',
+							'-ms-transform': '',
+							'transform': '',
+							'-webkit-transform-origin': '',
+							'-ms-transform-origin': '',
+							'transform-origin': ''
+						});
+					}
+					
+					this.totalSize = this.settings.orientation === "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
 				} else {
-					this.$maskContainer.css({
-						'-webkit-transform': '',
-						'-ms-transform': '',
-						'transform': '',
-						'-webkit-transform-origin': '',
-						'-ms-transform-origin': '',
-						'transform-origin': ''
-					});
+					this.totalSize = this.settings.orientation === "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 				}
-				
-				this.totalSize = this.settings.orientation === "horizontal" ? this.$maskContainer.innerWidth() : this.$maskContainer.innerHeight();
 			} else {
-				// clear previous styling
-				this.$maskContainer.attr('style', '');
-
-				this.totalSize = this.settings.orientation === "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
+				this.$accordion.css({width: this.settings.width, height: this.settings.height, maxWidth: '', maxHeight: ''});
 			}
 
 			// set the size of the background images explicitly because of a bug?
