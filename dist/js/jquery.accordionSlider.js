@@ -1,5 +1,5 @@
 /*!
-* Accordion Slider - v2.4.0
+* Accordion Slider - v2.5.0
 * Homepage: http://bqworks.com/accordion-slider/
 * Author: bqworks
 * Author URL: http://bqworks.com/
