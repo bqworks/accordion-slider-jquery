@@ -129,13 +129,6 @@
 			this.$maskContainer = $('<div class="as-mask"></div>').appendTo(this.$accordion);
 			this.$panelsContainer = this.$accordion.find('.as-panels').appendTo(this.$maskContainer);
 
-			if (this.settings.shuffle === true) {
-				var shuffledPanels = this.$panelsContainer.find('.as-panel').sort(function() {
-					return 0.5 - Math.random();
-				});
-				this.$panelsContainer.empty().append(shuffledPanels);
-			}
-
 			// create the 'as-panels' element if it wasn't created manually
 			if (this.$panelsContainer.length === 0)
 				this.$panelsContainer = $('<div class="as-panels"></div>').appendTo(this.$maskContainer);
@@ -176,9 +169,15 @@
 			// to restore the settings when the breakpoints are used
 			this.originalSettings = $.extend({}, this.settings);
 
+			if (this.settings.shuffle === true) {
+				var shuffledPanels = this.$panelsContainer.find('.as-panel').sort(function() {
+					return 0.5 - Math.random();
+				});
+				this.$panelsContainer.empty().append(shuffledPanels);
+			}
+
 			// set a panel to be opened from the start
 			this.currentIndex = this.settings.startPanel;
-
 
 			if (this.currentIndex === -1)
 				this.$accordion.addClass('as-closed');
