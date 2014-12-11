@@ -137,17 +137,17 @@
 			var modules = $.AccordionSlider.modules.accordion;
 
 			// Merge the modules' default settings with the core's default settings
-			if ( typeof modules !== 'undefined' ) {
-				for ( var i in modules ) {
-					var defaults = modules[ i ] + 'Defaults';
+			if (typeof modules !== 'undefined') {
+				for (var i = 0; i < modules.length; i++) {
+					var defaults = modules[i] + 'Defaults';
 					
-					if ( typeof this[ defaults ] !== 'undefined' ) {
-						$.extend( this.defaults, this[ defaults ] );
+					if ( typeof this[defaults] !== 'undefined') {
+						$.extend(this.defaults, this[defaults]);
 					} else {
-						defaults = modules[ i ].substring( 0, 1 ).toLowerCase() + modules[ i ].substring( 1 ) + 'Defaults';
+						defaults = modules[i].substring(0, 1).toLowerCase() + modules[i].substring(1) + 'Defaults';
 
-						if ( typeof this[ defaults ] !== 'undefined' ) {
-							$.extend( this.defaults, this[ defaults ] );
+						if (typeof this[defaults] !== 'undefined') {
+							$.extend(this.defaults, this[defaults]);
 						}
 					}
 				}
@@ -157,10 +157,10 @@
 			this.settings = $.extend({}, this.defaults, this.options);
 
 			// Initialize the modules
-			if ( typeof modules !== 'undefined' ) {
-				for ( var j in modules ) {
-					if ( typeof this[ 'init' + modules[ j ] ] !== 'undefined' ) {
-						this[ 'init' + modules[ j ] ]();
+			if (typeof modules !== 'undefined') {
+				for (var j = 0; j < modules.length; j++) {
+					if (typeof this['init' + modules[j]] !== 'undefined') {
+						this['init' + modules[j]]();
 					}
 				}
 			}
@@ -720,7 +720,7 @@
 			var modules = $.AccordionSlider.modules.accordion;
 
 			if (typeof modules !== 'undefined')
-				for (var i in modules) {
+				for (var i = 0; i < modules.length; i++) {
 					if (typeof this['destroy' + modules[i]] !== 'undefined')
 						this['destroy' + modules[i]]();
 				}
@@ -1370,7 +1370,7 @@
 			var modules = $.AccordionSlider.modules.panel;
 
 			if (typeof modules !== 'undefined')
-				for (var i in modules) {
+				for (var i = 0; i < modules.length; i++) {
 					if (typeof this['init' + modules[i]] !== 'undefined')
 						this['init' + modules[i]]();
 				}
@@ -1407,7 +1407,7 @@
 			var modules = $.AccordionSlider.modules.panel;
 
 			if (typeof modules !== 'undefined')
-				for (var i in modules) {
+				for (var i = 0; i < modules.length; i++) {
 					if (typeof this['destroy' + modules[i]] !== 'undefined')
 						this['destroy' + modules[i]]();
 				}
