@@ -6,6 +6,15 @@ When a new version is available, you can download it for free from your CodeCany
 
 ## Changelog ##
 
+**v. 2.5.1**
+
+* some bug fixes
+
+**v. 2.5**
+
+* add shuffle option
+* various fixes and improvements
+
 **v. 2.4**
 
 * fixed background image swap when startPanel is used
