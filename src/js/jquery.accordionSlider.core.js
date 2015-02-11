@@ -512,6 +512,7 @@
 				}
 			} else {
 				this.$accordion.css({width: this.settings.width, height: this.settings.height, maxWidth: '', maxHeight: ''});
+				this.totalSize = this.settings.orientation === "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 			}
 
 			// set the size of the background images explicitly because of a bug?
