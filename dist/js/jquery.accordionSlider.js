@@ -1,5 +1,5 @@
 /*!
-* Accordion Slider - v2.5.1
+* Accordion Slider - v2.6
 * Homepage: http://bqworks.com/accordion-slider/
 * Author: bqworks
 * Author URL: http://bqworks.com/
@@ -313,11 +313,11 @@
 				this.$accordion.find('.as-shadow').removeClass('as-shadow');
 			}
 
-			// set the size of the accordion
-			this.resize();
-
 			// reset the panels' container position
 			this.$panelsContainer.attr('style', '');
+
+			// set the size of the accordion
+			this.resize();
 
 			// fire the update event
 			var eventObject = {type: 'update'};
@@ -518,6 +518,7 @@
 				}
 			} else {
 				this.$accordion.css({width: this.settings.width, height: this.settings.height, maxWidth: '', maxHeight: ''});
+				this.totalSize = this.settings.orientation === "horizontal" ? this.$accordion.innerWidth() : this.$accordion.innerHeight();
 			}
 
 			// set the size of the background images explicitly because of a bug?
@@ -3706,6 +3707,8 @@ JWPlayerVideo.prototype.replay = function() {
 		_fadeInBackground: function(target) {
 			var duration = this.settings.swapBackgroundDuration;
 
+			target.css({'visibility': 'visible'});
+			
 			if (SwapBackgroundHelper.checkCSSTransitions() === true) {
 				// remove the transition property after the animation completes
 				target.off(SwapBackgroundHelper.cssTransitionEndEvents).on(SwapBackgroundHelper.cssTransitionEndEvents, function( event ) {
@@ -3777,8 +3780,6 @@ JWPlayerVideo.prototype.replay = function() {
 
 	var TouchSwipe = {
 
-		isTouchSupport: false,
-
 		touchStartPoint: {x: 0, y: 0},
 
 		touchEndPoint: {x: 0, y: 0},
@@ -3789,6 +3790,8 @@ JWPlayerVideo.prototype.replay = function() {
 
 		isTouchMoving: false,
 
+		touchSwipeEvents: { startEvent: '', moveEvent: '', endEvent: '' },
+
 		initTouchSwipe: function() {
 			var that = this;
 
@@ -3796,24 +3799,13 @@ JWPlayerVideo.prototype.replay = function() {
 			if (this.settings.touchSwipe === false)
 				return;
 
-			// check if there is touch support
-			this.isTouchSupport = 'ontouchstart' in window;
+			this.touchSwipeEvents.startEvent = 'touchstart' + '.' + NS + ' mousedown' + '.' + NS;
+			this.touchSwipeEvents.moveEvent = 'touchmove' + '.' + NS + ' mousemove' + '.' + NS;
+			this.touchSwipeEvents.endEvent = 'touchend' + '.' + this.uniqueId + '.' + NS + ' mouseup' + '.' + this.uniqueId + '.' + NS;
 
-			// listen to touch events or, if touch support doesn't exist, listen to mouse events
-			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown';
-			this.$panelsContainer.on(startEvent + '.' + NS, $.proxy(this._onTouchStart, this));
-			
+			this.$panelsContainer.on(this.touchSwipeEvents.startEvent, $.proxy(this._onTouchStart, this));
+
 			this.on('update.TouchSwipe.' + NS, function() {
-				// remove mouse events on panels
-				if (that.isTouchSupport)
-					$.each(that.panels, function(index, element) {
-						var panel = element;
-						panel.off('panelMouseOver.' + NS);
-						panel.off('panelMouseOut.' + NS);
-						panel.off('panelClick.' + NS);
-						panel.off('panelMouseDown.' + NS);
-					});
-
 				// add or remove grabbing icon
 				if (that.getTotalPages() > 1)
 					that.$panelsContainer.addClass('as-grab');
@@ -3823,18 +3815,16 @@ JWPlayerVideo.prototype.replay = function() {
 		},
 
 		_onTouchStart: function(event) {
+			var that = this,
+				eventObject =  typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
+
 			// disable dragging if the element is set to allow selections
-			if ($(event.target).closest('.as-selectable').length >= 1 || (this.isTouchSupport === false && this.getTotalPages() === 1))
+			if ($(event.target).closest('.as-selectable').length >= 1 || (typeof event.originalEvent.touches === 'undefined' && this.getTotalPages() === 1))
 				return;
 
 			// prevent default behavior only for mouse events
-			if (this.isTouchSupport === false)
+			if (typeof event.originalEvent.touches === 'undefined')
 				event.preventDefault();
-
-			var that = this,
-				eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent,
-				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove',
-				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
 
 			// get the initial position of the mouse pointer and the initial position of the panels' container
 			this.touchStartPoint.x = eventObject.pageX || eventObject.clientX;
@@ -3845,22 +3835,22 @@ JWPlayerVideo.prototype.replay = function() {
 			this.touchDistance.x = this.touchDistance.y = 0;
 
 			// listen for move and end events
-			this.$panelsContainer.on(moveEvent + '.' + NS, $.proxy(this._onTouchMove, this));
-			$(document).on(endEvent + '.' + this.uniqueId + '.' + NS, $.proxy(this._onTouchEnd, this));
+			this.$panelsContainer.on(this.touchSwipeEvents.moveEvent, $.proxy(this._onTouchMove, this));
+			$(document).on(this.touchSwipeEvents.endEvent, $.proxy(this._onTouchEnd, this));
 
 			// swap grabbing icons
 			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
 
-			// disable click events on links
+			// disable links (mostly needed for mobile devices)
 			$(event.target).parents('.as-panel').find('a').one('click.TouchSwipe', function(event) {
 				event.preventDefault();
 			});
-
+			
 			this.$accordion.addClass('as-swiping');
 		},
 
 		_onTouchMove: function(event) {
-			var eventObject = this.isTouchSupport ? event.originalEvent.touches[0] : event.originalEvent;
+			var eventObject = typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
 
 			// indicate that the move event is being fired
 			this.isTouchMoving = true;
@@ -3894,21 +3884,20 @@ JWPlayerVideo.prototype.replay = function() {
 
 		_onTouchEnd: function(event) {
 			// remove the move and end listeners
-			var that = this,
-				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove',
-				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup';
+			var that = this;
 
-			this.$panelsContainer.off(moveEvent + '.' + NS);
-			$(document).off(endEvent + '.' + this.uniqueId + '.' + NS);
+			this.$panelsContainer.off(this.touchSwipeEvents.moveEvent);
+			$(document).off(this.touchSwipeEvents.endEvent);
 
 			// swap grabbing icons
 			this.$panelsContainer.removeClass('as-grabbing').addClass('as-grab');
 
 			// check if there is intention for a tap
-			if (this.isTouchSupport === true && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchDistance.x) < 10 && Math.abs(this.touchDistance.y) < 10)) {
+			if (typeof event.originalEvent.touches !== 'undefined' && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchDistance.x) < 10 && Math.abs(this.touchDistance.y) < 10)) {
 				var index = $(event.target).parents('.as-panel').index();
 
 				if (index !== this.currentIndex && index !== -1) {
+					event.preventDefault();
 					this.openPanel(index);
 				} else {
 					// re-enable click events on links
@@ -3926,11 +3915,11 @@ JWPlayerVideo.prototype.replay = function() {
 				return;
 			}
 
-			this.isTouchMoving = false;
-
 			$(event.target).parents('.as-panel').one('click', function(event) {
 				event.preventDefault();
 			});
+
+			this.isTouchMoving = false;
 
 			// remove the 'as-swiping' class but with a delay
 			// because there might be other event listeners that check
@@ -3980,13 +3969,9 @@ JWPlayerVideo.prototype.replay = function() {
 		},
 
 		destroyTouchSwipe: function() {
-			var startEvent = this.isTouchSupport ? 'touchstart' : 'mousedown',
-				endEvent = this.isTouchSupport ? 'touchend' : 'mouseup',
-				moveEvent = this.isTouchSupport ? 'touchmove' : 'mousemove';
-
-			this.$panelsContainer.off(startEvent + '.' + NS);
-			$(document).off(endEvent + '.' + this.uniqueId + '.' + NS);
-			this.$panelsContainer.off(moveEvent + '.' + NS);
+			this.$panelsContainer.off(this.touchSwipeEvents.startEvent);
+			$(document).off(this.touchSwipeEvents.endEvent);
+			this.$panelsContainer.off(this.touchSwipeEvents.moveEvent);
 			this.off('update.TouchSwipe.' + NS);
 		},
 
