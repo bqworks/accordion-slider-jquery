@@ -307,11 +307,11 @@
 				this.$accordion.find('.as-shadow').removeClass('as-shadow');
 			}
 
-			// set the size of the accordion
-			this.resize();
-
 			// reset the panels' container position
 			this.$panelsContainer.attr('style', '');
+
+			// set the size of the accordion
+			this.resize();
 
 			// fire the update event
 			var eventObject = {type: 'update'};
