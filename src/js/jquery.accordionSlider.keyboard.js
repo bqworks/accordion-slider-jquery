@@ -41,7 +41,11 @@
 					else
 						that.nextPanel();
 				} else if (event.which === 13) {
-					that.$accordion.find('.as-panel').eq(that.currentIndex).children('a')[0].click();
+					var link = that.$accordion.find('.as-panel').eq(that.currentIndex).children('a');
+
+					if ( link.length !== 0 ) {
+						link[0].click();
+					}
 				}
 			});
 		},
