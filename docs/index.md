@@ -1,5 +1,5 @@
 # Accordion Slider - by [bqworks](http://bqworks.com/) #
-*__Version 2.5.1__*
+*__Version 2.6.1__*
 
 Hi, and thank you for purchasing Accordion Slider!
 
