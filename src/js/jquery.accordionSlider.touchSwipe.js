@@ -127,7 +127,7 @@
 			if (typeof event.originalEvent.touches !== 'undefined' && (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchDistance.x) < 10 && Math.abs(this.touchDistance.y) < 10)) {
 				var index = $(event.target).parents('.as-panel').index();
 
-				if (index !== this.currentIndex && index !== -1) {
+				if (index !== this.currentIndex && index !== -1 && this.openPanelOn !== 'never') {
 					event.preventDefault();
 					this.openPanel(index);
 				} else {
