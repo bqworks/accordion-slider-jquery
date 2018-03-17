@@ -249,6 +249,9 @@
 
 					// remove the transition property in order to prevent other animations of the element
 					that.$layer.css('transition', '');
+
+					// remove transform property to prevent issue where layer text is disappearing after animation
+					that.$layer.css('transform', '');
 				});
 
 				this.$layer.css(start)
@@ -307,6 +310,9 @@
 
 					// remove the transition property in order to prevent other animations of the element
 					that.$layer.css('transition', '');
+
+					// remove transform property to prevent issue where layer text is disappearing after animation
+					that.$layer.css('transform', '');
 
 					// hide the layer after transition
 					if (that.isVisible === false)
