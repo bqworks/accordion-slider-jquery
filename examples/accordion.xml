@@ -6,7 +6,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image1@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 		
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 1
 		</layer>
 
@@ -29,7 +29,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image2@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 2
 		</layer>
 
@@ -54,7 +54,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image3@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 3
 		</layer>
 
@@ -72,7 +72,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image4@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 4
 		</layer>
 
@@ -87,7 +87,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image5@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 5
 		</layer>
 
@@ -102,7 +102,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image6@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 6
 		</layer>
 
@@ -117,7 +117,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image7@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 7
 		</layer>
 
@@ -132,7 +132,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image8@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 8
 		</layer>
 		
@@ -153,7 +153,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image9@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 9
 		</layer>
 		
@@ -175,7 +175,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image10@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 10
 		</layer>
 		
@@ -201,7 +201,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image11@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 11
 		</layer>
 
@@ -216,7 +216,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image12@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 12
 		</layer>
 
@@ -238,7 +238,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image13@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 13
 		</layer>
 		
@@ -264,7 +264,7 @@
 		<backgroundRetina>http://bqworks.com/accordion-slider/images/image14@2x.jpg</backgroundRetina>
 		<backgroundLink>http://bqworks.com/</backgroundLink>
 
-		<layer style="closed white panel-counter" position="bottomLeft" horizontal="8" vertical="8">
+		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 14
 		</layer>
 
