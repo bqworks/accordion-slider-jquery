@@ -105,6 +105,15 @@
 	padding: 10px;
 }
 
+.as-layer.as-vertical {
+	-moz-transform-origin: left bottom;
+	-webkit-transform-origin: left bottom;
+	transform-origin: left bottom;
+	-moz-transform: rotate(-90deg) translateY(100%);
+	-webkit-transform: rotate(-90deg) translateY(100%);
+	transform: rotate(-90deg) translateY(100%);
+}
+
 .as-pagination-buttons {
 	position: absolute;
 	top: 100%;
