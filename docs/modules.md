@@ -104,6 +104,10 @@ Adds a 10 pixel padding to the layer.
 
 Makes the layer's corners rounded.
 
+##### as-vertical #####
+
+Changes the layer's orientation to vertical.
+
 In the accordion's CSS file, accordion-slider.css, you can edit the properties specified for the above classes. For example, you can set the padding to 5 pixels instead of 10 pixels, or you can change the transparency of the black and white backgrounds. However, it's a best practice to add your custom styling in a separate CSS file instead of modifying the accordion's CSS.
 
 This is the list of data attributes:
@@ -546,7 +550,8 @@ When using layers, the equivalent for the `class` attribute is the `style` prope
 * black
 * white
 * padding
-* rounded.
+* rounded
+* vertical
 
 ##### Properties #####
 
