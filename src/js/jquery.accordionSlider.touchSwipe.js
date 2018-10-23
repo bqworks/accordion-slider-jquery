@@ -23,6 +23,9 @@
 
 		touchSwipeEvents: { startEvent: '', moveEvent: '', endEvent: '' },
 
+		// Indicates whether the previous 'start' event was a 'touchstart' or 'mousedown'
+		previousStartEvent: '',
+
 		initTouchSwipe: function() {
 			var that = this;
 
@@ -41,7 +44,14 @@
 
 			// prevent 'click' events unless there is intention for a 'click'
 			this.$panelsContainer.find( 'a' ).on( 'click.' + NS, function( event ) {
-				if ( typeof event.originalEvent.touches === 'undefined' && that.$accordion.hasClass('as-swiping') ) {
+				if ( that.$accordion.hasClass( 'as-swiping' ) ) {
+					event.preventDefault();
+				}
+			});
+
+			// prevent 'tap' events unless the panel is opened
+			this.$panelsContainer.find( 'a' ).on( 'touchstart.' + NS, function( event ) {
+				if ( $(this).parents('.as-panel').hasClass( 'as-opened' ) === false ) {
 					event.preventDefault();
 				}
 			});
@@ -56,6 +66,16 @@
 		},
 
 		_onTouchStart: function(event) {
+
+			// return if a 'mousedown' event follows a 'touchstart' event
+			if ( event.type === 'mousedown' && this.previousStartEvent === 'touchstart' ) {
+				this.previousStartEvent = event.type;
+				return;
+			}
+
+			// assign the new 'start' event
+			this.previousStartEvent = event.type;
+
 			var that = this,
 				eventObject =  typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
 
@@ -77,8 +97,6 @@
 
 			// swap grabbing icons
 			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
-			
-			this.$accordion.addClass('as-swiping');
 		},
 
 		_onTouchMove: function(event) {
@@ -86,6 +104,10 @@
 
 			// indicate that the 'move' event is being fired
 			this.isTouchMoving = true;
+
+			if ( this.$accordion.hasClass('as-swiping') === false ) {
+				this.$accordion.addClass('as-swiping');
+			}
 
 			// get the current position of the mouse pointer
 			this.touchEndPoint.x = eventObject.pageX || eventObject.clientX;
@@ -126,25 +148,21 @@
 
 			// check if there is intention for a tap
 			if (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchDistance.x) < 10 && Math.abs(this.touchDistance.y) < 10) {
-				this.$accordion.removeClass('as-swiping');
-
 				var index = $(event.target).parents('.as-panel').index();
 
 				if (typeof event.originalEvent.touches !== 'undefined' && index !== this.currentIndex && index !== -1 && this.openPanelOn !== 'never') {
 					this.openPanel(index);
-
-					// don't follow links
-					event.preventDefault();
 				}
 			}
 
-			// remove the 'as-swiping' class but with a delay
-			// because there might be other event listeners that check
-			// the existence of this class, and this class should still be 
-			// applied for those listeners, since there was a swipe event
-			setTimeout(function() {
-				that.$accordion.removeClass('as-swiping');
-			}, 1);
+			// remove the 'as-swiping' class with a delay, to allow
+			// other event listeners (i.e. click) to check the existance
+			// of the swipe event.
+			if ( this.$accordion.hasClass('as-swiping') ) {
+				setTimeout(function() {
+					that.$accordion.removeClass('as-swiping');
+				}, 100);
+			}
 
 			// return if there was no movement and re-enable click events on links
 			if (this.isTouchMoving === false) {
@@ -195,6 +213,7 @@
 		destroyTouchSwipe: function() {
 			this.$panelsContainer.off( 'dragstart.' + NS );
 			this.$panelsContainer.find( 'a' ).off( 'click.' + NS );
+			this.$panelsContainer.find( 'a' ).off( 'touchstart.' + NS );
 
 			this.$panelsContainer.off(this.touchSwipeEvents.startEvent);
 			this.$panelsContainer.off(this.touchSwipeEvents.moveEvent);
