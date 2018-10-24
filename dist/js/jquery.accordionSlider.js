@@ -1,5 +1,5 @@
 /*!
-* Accordion Slider - v2.7
+* Accordion Slider - v2.8
 * Homepage: http://bqworks.com/accordion-slider/
 * Author: bqworks
 * Author URL: http://bqworks.com/
@@ -486,10 +486,12 @@
 					// get the accordion's size ratio based on the set size and the actual size
 					this.autoResponsiveRatio = this.$accordion.innerWidth() / this.settings.width;
 
-					this.$maskContainer.css({
-						width: this.settings.width,
-						height: this.settings.height
-					});
+					this.$maskContainer.css('width', this.settings.width);
+
+					if ( isNaN( this.settings.height ) )
+						this.$maskContainer.css('height', Math.min(this.settings.width / this.settings.aspectRatio, parseInt(this.settings.height, 10) / 100 * $(window).height()));
+					else
+						this.$maskContainer.css('height', Math.min(this.settings.width / this.settings.aspectRatio, this.settings.height));
 
 					// scale the mask container based on the current ratio
 					if ( this.autoResponsiveRatio < 1 ) {
@@ -3217,7 +3219,7 @@ var VimeoVideoHelper = {
 var VimeoVideo = function( video ) {
 	this.init = false;
 
-	if ( typeof window.Froogaloop !== 'undefined' ) {
+	if ( typeof window.Vimeo !== 'undefined' ) {
 		Video.call( this, video );
 	} else {
 		VimeoVideoHelper.vimeoVideos.push({ 'video': video, 'scope': this });
@@ -3226,12 +3228,12 @@ var VimeoVideo = function( video ) {
 			VimeoVideoHelper.vimeoAPIAdded = true;
 
 			var tag = document.createElement('script');
-			tag.src = "//a.vimeocdn.com/js/froogaloop2.min.js";
+			tag.src = "//player.vimeo.com/api/player.js";
 			var firstScriptTag = document.getElementsByTagName( 'script' )[0];
 			firstScriptTag.parentNode.insertBefore( tag, firstScriptTag );
 		
 			var checkVimeoAPITimer = setInterval(function() {
-				if ( typeof window.Froogaloop !== 'undefined' ) {
+				if ( typeof window.Vimeo !== 'undefined' ) {
 					clearInterval( checkVimeoAPITimer );
 					
 					$.each( VimeoVideoHelper.vimeoVideos, function( index, element ) {
@@ -3268,31 +3270,29 @@ VimeoVideo.prototype._setup = function() {
 	var that = this;
 
 	// Get a reference to the player
-	this.player = $f( this.$video[0] );
+	this.player = new Vimeo.Player( this.$video[0] );
 	
-	this.player.addEvent( 'ready', function() {
-		that.ready = true;
-		that.trigger({ type: 'ready' });
+	that.ready = true;
+	that.trigger({ type: 'ready' });
 		
-		that.player.addEvent( 'play', function() {
-			if ( that.started === false ) {
-				that.started = true;
-				that.trigger({ type: 'start' });
-			}
+	that.player.on( 'play', function() {
+		if ( that.started === false ) {
+			that.started = true;
+			that.trigger({ type: 'start' });
+		}
 
-			that.state = 'playing';
-			that.trigger({ type: 'play' });
-		});
+		that.state = 'playing';
+		that.trigger({ type: 'play' });
+	});
 		
-		that.player.addEvent( 'pause', function() {
-			that.state = 'paused';
-			that.trigger({ type: 'pause' });
-		});
+	that.player.on( 'pause', function() {
+		that.state = 'paused';
+		that.trigger({ type: 'pause' });
+	});
 		
-		that.player.addEvent( 'finish', function() {
-			that.state = 'ended';
-			that.trigger({ type: 'ended' });
-		});
+	that.player.on( 'ended', function() {
+		that.state = 'ended';
+		that.trigger({ type: 'ended' });
 	});
 };
 
@@ -3300,30 +3300,37 @@ VimeoVideo.prototype.play = function() {
 	var that = this;
 
 	if ( this.ready === true ) {
-		this.player.api( 'play' );
+		this.player.play();
 	} else {
 		var timer = setInterval(function() {
 			if ( that.ready === true ) {
 				clearInterval( timer );
-				that.player.api( 'play' );
+				that.player.play();
 			}
 		}, 100 );
 	}
 };
 
 VimeoVideo.prototype.pause = function() {
-	this.player.api( 'pause' );
+	this.player.pause();
 };
 
 VimeoVideo.prototype.stop = function() {
-	this.player.api( 'seekTo', 0 );
-	this.player.api( 'pause' );
-	this.state = 'stopped';
+	var that = this;
+ 
+	this.player.setCurrentTime( 0 ).then( function() {
+		that.player.pause();
+		that.state = 'stopped';
+	});
+	
 };
 
 VimeoVideo.prototype.replay = function() {
-	this.player.api( 'seekTo', 0 );
-	this.player.api( 'play' );
+	var that = this;
+
+	this.player.setCurrentTime( 0 ).then( function() {
+		that.player.play();
+	});
 };
 
 VimeoVideo.prototype.on = function( type, callback ) {
@@ -3802,6 +3809,9 @@ JWPlayerVideo.prototype.replay = function() {
 
 		touchSwipeEvents: { startEvent: '', moveEvent: '', endEvent: '' },
 
+		// Indicates whether the previous 'start' event was a 'touchstart' or 'mousedown'
+		previousStartEvent: '',
+
 		initTouchSwipe: function() {
 			var that = this;
 
@@ -3820,7 +3830,14 @@ JWPlayerVideo.prototype.replay = function() {
 
 			// prevent 'click' events unless there is intention for a 'click'
 			this.$panelsContainer.find( 'a' ).on( 'click.' + NS, function( event ) {
-				if ( typeof event.originalEvent.touches === 'undefined' && that.$accordion.hasClass('as-swiping') ) {
+				if ( that.$accordion.hasClass( 'as-swiping' ) ) {
+					event.preventDefault();
+				}
+			});
+
+			// prevent 'tap' events unless the panel is opened
+			this.$panelsContainer.find( 'a' ).on( 'touchstart.' + NS, function( event ) {
+				if ( $(this).parents('.as-panel').hasClass( 'as-opened' ) === false ) {
 					event.preventDefault();
 				}
 			});
@@ -3835,6 +3852,16 @@ JWPlayerVideo.prototype.replay = function() {
 		},
 
 		_onTouchStart: function(event) {
+
+			// return if a 'mousedown' event follows a 'touchstart' event
+			if ( event.type === 'mousedown' && this.previousStartEvent === 'touchstart' ) {
+				this.previousStartEvent = event.type;
+				return;
+			}
+
+			// assign the new 'start' event
+			this.previousStartEvent = event.type;
+
 			var that = this,
 				eventObject =  typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
 
@@ -3851,13 +3878,11 @@ JWPlayerVideo.prototype.replay = function() {
 			this.touchDistance.x = this.touchDistance.y = 0;
 
 			// listen for 'move' and 'end' events
-			$(document).on(this.touchSwipeEvents.moveEvent, $.proxy(this._onTouchMove, this));
+			this.$panelsContainer.on(this.touchSwipeEvents.moveEvent, $.proxy(this._onTouchMove, this));
 			$(document).on(this.touchSwipeEvents.endEvent, $.proxy(this._onTouchEnd, this));
 
 			// swap grabbing icons
 			this.$panelsContainer.removeClass('as-grab').addClass('as-grabbing');
-			
-			this.$accordion.addClass('as-swiping');
 		},
 
 		_onTouchMove: function(event) {
@@ -3865,6 +3890,10 @@ JWPlayerVideo.prototype.replay = function() {
 
 			// indicate that the 'move' event is being fired
 			this.isTouchMoving = true;
+
+			if ( this.$accordion.hasClass('as-swiping') === false ) {
+				this.$accordion.addClass('as-swiping');
+			}
 
 			// get the current position of the mouse pointer
 			this.touchEndPoint.x = eventObject.pageX || eventObject.clientX;
@@ -3897,7 +3926,7 @@ JWPlayerVideo.prototype.replay = function() {
 			var that = this;
 
 			// remove the 'move' and 'end' listeners
-			$(document).off(this.touchSwipeEvents.moveEvent);
+			this.$panelsContainer.off(this.touchSwipeEvents.moveEvent);
 			$(document).off(this.touchSwipeEvents.endEvent);
 
 			// swap grabbing icons
@@ -3905,25 +3934,21 @@ JWPlayerVideo.prototype.replay = function() {
 
 			// check if there is intention for a tap
 			if (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchDistance.x) < 10 && Math.abs(this.touchDistance.y) < 10) {
-				this.$accordion.removeClass('as-swiping');
-
 				var index = $(event.target).parents('.as-panel').index();
 
 				if (typeof event.originalEvent.touches !== 'undefined' && index !== this.currentIndex && index !== -1 && this.openPanelOn !== 'never') {
 					this.openPanel(index);
-
-					// don't follow links
-					event.preventDefault();
 				}
 			}
 
-			// remove the 'as-swiping' class but with a delay
-			// because there might be other event listeners that check
-			// the existence of this class, and this class should still be 
-			// applied for those listeners, since there was a swipe event
-			setTimeout(function() {
-				that.$accordion.removeClass('as-swiping');
-			}, 1);
+			// remove the 'as-swiping' class with a delay, to allow
+			// other event listeners (i.e. click) to check the existance
+			// of the swipe event.
+			if ( this.$accordion.hasClass('as-swiping') ) {
+				setTimeout(function() {
+					that.$accordion.removeClass('as-swiping');
+				}, 100);
+			}
 
 			// return if there was no movement and re-enable click events on links
 			if (this.isTouchMoving === false) {
@@ -3974,11 +3999,12 @@ JWPlayerVideo.prototype.replay = function() {
 		destroyTouchSwipe: function() {
 			this.$panelsContainer.off( 'dragstart.' + NS );
 			this.$panelsContainer.find( 'a' ).off( 'click.' + NS );
+			this.$panelsContainer.find( 'a' ).off( 'touchstart.' + NS );
 
 			this.$panelsContainer.off(this.touchSwipeEvents.startEvent);
+			this.$panelsContainer.off(this.touchSwipeEvents.moveEvent);
 			$(document).off(this.touchSwipeEvents.endEvent);
-			$(document).off(this.touchSwipeEvents.moveEvent);
-
+			
 			this.off('update.TouchSwipe.' + NS);
 
 			this.$panelsContainer.removeClass('as-grab');
