@@ -1,8 +1,8 @@
 /*!
-* Accordion Slider - v2.8
-* Homepage: http://bqworks.com/accordion-slider/
+* Accordion Slider - v2.9
+* Homepage: http://bqworks.net/accordion-slider/
 * Author: bqworks
-* Author URL: http://bqworks.com/
+* Author URL: http://bqworks.net/
 */
 ;(function(window, $) {
 
@@ -3835,10 +3835,16 @@ JWPlayerVideo.prototype.replay = function() {
 				}
 			});
 
+			// re-enable links
+			this.$panelsContainer.on( 'touchstart.' + NS, function( event ) {
+				$(this).find('[data-disabledlink]').css('pointer-events', '').removeAttr('data-disabledlink');
+			});
+
 			// prevent 'tap' events unless the panel is opened
-			this.$panelsContainer.find( 'a' ).on( 'touchstart.' + NS, function( event ) {
+			this.$panelsContainer.find( 'a' ).on( 'touchend.' + NS, function( event ) {
 				if ( $(this).parents('.as-panel').hasClass( 'as-opened' ) === false ) {
-					event.preventDefault();
+					$(this).css('pointer-events', 'none');
+					$(this).attr('data-disabledlink', 'true');
 				}
 			});
 
@@ -3906,10 +3912,10 @@ JWPlayerVideo.prototype.replay = function() {
 			var distance = this.settings.orientation === 'horizontal' ? this.touchDistance.x : this.touchDistance.y,
 				oppositeDistance = this.settings.orientation === 'horizontal' ? this.touchDistance.y : this.touchDistance.x;
 
-			if (Math.abs(distance) > Math.abs(oppositeDistance))
-				event.preventDefault();
-			else
+			if (Math.abs(distance) <= Math.abs(oppositeDistance) || this.getTotalPages() === 1 || (this.getTotalPages() > 1 && this.currentPage === this.getTotalPages() - 1))
 				return;
+
+			event.preventDefault();
 			
 			// get the current position of panels' container
 			var currentPanelsPosition = parseInt(this.$panelsContainer.css(this.positionProperty), 10);
@@ -3935,7 +3941,7 @@ JWPlayerVideo.prototype.replay = function() {
 			// check if there is intention for a tap
 			if (this.isTouchMoving === false || this.isTouchMoving === true && Math.abs(this.touchDistance.x) < 10 && Math.abs(this.touchDistance.y) < 10) {
 				var index = $(event.target).parents('.as-panel').index();
-
+				
 				if (typeof event.originalEvent.touches !== 'undefined' && index !== this.currentIndex && index !== -1 && this.openPanelOn !== 'never') {
 					this.openPanel(index);
 				}
