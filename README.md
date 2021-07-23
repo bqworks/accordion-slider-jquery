@@ -21,7 +21,11 @@ Check the plugin's [presentation page](http://bqworks.net/accordion-slider/) for
 
 ### 1. Get a copy of the plugin ###
 
-You can fork or download the plugin from GitHub.
+You can fork or download the plugin from GitHub, or you can install it through `npm`.
+
+```
+$ npm install accordion-slider
+``
 
 ### 2. Load the required files ###
 
