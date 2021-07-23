@@ -2,11 +2,24 @@
   "name": "accordion-slider",
   "prettyName": "Accordion Slider",
   "description": "Responsive jQuery accordion plugin, featuring modular architecture, touch swipe, pagination, retina, video support and much more.",
-  "version": "2.9",
+  "version": "2.9.0",
   "homepage": "http://bqworks.net/accordion-slider/",
   "author": {
     "name": "bqworks",
     "url": "http://bqworks.net/"
+  },
+  "contributors": [
+    {
+      "name": "David Ghiurau",
+      "email": "contact@bqworks.net"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bqworks/accordion-slider-js"
+  },
+  "bugs": {
+    "url": "https://github.com/bqworks/accordion-slider-js/issues"
   },
   "keywords": [
     "jquery-plugin",
