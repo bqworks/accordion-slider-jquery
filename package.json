@@ -16,10 +16,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/bqworks/accordion-slider-js"
+    "url": "https://github.com/bqworks/accordion-slider-jquery"
   },
   "bugs": {
-    "url": "https://github.com/bqworks/accordion-slider-js/issues"
+    "url": "https://github.com/bqworks/accordion-slider-jquery/issues"
   },
   "keywords": [
     "jquery-plugin",
