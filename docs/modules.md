@@ -219,7 +219,7 @@ This module is showcased in example1.html, example2.html and example3.html.
 
 Provides the possibility to link to a specific panel in the accordion. You can use this to have the accordion opened at a specific panel when the page loads or to load a specific panel later at a later time.
 
-The hash that needs to be appended to the URL consists of the 'id' attribute of the accordion and the index of the panel separated by a slash character (/). For example, `http://domain.com/page#my-accordion/0` will open the first panel (because panel indexes start with 0) in the accordion that has the 'id' set to 'my-accordion'.
+The hash that needs to be appended to the URL consists of the 'id' attribute of the accordion and the index of the panel separated by a slash character (/). For example, `https://domain.com/page#my-accordion/0` will open the first panel (because panel indexes start with 0) in the accordion that has the 'id' set to 'my-accordion'.
 
 It's also possible to specify the 'id' attribute of the panel instead of its index.
 
@@ -241,7 +241,7 @@ It's also possible to specify the 'id' attribute of the panel instead of its ind
 </div>
 ```
 
-In order to open the second panel, you can use either `http://domain.com/page#my-accordion/1` or `http://domain.com/page#my-accordion/my-panel`.
+In order to open the second panel, you can use either `https://domain.com/page#my-accordion/1` or `https://domain.com/page#my-accordion/my-panel`.
 
 This module is showcased in example4.html.
 
@@ -289,7 +289,7 @@ The videos need to have the `enablejsapi=1` parameter appended to the URL of the
 *Example:*
 
 ```
-<iframe class="as-video" src="http://www.youtube.com/embed/msIjWthwWwI?enablejsapi=1&amp;wmode=opaque" width="500" height="350" frameborder="0" allowfullscreen></iframe>
+<iframe class="as-video" src="https://www.youtube.com/embed/msIjWthwWwI?enablejsapi=1&amp;wmode=opaque" width="500" height="350" frameborder="0" allowfullscreen></iframe>
 ```
 
 ##### Vimeo #####
@@ -299,7 +299,7 @@ The videos need to have the `api=1` parameter appended to the URL of the video.
 *Example:*
 
 ```
-<iframe class="as-video" src="http://player.vimeo.com/video/43401199?api=1" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe class="as-video" src="https://player.vimeo.com/video/43401199?api=1" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 ```
 
 ##### HTML5 #####
@@ -331,7 +331,7 @@ Each Video.js video must have a unique 'id' attribute. Also, because the Video.j
 </div>
 ```
 
-Please note that, in order to use Video.js, you need to load the Video.js JavaScript and CSS files in your page. More information about how to use Video.js, in general, can be found on the [official Video.js page](http://www.videojs.com/). 
+Please note that, in order to use Video.js, you need to load the Video.js JavaScript and CSS files in your page. More information about how to use Video.js, in general, can be found on the [official Video.js page](https://www.videojs.com/). 
 
 ##### SublimeVideo #####
 
@@ -346,7 +346,7 @@ Each SublimeVideo instance must have a unique 'id' attribute.
 </video>
 ```
 
-Please note that, in order to use SublimeVideo, you will also need to load a script in your page which you need to download from the SublimeVideo page. More information about how to use SublimeVideo, in general, can be found on the [official SublimeVideo page](http://www.sublimevideo.net/).
+Please note that, in order to use SublimeVideo, you will also need to load a script in your page which you need to download from the SublimeVideo page. More information about how to use SublimeVideo, in general, can be found on the [official SublimeVideo page](https://www.sublimevideo.net/).
 
 ##### Notes #####
 
