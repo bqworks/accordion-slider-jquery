@@ -78,7 +78,7 @@
 				this.previousStartEvent = event.type;
 				return;
 			}
-
+$('iframe').css('pointer-events', 'none');
 			// assign the new 'start' event
 			this.previousStartEvent = event.type;
 
@@ -144,7 +144,7 @@
 
 		_onTouchEnd: function(event) {
 			var that = this;
-
+//$('iframe').css('pointer-events', '');
 			// remove the 'move' and 'end' listeners
 			this.$panelsContainer.off(this.touchSwipeEvents.moveEvent);
 			$(document).off(this.touchSwipeEvents.endEvent);

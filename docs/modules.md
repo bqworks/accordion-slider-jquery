@@ -173,7 +173,7 @@ Enables the accordion to load images only when they are in view. It makes sense 
 </div>
 
 <div class="as-panel">
-	<a href="http://bqworks.com">
+	<a href="http://bqworks.net">
 		<img class="as-background" src="path/to/blank.gif" data-src="path/to/image2.jpg"/>
 	</a>
 </div>
@@ -203,7 +203,7 @@ The high resolution image needs to be specified in the `data-retina` attribute, 
 </div>
 
 <div class="as-panel">
-	<a href="http://bqworks.com">
+	<a href="http://bqworks.net">
 		<img class="as-background" src="path/to/blank.gif" data-src="path/to/image3.jpg" data-retina="path/to/image3@2x.jpg"/>
 	</a>
 </div>
@@ -262,7 +262,7 @@ Allows you to set an alternative background image that will appear when the pane
 
 <div class="as-panel">
 	<img class="as-background" src="path/to/blank.gif" data-src="path/to/image3.jpg" data-retina="path/to/image3@2x.jpg"/>
-	<a href="http://bqworks.com">
+	<a href="http://bqworks.net">
 		<img class="as-background-opened" src="path/to/blank.gif" data-src="path/to/alt_image3.jpg" data-retina="path/to/alt_image3@2x.jpg"/>
 	</a>
 </div>
@@ -403,7 +403,7 @@ These are the node names that need to be used:
 		<backgroundRetina>path/to/image1@2x.jpg</backgroundRetina>
 		<backgroundOpened>path/to/alt_image1.jpg</backgroundOpened>
 		<backgroundOpenedRetina>path/to/alt_image1@2x.jpg</backgroundOpenedRetina>
-		<backgroundLink>http://bqworks.com/</backgroundLink>
+		<backgroundLink>http://bqworks.net/</backgroundLink>
 	</panel>
 
     <panel>
@@ -411,7 +411,7 @@ These are the node names that need to be used:
 		<backgroundRetina>path/to/image2@2x.jpg</backgroundRetina>
 		<backgroundOpened>path/to/alt_image2.jpg</backgroundOpened>
 		<backgroundOpenedRetina>path/to/alt_image2@2x.jpg</backgroundOpenedRetina>
-		<backgroundOpenedLink>http://bqworks.com/</backgroundOpenedLink>
+		<backgroundOpenedLink>http://bqworks.net/</backgroundOpenedLink>
 	</panel>
 </accordion>
 ```
@@ -501,14 +501,14 @@ These are the node names that need to be used:
 				"backgroundRetina": {"source": "path/to/image1@2x.jpg"},
 				"backgroundOpened": {"source": "path/to/alt_image1.jpg"},
 				"backgroundOpenedRetina": {"source": "path/to/image1@2x.jpg"},
-				"backgroundLink": {"address": "http://bqworks.com"}
+				"backgroundLink": {"address": "http://bqworks.net"}
 			},
 			{
 				"background": {"source": "path/to/image2.jpg"},
 				"backgroundRetina": {"source": "path/to/image2@2x.jpg"},
 				"backgroundOpened": {"source": "path/to/alt_image2.jpg"},
 				"backgroundOpenedRetina": {"source": "path/to/alt_image2@2x.jpg"},
-				"backgroundOpenedLink": {"address": "http://bqworks.com"}
+				"backgroundOpenedLink": {"address": "http://bqworks.net"}
 			}
 		]
 	}

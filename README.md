@@ -25,7 +25,7 @@ You can fork or download the plugin from GitHub, or you can install it through `
 
 ```
 $ npm install accordion-slider
-``
+```
 
 ### 2. Load the required files ###
 
