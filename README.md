@@ -41,7 +41,14 @@ In the page's footer, just before <code>&lt;/body&gt;</code>, include the requir
 
 ```html
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.2.min.js"></script>
-<script src="dist/js/jquery.accordionSlider.min.js"></script>
+<script type="text/javascript" src="dist/js/jquery.accordionSlider.min.js"></script>
+```
+
+You can also load the CSS and JS code from unpkg.com:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/accordion-slider/dist/css/accordion-slider.min.css"/>
+<script type="text/javascript" src="https://unpkg.com/accordion-slider/dist/js/jquery.accordionSlider.min.js"></script>
 ```
 
 ### 3. Create the HTML markup ###
