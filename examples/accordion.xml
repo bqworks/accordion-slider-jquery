@@ -2,9 +2,9 @@
 <accordion lazyLoading="../dist/css/images/blank.gif">
 	 <!-- Panel 1 -->
 	<panel>
-		<background>http://bqworks.net/accordion-slider/images/image1.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image1@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image1.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image1@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 		
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 1
@@ -25,9 +25,9 @@
 
     <!-- Panel 2 -->
     <panel>
-    	<background>http://bqworks.net/accordion-slider/images/image2.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image2@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+    	<background>https://bqworks.net/accordion-slider/images/image2.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image2@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 2
@@ -50,9 +50,9 @@
 
     <!-- Panel 3 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image3.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image3@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image3.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image3@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 3
@@ -68,9 +68,9 @@
 
     <!-- Panel 4 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image4.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image4@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image4.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image4@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 4
@@ -83,9 +83,9 @@
 
     <!-- Panel 5 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image5.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image5@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image5.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image5@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 5
@@ -98,9 +98,9 @@
 
     <!-- Panel 6 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image6.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image6@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image6.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image6@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 6
@@ -113,9 +113,9 @@
 
     <!-- Panel 7 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image7.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image7@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image7.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image7@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 7
@@ -128,9 +128,9 @@
 
     <!-- Panel 8 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image8.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image8@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image8.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image8@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 8
@@ -149,9 +149,9 @@
 
 	<!-- Panel 9 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image9.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image9@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image9.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image9@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 9
@@ -171,9 +171,9 @@
 
     <!-- Panel 10 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image10.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image10@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image10.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image10@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 10
@@ -197,9 +197,9 @@
 
     <!-- Panel 11 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image11.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image11@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image11.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image11@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 11
@@ -212,9 +212,9 @@
 
     <!-- Panel 12 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image12.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image12@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image12.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image12@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 12
@@ -234,9 +234,9 @@
 
 	<!-- Panel 13 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image13.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image13@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image13.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image13@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 13
@@ -260,9 +260,9 @@
 
     <!-- Panel 14 -->
     <panel>
-		<background>http://bqworks.net/accordion-slider/images/image14.jpg</background>
-		<backgroundRetina>http://bqworks.net/accordion-slider/images/image14@2x.jpg</backgroundRetina>
-		<backgroundLink>http://bqworks.net/</backgroundLink>
+		<background>https://bqworks.net/accordion-slider/images/image14.jpg</background>
+		<backgroundRetina>https://bqworks.net/accordion-slider/images/image14@2x.jpg</backgroundRetina>
+		<backgroundLink>https://bqworks.net/</backgroundLink>
 
 		<layer style="closed white vertical panel-counter" position="bottomLeft" horizontal="8" vertical="8">
 			 Panel 14
