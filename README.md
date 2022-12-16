@@ -1,6 +1,8 @@
-# [Accordion Slider - jQuery slider plugin](http://bqworks.net/accordion-slider/) #
+# [Accordion Slider - jQuery slider plugin](https://bqworks.net/accordion-slider/) #
 
->A responsive and touch-enabled jQuery accordion slider plugin that combines the functionality of a slider with that of an accordion.
+A responsive and touch-enabled jQuery accordion slider plugin that combines the functionality of a slider with that of an accordion.
+
+>The Accordion Slider is also available as a [WordPress plugin](https://wordpress.org/plugins/accordion-slider/).
 
 Main features: 
 
@@ -15,7 +17,7 @@ Main features:
 * video support
 * JavaScript breakpoints 
 
-Check the plugin's [presentation page](http://bqworks.net/accordion-slider/) for examples and more details of the available features.
+Check the plugin's [presentation page](https://bqworks.net/accordion-slider/) for examples and more details of the available features.
 
 ## Getting started ##
 
@@ -38,7 +40,7 @@ Inside the page's head tag include the accordion's CSS file.
 In the page's footer, just before <code>&lt;/body&gt;</code>, include the required JavaScript files.
 
 ```html
-<script src="libs/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.2.min.js"></script>
 <script src="dist/js/jquery.accordionSlider.min.js"></script>
 ```
 
@@ -82,7 +84,7 @@ More about the supported content (i.e., layers, html, video) in the [Modules](do
 </script>
 ```
 
-Accordion Slider has 40+ customizable options. More about this in the [JavaScript API](docs/api.md#javascript-api) doc.
+Accordion Slider has 40+ customizable options. More about this in the [JavaScript API](docs/api.md#javascript-api) documentation.
 
 ## Detailed usage instructions ##
 
@@ -106,8 +108,8 @@ Accordion Slider has 40+ customizable options. More about this in the [JavaScrip
 
 ## Support ##
 
-If you found a bug or have a feature suggestion, please submit it in the [Issues tracker](https://github.com/bqworks/accordion-slider-js/issues).
+If you found a bug or have a feature suggestion, please submit it in the [Issues tracker](https://github.com/bqworks/accordion-slider-jquery/issues).
 
 ## License ##
 
-The plugin is available under the <a href="http://opensource.org/licenses/MIT">MIT license</a>.
+The plugin is available under the <a href="https://opensource.org/licenses/MIT">MIT license</a>.
