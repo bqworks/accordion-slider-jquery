@@ -1,3 +1,8 @@
+[![npm version](https://img.shields.io/npm/v/accordion-slider)](https://www.npmjs.com/package/accordion-slider)
+[![License](https://img.shields.io/github/license/bqworks/accordion-slider-jquery)](https://github.com/bqworks/accordion-slider-jquery/blob/master/LICENSE)
+[![Build](https://github.com/bqworks/accordion-slider-jquery/actions/workflows/build.yml/badge.svg)](https://github.com/bqworks/accordion-slider-jquery/actions/workflows/build.yml)
+[![Downloads](https://img.shields.io/npm/dt/accordion-slider)](https://github.com/bqworks/accordion-slider-jquery)
+
 # [Accordion Slider - jQuery slider plugin](https://bqworks.net/accordion-slider/) #
 
 A responsive and touch-enabled jQuery accordion slider plugin that combines the functionality of a slider with that of an accordion.
